@@ -1,0 +1,44 @@
+4 IN, 8 OUT ????  Revised: Tuesday, February 08, 2011
+TCNB01.DSN          Revision: 00
+
+
+
+
+
+
+
+Bill Of Materials       February 8,2011      10:40:44	Page1
+
+Item	Quantity	Reference	Part
+______________________________________________
+
+1	8	CN1,CN2,CN3,CN4,CN5,CN6,	PM5.08P3 (cod. farnell 1624289)
+		CN7,CN8
+2	1	CN9	PTH;DB9F/90 (cod. farnell 1084710)
+3	2	CN10,CN11	PM5.08P2 (cod. farnell 1624287)
+4	1	CN12	PM5.08P4 (comporre acquistando 2 x 1624287)
+5	1	CN13	PM5.08P5 (comporre acquistando (1 x 1624289)+(1 x 1624287)) 
+6	11	C1,C2,C3,C4,C5,C6,C8,C9,	PTH;100n;50V;5 (cod. farnell 1600877)
+		C13,C15,C16
+7	3	C7,C12,C14	PTH;100u;16V;D6,3mm;P2,54 (cod. farnell 1167929)
+8	2	C10,C11	NU
+9	8	D1,D2,D3,D4,D5,D6,D7,D8	PTH;1N4007;P10 (cod. farnell 9565051)
+10	2	D9,D10	PTH;1N4148;P10 (cod. farnell 9565124)
+11	3	ISO1,ISO2,ISO3	PTH;TLP504A;08DIP300 (cod. farnell 1201938)
+12	1	J1	PTH;STRIP6F P2,54 (cod. farnell 1668223)
+13	1	LD1	PTH;Led 3mm;Rosso	(cod. farnell 1581112)
+	1	LD2	PTH;Led 3mm;Verde	(cod. farnell 1581114)
+14	8	Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8	PTH;BC337;TO92	(cod. farnell 9558489)
+15	8	RL1,RL2,RL3,RL4,RL5,RL6,	PTH;5Vdc;SPNO	(cod. farnell 1191227)
+		RL7,RL8
+16	14	R1,R2,R3,R4,R5,R6,R7,R8,	PTH;470;1/4;R10;5	(cod. farnell 9341943)
+		R19,R20,R21,R22,R23,R24
+	8	R9,R14,R15,R16,R17,R18,		PTH;47K;1/4;R10;5	(cod. farnell 1652645)
+		R25,R26
+	4	R10,R11,R12,R13		PTH;330;1/4;R10;5	(cod. farnell 9341730)
+17	1	SW1	PTH;Switch DPST 6x6mm	(cod. farnell 1656423)
+18	1	U1	PTH;ST232;16DIP300	(cod. farnell 1077192)	
+19	1	U2	PTH;ATMEGA164A-PU;40DIP300	(cod. farnell 1748515)
+20	1	U3	PTH;LM78M05CT;TO220	(cod. farnell 1383850)
+21	1	U4	PTH;TCN75AVOA;08DIP300	(cod. farnell 1605585)
+22	1	X1	PTH;32K768;2x6mm cilindrico	(cod. farnell 1611828)
