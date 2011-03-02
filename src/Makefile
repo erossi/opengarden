@@ -13,13 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+PRG_NAME = opengarden
 MCU = atmega164p
-PWD = $(shell pwd)
-INC = -I/usr/avr/include/
 OPTLEV = 2
 FCPU = 1000000UL
+PWD = $(shell pwd)
+INC = -I/usr/lib/avr/include/
+
 CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
 LFLAGS =
+
+PRGNAME = $(PRG_NAME)
+GIT_TAG = "Unknown"
+# Uncomment if git tag is in use
+#GIT_TAG = "$(shell git describe --tags)"
+#PRGNAME = $(PRG_NAME)_$(GIT_TAG)
 
 AR = avr-ar
 CC = avr-gcc
@@ -28,27 +36,27 @@ DUDEPORT = /dev/ttyUSB0
 DUDEDEV = stk500v2
 DUDEPORT = usb
 DUDEDEV = avrispmkII
+# Use sudo for USB avrispmkII
+DUDE = sudo avrdude -c $(DUDEDEV) -p $(MCU) -P $(DUDEPORT) -e -U flash:w:$(PRGNAME).hex
 
-PRGNAME = hospitv
 OBJCOPY = avr-objcopy -j .text -j .data -O ihex
 OBJDUMP = avr-objdump
 SIZE = avr-size
 
-# Use sudo for USB avrispmkII
-DUDE = sudo avrdude -c $(DUDEDEV) -p $(MCU) -P $(DUDEPORT) -e -U flash:w:$(PRGNAME).hex
 REMOVE = rm -f
 
-objects = led.o
-
-GITRELEASE = "\"$(shell git describe --tags)\""
+objects = led.o uart.o io_input.o debug.o
 
 .PHONY: clean indent
 .SILENT: help
 .SUFFIXES: .c, .o
 
 all: $(objects)
-	$(CC) $(CFLAGS) -o main.elf main.c $(objects) $(LFLAGS)
-	$(OBJCOPY) main.elf master.hex
+	$(CC) $(CFLAGS) -o $(PRGNAME).elf main.c $(objects) $(LFLAGS)
+	$(OBJCOPY) $(PRGNAME).elf $(PRGNAME).hex
+
+debug.o:
+	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
 
 program:
 	$(DUDE)
@@ -57,4 +65,4 @@ clean:
 	$(REMOVE) *.elf *.hex $(objects)
 
 version:
-	git describe --tags
+	# Last Git tag: $(GITRELEASE)
