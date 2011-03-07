@@ -58,7 +58,7 @@ uint8_t debug_wait_for_y(struct debug_t *debug)
 
 	if (debug->active) {
 		for (i = 0; i < SEC_FOR_Y; i++) {
-			c = uart_getchar(0);
+			c = uart_getchar(0, 0);
 
 			/*! "Y" is 89 and "y" is 121 */
 			if ((c == 89) || (c == 121)) {

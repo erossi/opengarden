@@ -40,7 +40,7 @@ struct uartStruct {
 
 void uart_init(const uint8_t port);
 void uart_shutdown(const uint8_t port);
-char uart_getchar(const uint8_t port);
+char uart_getchar(const uint8_t port, const uint8_t locked);
 void uart_putchar(const uint8_t port, const char c);
 void uart_printstr(const uint8_t port, const char *s);
 
