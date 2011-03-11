@@ -29,11 +29,13 @@
 #include <util/delay.h>
 #include "debug.h"
 #include "led.h"
+#include "time.h"
 #include "io_input.h"
 
 int main(void)
 {
 	struct debug_t *debug;
+	time_t clock = 1299764113;
 
 	/* Init sequence, turn on both led */
 	led_init();
@@ -42,8 +44,11 @@ int main(void)
 	AU_DDR = 0xff; /* all output */
 	AU_PORT = 0;
 	led_set(BOTH, OFF);
+	rtc_setup();
+	settimeofday(clock);
 
 	sei();
+	rtc_start();
 
 	while (1) {
 		if (io_in_get(IN_P0))
@@ -67,11 +72,14 @@ int main(void)
 			AU_PORT &= ~(_BV(6) | _BV(7));
 
 
-		led_set(GREEN, ON);
-		_delay_ms(1000);
-		led_set(BOTH, OFF);
+		led_set(GREEN, BLINK);
+		_delay_ms(500);
+		clock = time(NULL);
+		debug->line = ctime(&clock);
+		debug_print(debug);
 	}
 
+	rtc_stop();
 	cli();
 	debug_free(debug);
 

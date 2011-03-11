@@ -34,8 +34,8 @@ CC = avr-gcc
 
 DUDEPORT = /dev/ttyUSB0
 DUDEDEV = stk500v2
-DUDEPORT = usb
-DUDEDEV = avrispmkII
+#DUDEPORT = usb
+#DUDEDEV = avrispmkII
 # Use sudo for USB avrispmkII
 DUDE = sudo avrdude -c $(DUDEDEV) -p $(MCU) -P $(DUDEPORT) -e -U flash:w:$(PRGNAME).hex
 
@@ -45,7 +45,8 @@ SIZE = avr-size
 
 REMOVE = rm -f
 
-objects = led.o uart.o io_input.o debug.o
+time_obj = rtc.o time.o
+objects = led.o uart.o io_input.o debug.o $(time_obj)
 
 .PHONY: clean indent
 .SILENT: help
