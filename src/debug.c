@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
-#include <avr/pgmspace.h>
 #include <util/delay.h>
 #include "debug.h"
 

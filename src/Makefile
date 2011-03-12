@@ -46,7 +46,8 @@ SIZE = avr-size
 REMOVE = rm -f
 
 time_obj = rtc.o time.o
-objects = led.o uart.o io_input.o debug.o $(time_obj)
+io_obj = io_input.o io_out.o
+objects = led.o uart.o debug.o $(time_obj) $(io_obj)
 
 .PHONY: clean indent
 .SILENT: help

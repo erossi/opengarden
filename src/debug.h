@@ -22,6 +22,7 @@
 #ifndef DBG_H
 #define DBG_H
 
+#include <avr/pgmspace.h>
 #include "uart.h"
 
 #define QUOTEME_(x) #x

@@ -19,18 +19,14 @@
   \brief Main.
  */
 
-#define AU_PORT PORTA
-#define AU_DDR DDRA
-
 #include <stdlib.h>
-#include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include <util/delay.h>
 #include "debug.h"
 #include "led.h"
 #include "time.h"
 #include "io_input.h"
+#include "io_out.h"
 
 int main(void)
 {
@@ -40,9 +36,8 @@ int main(void)
 	/* Init sequence, turn on both led */
 	led_init();
 	io_in_init();
+	io_out_init();
 	debug = debug_init();
-	AU_DDR = 0xff; /* all output */
-	AU_PORT = 0;
 	led_set(BOTH, OFF);
 	rtc_setup();
 	settimeofday(clock);
@@ -51,26 +46,37 @@ int main(void)
 	rtc_start();
 
 	while (1) {
-		if (io_in_get(IN_P0))
-			AU_PORT |= _BV(0) | _BV(1);
-		else
-			AU_PORT &= ~(_BV(0) | _BV(1));
+		if (io_in_get(IN_P0)) {
+			io_out_set(OUT_P0, 1);
+			io_out_set(OUT_P1, 1);
+		} else {
+			io_out_set(OUT_P0, 0);
+			io_out_set(OUT_P1, 0);
+		}
 
-		if (io_in_get(IN_P1))
-			AU_PORT |= _BV(2) | _BV(3);
-		else
-			AU_PORT &= ~(_BV(2) | _BV(3));
+		if (io_in_get(IN_P1)) {
+			io_out_set(OUT_P2, 1);
+			io_out_set(OUT_P3, 1);
+		} else {
+			io_out_set(OUT_P2, 0);
+			io_out_set(OUT_P3, 0);
+		}
 
-		if (io_in_get(IN_P2))
-			AU_PORT |= _BV(4) | _BV(5);
-		else
-			AU_PORT &= ~(_BV(4) | _BV(5));
+		if (io_in_get(IN_P2)) {
+			io_out_set(OUT_P4, 1);
+			io_out_set(OUT_P5, 1);
+		} else {
+			io_out_set(OUT_P4, 0);
+			io_out_set(OUT_P5, 0);
+		}
 
-		if (io_in_get(IN_P3))
-			AU_PORT |= _BV(6) | _BV(7);
-		else
-			AU_PORT &= ~(_BV(6) | _BV(7));
-
+		if (io_in_get(IN_P3)) {
+			io_out_set(OUT_P6, 1);
+			io_out_set(OUT_P7, 1);
+		} else {
+			io_out_set(OUT_P6, 0);
+			io_out_set(OUT_P7, 0);
+		}
 
 		led_set(GREEN, BLINK);
 		_delay_ms(500);
