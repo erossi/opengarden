@@ -39,6 +39,11 @@ conversions have to be made from int to string etc. */
 #define PRINT_VALUE_X_LINE 16
 #define SEC_FOR_Y 5
 
+/* GITREL Environment check */
+#ifndef GITREL
+#define GITREL "unknown"
+#endif
+
 /*! The main debug structure, it has to be allocated,
   eventually, if debug is not active, you can avoid the
   allocation of the two members char *.
@@ -49,6 +54,7 @@ struct debug_t {
 	uint8_t active;
 };
 
+void debug_get_str(char *str);
 void debug_print_P(PGM_P string, struct debug_t *debug);
 void debug_print(struct debug_t *debug);
 uint8_t debug_wait_for_y(struct debug_t *debug);

@@ -22,6 +22,22 @@
 #include <util/delay.h>
 #include "debug.h"
 
+void debug_get_str(char *str) {
+	uint8_t i = 0;
+
+	*(str + i) = uart_getchar(0, 1);
+	uart_putchar(0, *(str + i));
+
+	while ((*(str + i) != '\r') && (i < MAX_LINE_LENGHT)) {
+		i++;
+		*(str + i) = uart_getchar(0, 1);
+		uart_putchar(0, *(str + i));
+	}
+
+	i++;
+	*(str + i) = 0;
+}
+
 void debug_print_P(PGM_P string, struct debug_t *debug)
 {
 	if (debug->active) {

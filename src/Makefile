@@ -26,8 +26,8 @@ LFLAGS =
 PRGNAME = $(PRG_NAME)
 GIT_TAG = "Unknown"
 # Uncomment if git tag is in use
-#GIT_TAG = "$(shell git describe --tags)"
-#PRGNAME = $(PRG_NAME)_$(GIT_TAG)
+GIT_TAG = "$(shell git describe --tags)"
+PRGNAME = $(PRG_NAME)_$(GIT_TAG)
 
 AR = avr-ar
 CC = avr-gcc
@@ -45,7 +45,7 @@ SIZE = avr-size
 
 REMOVE = rm -f
 
-time_obj = rtc.o time.o
+time_obj = rtc.o time.o date.o
 io_obj = io_input.o io_out.o
 objects = led.o uart.o debug.o $(time_obj) $(io_obj)
 
@@ -67,4 +67,4 @@ clean:
 	$(REMOVE) *.elf *.hex $(objects)
 
 version:
-	# Last Git tag: $(GITRELEASE)
+	# Last Git tag: $(GIT_TAG)

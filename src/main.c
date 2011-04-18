@@ -27,10 +27,12 @@
 #include "time.h"
 #include "io_input.h"
 #include "io_out.h"
+#include "date.h"
 
 int main(void)
 {
 	struct debug_t *debug;
+	struct tm tm_clock;
 	time_t clock = 1299764113;
 
 	/* Init sequence, turn on both led */
@@ -40,6 +42,8 @@ int main(void)
 	debug = debug_init();
 	led_set(BOTH, OFF);
 	rtc_setup();
+	setup_date(&tm_clock, debug);
+	clock = mktime(&tm_clock);
 	settimeofday(clock);
 
 	sei();
