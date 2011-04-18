@@ -148,24 +148,24 @@ time_t mktime(struct tm *timeptr) {
 	CheckTime(timeptr);
 
 	/* seconds from 1970 till 1 jan 00:00:00 this year */
-	seconds= (year-1970)*(60*60*24L*365);
+	seconds= (year-1970)*31536000L; /* 60*60*24L*365 */
 
 	/* add extra days for leap years */
 	for (i=1970; i<year; i++)
 		if (LEAP_YEAR(i))
-			seconds+= 60*60*24L;
+			seconds+= 86400L; /* 60*60*24L */
 
 	/* add days for this year */
 	for (i=0; i<month; i++) {
 		if (i==1 && LEAP_YEAR(year)) { 
-			seconds+= 60*60*24L*29;
+			seconds+= 2505600L; /* 60*60*24L*29 */
 		} else {
-			seconds+= 60*60*24L*monthDays[i];
+			seconds+= 86400L * monthDays[i];
 		}
 	}
 
-	seconds+= (timeptr->tm_mday-1)*60*60*24L;
-	seconds+= timeptr->tm_hour*60*60;
+	seconds+= (timeptr->tm_mday-1) * 86400L;
+	seconds+= timeptr->tm_hour * 3600L;
 	seconds+= timeptr->tm_min*60;
 	seconds+= timeptr->tm_sec;
 	return(seconds);
