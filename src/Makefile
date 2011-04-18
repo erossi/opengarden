@@ -47,7 +47,7 @@ REMOVE = rm -f
 
 time_obj = rtc.o time.o date.o
 io_obj = io_input.o io_out.o
-objects = led.o uart.o debug.o $(time_obj) $(io_obj)
+objects = led.o uart.o debug.o $(time_obj) $(io_obj) program.o
 
 .PHONY: clean indent
 .SILENT: help

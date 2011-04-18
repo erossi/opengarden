@@ -28,11 +28,13 @@
 #include "io_input.h"
 #include "io_out.h"
 #include "date.h"
+#include "program.h"
 
 int main(void)
 {
 	struct debug_t *debug;
 	struct tm tm_clock;
+	struct programms_t *progs;
 	time_t clock = 1299764113;
 
 	/* Init sequence, turn on both led */
@@ -40,6 +42,7 @@ int main(void)
 	io_in_init();
 	io_out_init();
 	debug = debug_init();
+	progs = prog_init();
 	led_set(BOTH, OFF);
 	rtc_setup();
 	setup_date(&tm_clock, debug);

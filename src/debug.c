@@ -22,7 +22,8 @@
 #include <util/delay.h>
 #include "debug.h"
 
-void debug_get_str(char *str) {
+void debug_get_str(char *str)
+{
 	uint8_t i = 0;
 
 	*(str + i) = uart_getchar(0, 1);
