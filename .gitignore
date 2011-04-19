@@ -1,2 +1,6 @@
 doc/html/
+*.elf
+*.hex
+*.o
+*.swp
 

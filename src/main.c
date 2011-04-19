@@ -20,6 +20,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "debug.h"
@@ -29,13 +30,20 @@
 #include "io_out.h"
 #include "date.h"
 #include "program.h"
+#include "cmdli.h"
+
+/*! Global EEPROM storage */
+struct programms_t EEMEM EE_progs;
 
 int main(void)
 {
 	struct debug_t *debug;
 	struct tm tm_clock;
 	struct programms_t *progs;
+	struct cmdli_t *cmdli;
+	/*! time start at ... */
 	time_t clock = 1299764113;
+	char c;
 
 	/* Init sequence, turn on both led */
 	led_init();
@@ -43,6 +51,7 @@ int main(void)
 	io_out_init();
 	debug = debug_init();
 	progs = prog_init();
+	cmdli = cmdli_init(debug);
 	led_set(BOTH, OFF);
 	rtc_setup();
 	setup_date(&tm_clock, debug);
@@ -53,6 +62,7 @@ int main(void)
 	rtc_start();
 
 	while (1) {
+		/*
 		if (io_in_get(IN_P0)) {
 			io_out_set(OUT_P0, 1);
 			io_out_set(OUT_P1, 1);
@@ -60,41 +70,24 @@ int main(void)
 			io_out_set(OUT_P0, 0);
 			io_out_set(OUT_P1, 0);
 		}
+		*/
 
-		if (io_in_get(IN_P1)) {
-			io_out_set(OUT_P2, 1);
-			io_out_set(OUT_P3, 1);
-		} else {
-			io_out_set(OUT_P2, 0);
-			io_out_set(OUT_P3, 0);
-		}
+		c = uart_getchar(0, 0);
 
-		if (io_in_get(IN_P2)) {
-			io_out_set(OUT_P4, 1);
-			io_out_set(OUT_P5, 1);
-		} else {
-			io_out_set(OUT_P4, 0);
-			io_out_set(OUT_P5, 0);
-		}
-
-		if (io_in_get(IN_P3)) {
-			io_out_set(OUT_P6, 1);
-			io_out_set(OUT_P7, 1);
-		} else {
-			io_out_set(OUT_P6, 0);
-			io_out_set(OUT_P7, 0);
-		}
+		if (c)
+			cmdli_exec(c, cmdli, debug);
 
 		led_set(GREEN, BLINK);
 		_delay_ms(500);
 		clock = time(NULL);
-		debug->line = ctime(&clock);
+		strcpy(debug->line, ctime(&clock));
 		debug_print(debug);
 	}
 
 	rtc_stop();
 	cli();
 	debug_free(debug);
+	cmdli_free(cmdli);
 
 	return(0);
 }

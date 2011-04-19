@@ -54,7 +54,7 @@ struct programms_t {
 };
 
 /*! global EEPROM variable */
-struct programms_t EEMEM *EE_progs;
+extern struct programms_t EEMEM EE_progs;
 
 struct programms_t *prog_init(void);
 void prog_save(struct programms_t *progs);

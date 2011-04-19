@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "program.h"
 
 struct programms_t *prog_init(void)
@@ -28,7 +29,7 @@ struct programms_t *prog_init(void)
 	struct programms_t *progs;
 	
 	progs = malloc(sizeof(struct programms_t));
-	eeprom_read_block(progs, EE_progs, sizeof(struct programms_t));
+	eeprom_read_block(progs, &EE_progs, sizeof(struct programms_t));
 
 	/* initialize a new programms struct */
 	if (progs->check != CHECK_VALID_CODE) {
@@ -80,12 +81,12 @@ void prog_list(struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, "\nProgramms list [%d]:\n", progs->number);
+	sprintf_P(debug->line, PSTR("\nProgramms list [%d]:\n"), progs->number);
 	debug_print(debug);
-	debug_print_P("p<number>,<start>,<stop>,<DoW>,<out line>\n", debug);
+	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, "p%d,%d,%d,%d\n",i ,progs->p[i].hstart, progs->p[i].hstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR("p%d,%d,%d,%d\n"),i ,progs->p[i].hstart, progs->p[i].hstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 }
@@ -100,20 +101,30 @@ void prog_clear(struct programms_t *progs)
   \param s string in the form pHH,SS,DD,OO
   where
   HH Start hour in the form 0..48 of 30min each.
-  SS Stop hour.
-  DD Day of the week sun..sat bit for day.
-  OO output line 0..7 bit for line 0 to 7.
+  SS Stop hour, same as HH.
+  DD Day of the week sun..sat bit for day (HEX number).
+  OO output line 0..7 bit for line 0 to 7 (HEX number).
  */
 void prog_add(struct programms_t *progs, const char *s)
 {
-	uint8_t hstart, hstop, dow, oline;
+	char *substr;
 
 	if (progs->number + 1 < MAX_PROGS) {
+		substr = malloc(3);
 		progs->number++;
-		progs->p[progs->number].hstart = hstart;
-		progs->p[progs->number].hstop = hstop;
-		progs->p[progs->number].dow = dow;
-		progs->p[progs->number].oline = oline;
+		/* get HH, copy from s char 1..2 (HH) into substr */
+		strlcpy(substr, s + 1, 3);
+		progs->p[progs->number].hstart = strtoul(substr, 0, 10);
+		/* get SS */
+		strlcpy(substr, s + 4, 3);
+		progs->p[progs->number].hstop = strtoul(substr, 0, 10);
+		/* get DD */
+		strlcpy(substr, s + 7, 3);
+		progs->p[progs->number].dow = strtoul(substr, 0, 16);
+		/* get OO */
+		strlcpy(substr, s + 10, 3);
+		progs->p[progs->number].oline = strtoul(substr, 0, 16);
+		free(substr);
 	}
 }
 
@@ -134,5 +145,5 @@ uint8_t prog_del(struct programms_t *progs, const uint8_t n)
 
 void prog_save(struct programms_t *progs)
 {
-	eeprom_update_block(progs, EE_progs, sizeof(struct programms_t));
+	eeprom_update_block(progs, &EE_progs, sizeof(struct programms_t));
 }
