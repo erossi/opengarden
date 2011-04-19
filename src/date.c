@@ -31,32 +31,20 @@ void setup_date(struct tm *date, struct debug_t *debug) {
 	strlcpy(debug->string, debug->line, 5);
 	date->tm_year = atoi(debug->string) - 1900;
 	/* Month */
-	strcpy(debug->line, debug->line + 4);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	strlcpy(debug->string, debug->line, 3);
+	strlcpy(debug->string, debug->line + 4, 3);
 	date->tm_mon = atoi(debug->string) - 1;
 	/* Day */
-	strcpy(debug->line, debug->line + 2);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	strlcpy(debug->string, debug->line, 3);
+	strlcpy(debug->string, debug->line + 6, 3);
 	date->tm_mday = atoi(debug->string);
 	/* Hour */
-	strcpy(debug->line, debug->line + 2);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	strlcpy(debug->string, debug->line, 3);
+	strlcpy(debug->string, debug->line + 8, 3);
 	date->tm_hour = atoi(debug->string);
 	/* Minute */
-	strcpy(debug->line, debug->line + 2);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	strlcpy(debug->string, debug->line, 3);
+	strlcpy(debug->string, debug->line + 10, 3);
 	date->tm_min = atoi(debug->string);
 	date->tm_sec = 0;
 
-	debug->line = asctime(date);
+	strcpy(debug->line, asctime(date));
 	debug_print(debug);
 	uart_putchar(0, '\n');
 
