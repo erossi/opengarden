@@ -23,14 +23,14 @@
   -------------------------------------------------------------------------*/
 
 #include <stdio.h>
+#include <avr/pgmspace.h>
 #include "time.h"
 
 /* please note that the tm structure has the years since 1900,
    but time returns the seconds since 1970 */
 
-static unsigned char monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31};
-char * __month[]={"Jan","Feb","Mar","Apr","May","Jun",
-	"Jul","Aug","Sep","Oct","Nov","Dec"};
+static unsigned char monthDays[] PROGMEM = {31,28,31,30,31,30,31,31,30,31,30,31};
+char * __month[]={"Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"};
 char * __day[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 static char ascTimeBuffer[32];
 static struct tm lastTime;
@@ -67,7 +67,7 @@ static void CheckTime(struct tm *timeptr) {
 /* format the time into "Sat Feb 17 17:45:23 2001\n" */
 char *asctime(struct tm *timeptr) {
 	CheckTime(timeptr);
-	sprintf (ascTimeBuffer, "%s %s %2d %02d:%02d:%02d %04d\n",
+	sprintf_P(ascTimeBuffer, PSTR("%s %s %2d %02d:%02d:%02d %04d\n"),
 			__day[timeptr->tm_wday], __month[timeptr->tm_mon], timeptr->tm_mday,
 			timeptr->tm_hour, timeptr->tm_min, timeptr->tm_sec, 
 			timeptr->tm_year+1900);
@@ -118,7 +118,7 @@ struct tm *gmtime(time_t *timep) {
 				monthLength=28;
 			}
 		} else {
-			monthLength = monthDays[month];
+			monthLength = pgm_read_byte(&(monthDays[month]));
 		}
 
 		if (epoch>=monthLength) {
@@ -160,7 +160,7 @@ time_t mktime(struct tm *timeptr) {
 		if (i==1 && LEAP_YEAR(year)) { 
 			seconds+= 2505600L; /* 60*60*24L*29 */
 		} else {
-			seconds+= 86400L * monthDays[i];
+			seconds+= 86400L * pgm_read_byte(&(monthDays[i]));
 		}
 	}
 
