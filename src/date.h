@@ -25,6 +25,6 @@
 #include "debug.h"
 #include "time.h"
 
-void setup_date(struct tm *date, struct debug_t *debug);
+void date_set(struct tm *date, struct debug_t *debug);
 
 #endif

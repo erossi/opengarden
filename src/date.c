@@ -23,7 +23,8 @@
 #include "uart.h"
 #include "date.h"
 
-void setup_date(struct tm *date, struct debug_t *debug) {
+void date_set(struct tm *date, struct debug_t *debug)
+{
         debug_print_P(PSTR("Enter date [YYYYMMDDhhmm]: "), debug);
 	debug_get_str(debug->line);
 	uart_putchar(0, '\n');
@@ -44,10 +45,12 @@ void setup_date(struct tm *date, struct debug_t *debug) {
 	date->tm_min = atoi(debug->string);
 	date->tm_sec = 0;
 
+        debug_print_P(PSTR("The date is now: "), debug);
 	strcpy(debug->line, asctime(date));
 	debug_print(debug);
 	uart_putchar(0, '\n');
 
+	/*
 	debug->line = itoa(date->tm_year, debug->line, 10);
 	debug_print(debug);
 	uart_putchar(0, '\n');
@@ -66,4 +69,5 @@ void setup_date(struct tm *date, struct debug_t *debug) {
 	debug->line = itoa(date->tm_sec, debug->line, 10);
 	debug_print(debug);
 	uart_putchar(0, '\n');
+	*/
 }

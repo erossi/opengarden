@@ -54,7 +54,7 @@ int main(void)
 	cmdli = cmdli_init(debug);
 	led_set(BOTH, OFF);
 	rtc_setup();
-	setup_date(&tm_clock, debug);
+	date_set(&tm_clock, debug);
 	clock = mktime(&tm_clock);
 	settimeofday(clock);
 
