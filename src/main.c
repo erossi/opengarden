@@ -61,9 +61,13 @@ int main(void)
 
 	while (1) {
 		c = uart_getchar(0, 0);
+		/* echo, shoud not be used */
+		uart_putchar(0, c);
 
 		if (c)
-			cmdli_exec(c, cmdli, debug);
+			cmdli_exec(c, cmdli, progs, debug);
+		else
+			led_set(GREEN, BLINK);
 
 		if (date_timetorun(tm_clock, debug)) {
 			tmp = tm_clock->tm_hour * 2;
@@ -73,10 +77,6 @@ int main(void)
 
 			prog_run(progs, tmp, debug);
 		}
-
-		led_set(GREEN, BLINK);
-		_delay_ms(500);
-		date(debug);
 	}
 
 	date_hwclock_stop();

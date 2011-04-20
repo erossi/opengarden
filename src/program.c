@@ -24,9 +24,8 @@
 #include <string.h>
 #include "program.h"
 
-struct programms_t *prog_init(struct programms_t *progs)
+void prog_load(struct programms_t *progs)
 {
-	progs = malloc(sizeof(struct programms_t));
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programms_t));
 
 	/* initialize a new programms struct */
@@ -34,7 +33,12 @@ struct programms_t *prog_init(struct programms_t *progs)
 		progs->check = CHECK_VALID_CODE;
 		progs->number = 0; /* 0 valid program */
 	}
+}
 
+struct programms_t *prog_init(struct programms_t *progs)
+{
+	progs = malloc(sizeof(struct programms_t));
+	prog_load(progs);
 	io_in_init();
 	io_out_init();
 	return(progs);
@@ -84,15 +88,18 @@ void prog_run(struct programms_t *progs, const uint8_t hh, struct debug_t *debug
 {
 	uint8_t i;
 
+	sprintf_P(debug->line, PSTR("Executing programms at hour %2d:\n"), hh);
+	debug_print(debug);
+
 	for (i=0; i<progs->number; i++) {
 		if (progs->p[i].hstart == hh) {
-			sprintf_P(debug->line, " prog %d start\n", i);
+			sprintf_P(debug->line, PSTR(" prog %d start\n"), i);
 			debug_print(debug);
 			change_io_line(progs->p[i].oline, 1);
 		}
 
 		if (progs->p[i].hstop == hh) {
-			sprintf_P(debug->line, " prog %d stop\n", i);
+			sprintf_P(debug->line, PSTR(" prog %d stop\n"), i);
 			debug_print(debug);
 			change_io_line(progs->p[i].oline, 0);
 		}
@@ -104,12 +111,12 @@ void prog_list(struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("\nProgramms list [%d]:\n"), progs->number);
+	sprintf_P(debug->line, PSTR("\nProgramms list [%2d]:\n"), progs->number);
 	debug_print(debug);
 	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR("p%d,%d,%d,%d\n"),i ,progs->p[i].hstart, progs->p[i].hstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR("p%2d,%2d,%2d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].hstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 }
@@ -134,7 +141,6 @@ void prog_add(struct programms_t *progs, const char *s)
 
 	if (progs->number + 1 < MAX_PROGS) {
 		substr = malloc(3);
-		progs->number++;
 		/* get HH, copy from s char 1..2 (HH) into substr */
 		strlcpy(substr, s + 1, 3);
 		progs->p[progs->number].hstart = strtoul(substr, 0, 10);
@@ -148,6 +154,7 @@ void prog_add(struct programms_t *progs, const char *s)
 		strlcpy(substr, s + 10, 3);
 		progs->p[progs->number].oline = strtoul(substr, 0, 16);
 		free(substr);
+		progs->number++;
 	}
 }
 

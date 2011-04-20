@@ -20,6 +20,7 @@
   */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "cmdli.h"
 
 /*! Clear the cli_t struct */
@@ -51,30 +52,61 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("c - clear all programms from memory.\n"), debug);
 	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("l - list programms.\n"), debug);
-	debug_print_P(PSTR("pHHSSDDOO - HH[0..48] SS[0..48] DD[n/a] OO[oline].\n"), debug);
+	debug_print_P(PSTR("pHH,SS,DD,OO - HH[0..48] SS[0..48] DD[n/a] OO[oline].\n"), debug);
+	debug_print_P(PSTR("r - re-load programms from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programms to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
 
-void exec_command(char *cmd, struct debug_t *debug)
+void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 {
+	uint8_t tmp;
+
 	switch (*cmd) {
 		case '?':
 			cmdli_help(debug);
 			break;
+		case 'c':
+			prog_clear(progs);
+			debug_print_P(PSTR("All programms has been removed.\n"), debug);
+			break;
+		case 'd':
+			tmp = strtoul((cmd+1), 0, 10);
+			prog_del(progs, tmp);
+			sprintf_P(debug->line, PSTR("The program %d has been removed.\n"), tmp);
+			debug_print(debug);
+			break;
+		case 'l':
+			prog_list(progs, debug);
+			break;
+		case 'p':
+			prog_add(progs, cmd);
+			break;
+		case 'r':
+			prog_load(progs);
+			debug_print_P(PSTR("All programms has been restored.\n"), debug);
+			break;
+		case 's':
+			prog_save(progs);
+			debug_print_P(PSTR("All programms has been saved.\n"), debug);
+			break;
 		case 't':
+			debug_print_P(PSTR("The time is: "), debug);
+			date(debug);
 			break;	
 		default:
+			debug_print_P(PSTR("Wrong command! Use '?' to get help\n"), debug);
 			break;
 	}
 }
 
-void cmdli_exec(char c, struct cmdli_t *cmdli, struct debug_t *debug)
+void cmdli_exec(char c, struct cmdli_t *cmdli, struct programms_t *progs, struct debug_t *debug)
 {
 	if (c == '\r') {
+		debug_print_P(PSTR("\n"), debug);
 		*(cmdli->cmd + cmdli->idx) = 0;
-		exec_command(cmdli->cmd, debug);
+		exec_command(cmdli->cmd, progs, debug);
 		cmdli_clear(cmdli);
 	} else {
 		*(cmdli->cmd + cmdli->idx) = c;

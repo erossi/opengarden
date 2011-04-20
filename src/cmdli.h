@@ -23,6 +23,8 @@
 #define CMDLI_H
 
 #include "debug.h"
+#include "date.h"
+#include "program.h"
 
 /*! maximum chars a command is made of */
 #define MAX_CMD_LENGHT 20
@@ -38,6 +40,6 @@ struct cmdli_t {
 struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug);
 void cmdli_free(struct cmdli_t *cmdli);
 void cmdli_help(struct debug_t *debug);
-void cmdli_exec(char c, struct cmdli_t *cmdli, struct debug_t *debug);
+void cmdli_exec(char c, struct cmdli_t *cmdli, struct programms_t *progs, struct debug_t *debug);
 
 #endif
