@@ -24,10 +24,8 @@
 #include <string.h>
 #include "program.h"
 
-struct programms_t *prog_init(void)
+struct programms_t *prog_init(struct programms_t *progs)
 {
-	struct programms_t *progs;
-	
 	progs = malloc(sizeof(struct programms_t));
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programms_t));
 
@@ -51,6 +49,16 @@ void prog_free(struct programms_t *progs)
 
 void change_io_line(const uint8_t oline, const uint8_t onoff)
 {
+	/*
+	   if (io_in_get(IN_P0)) {
+	   io_out_set(OUT_P0, 1);
+	   io_out_set(OUT_P1, 1);
+	   } else {
+	   io_out_set(OUT_P0, 0);
+	   io_out_set(OUT_P1, 0);
+	   }
+	   */
+
 	if (oline & _BV(0))
 		io_out_set(OUT_P0, onoff);
 	if (oline & _BV(1))
@@ -69,19 +77,25 @@ void change_io_line(const uint8_t oline, const uint8_t onoff)
 		io_out_set(OUT_P7, onoff);
 }
 
-/*! Check which program to execi.
+/*! Check which program to exec.
   \param hh time of the program 0..48 (half hour steps)
  */
-void prog_exec(struct programms_t *progs, const uint8_t hh)
+void prog_run(struct programms_t *progs, const uint8_t hh, struct debug_t *debug)
 {
 	uint8_t i;
 
 	for (i=0; i<progs->number; i++) {
-		if (progs->p[i].hstart == hh)
-			change_io_line(i, 1);
+		if (progs->p[i].hstart == hh) {
+			sprintf_P(debug->line, " prog %d start\n", i);
+			debug_print(debug);
+			change_io_line(progs->p[i].oline, 1);
+		}
 
-		if (progs->p[i].hstop == hh)
-			change_io_line(i, 0);
+		if (progs->p[i].hstop == hh) {
+			sprintf_P(debug->line, " prog %d stop\n", i);
+			debug_print(debug);
+			change_io_line(progs->p[i].oline, 0);
+		}
 	}
 }
 

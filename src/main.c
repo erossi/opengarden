@@ -37,34 +37,42 @@ int main(void)
 	struct debug_t *debug;
 	struct programms_t *progs;
 	struct cmdli_t *cmdli;
+	/*! convenient pre-allcated structure */
+	struct tm *tm_clock;
+	uint8_t tmp;
 	char c;
+
+	/* anti warning for non initialized variables */
+	debug = NULL;
+	progs = NULL;
+	cmdli = NULL;
+	tm_clock = NULL;
 
 	/* Init sequence, turn on both led */
 	led_init();
-	debug = debug_init();
-	progs = prog_init();
-	cmdli = cmdli_init(debug);
-	date_init(debug);
+	debug = debug_init(debug);
+	progs = prog_init(progs);
+	cmdli = cmdli_init(cmdli, debug);
+	tm_clock = date_init(tm_clock, debug);
 
 	sei();
 	date_hwclock_start();
 	led_set(BOTH, OFF);
 
 	while (1) {
-		/*
-		if (io_in_get(IN_P0)) {
-			io_out_set(OUT_P0, 1);
-			io_out_set(OUT_P1, 1);
-		} else {
-			io_out_set(OUT_P0, 0);
-			io_out_set(OUT_P1, 0);
-		}
-		*/
-
 		c = uart_getchar(0, 0);
 
 		if (c)
 			cmdli_exec(c, cmdli, debug);
+
+		if (date_timetorun(tm_clock, debug)) {
+			tmp = tm_clock->tm_hour * 2;
+
+			if (tm_clock->tm_min > 29)
+				tmp++;
+
+			prog_run(progs, tmp, debug);
+		}
 
 		led_set(GREEN, BLINK);
 		_delay_ms(500);
@@ -73,6 +81,7 @@ int main(void)
 
 	date_hwclock_stop();
 	cli();
+	date_free(tm_clock);
 	cmdli_free(cmdli);
 	prog_free(progs);
 	debug_free(debug);

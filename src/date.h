@@ -26,9 +26,11 @@
 #include "time.h"
 
 void date_set(struct tm *date, struct debug_t *debug);
-void date_init(struct debug_t *debug);
+struct tm *date_init(struct tm *tm_clock, struct debug_t *debug);
+void date_free(struct tm *tm_clock);
 void date(struct debug_t *debug);
 void date_hwclock_start(void);
 void date_hwclock_stop(void);
+uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug);
 
 #endif

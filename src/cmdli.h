@@ -35,7 +35,7 @@ struct cmdli_t {
 	uint8_t idx;
 };
 
-struct cmdli_t *cmdli_init(struct debug_t *debug);
+struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug);
 void cmdli_free(struct cmdli_t *cmdli);
 void cmdli_help(struct debug_t *debug);
 void cmdli_exec(char c, struct cmdli_t *cmdli, struct debug_t *debug);

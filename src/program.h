@@ -57,12 +57,13 @@ struct programms_t {
 /*! global EEPROM variable */
 extern struct programms_t EEMEM EE_progs;
 
-struct programms_t *prog_init(void);
+struct programms_t *prog_init(struct programms_t *progs);
 void prog_free(struct programms_t *progs);
 void prog_save(struct programms_t *progs);
 void prog_list(struct programms_t *progs, struct debug_t *debug);
 void prog_clear(struct programms_t *progs);
 void prog_add(struct programms_t *progs, const char *s);
 uint8_t prog_del(struct programms_t *progs, const uint8_t n);
+void prog_run(struct programms_t *progs, uint8_t time, struct debug_t *debug);
 
 #endif

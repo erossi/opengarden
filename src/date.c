@@ -44,11 +44,36 @@ void date_set(struct tm *date, struct debug_t *debug)
 	strlcpy(debug->string, debug->line + 10, 3);
 	date->tm_min = atoi(debug->string);
 	date->tm_sec = 0;
+}
 
-        debug_print_P(PSTR("The date is now: "), debug);
-	strcpy(debug->line, asctime(date));
+/*! print the current time */
+void date(struct debug_t *debug)
+{
+	time_t clock;
+
+	clock = time(NULL);
+	strcpy(debug->line, ctime(&clock));
 	debug_print(debug);
 	uart_putchar(0, '\n');
+}
+
+/*! adjust the internal clock */
+struct tm *date_init(struct tm *tm_clock, struct debug_t *debug)
+{
+	time_t clock = 1299764113;
+
+	/* this should set the pointer to the
+	 * preallocated area of lastTime.
+	 */
+	tm_clock = gmtime(&clock);
+
+	rtc_setup(); /* Prepare the HW clock counter */
+	date_set(tm_clock, debug); /* Input the current time. */
+	clock = mktime(tm_clock); /* convert the time into sec. */
+	settimeofday(clock); /* set the clock to the current time */
+
+        debug_print_P(PSTR("The date is now: "), debug);
+	date(debug);
 
 	/*
 	debug->line = itoa(date->tm_year, debug->line, 10);
@@ -70,28 +95,13 @@ void date_set(struct tm *date, struct debug_t *debug)
 	debug_print(debug);
 	uart_putchar(0, '\n');
 	*/
+
+	return(tm_clock);
 }
 
-/*! adjust the internal clock */
-void date_init(struct debug_t *debug)
+void date_free(struct tm *tm_clock)
 {
-	struct tm tm_clock;
-	time_t clock = 1299764113;
-
-	rtc_setup(); /* Prepare the HW clock counter */
-	date_set(&tm_clock, debug); /* Input the current time. */
-	clock = mktime(&tm_clock); /* convert the time into sec. */
-	settimeofday(clock); /* set the clock to the current time */
-}
-
-/*! print the current time */
-void date(struct debug_t *debug)
-{
-	time_t clock;
-
-	clock = time(NULL);
-	strcpy(debug->line, ctime(&clock));
-	debug_print(debug);
+	free(tm_clock);
 }
 
 void date_hwclock_start(void)
@@ -102,4 +112,26 @@ void date_hwclock_start(void)
 void date_hwclock_stop(void)
 {
 	rtc_stop();
+}
+
+uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
+{
+	time_t clock;
+	/*! min at which last time we executed, needed to avoid
+	 * re-execution of programs in the same minute.
+	 */
+	static uint8_t flag = 99;
+
+	clock = gettimeofday();
+	tm_clock = gmtime(&clock);
+
+	if (flag != tm_clock->tm_min)
+		if ((tm_clock->tm_min == 0) || (tm_clock->tm_min == 30)) {
+			debug_print_P(PSTR("Executing programms at "), debug);
+			date(debug);
+			flag = tm_clock->tm_min;
+			return(1);
+		}
+
+	return(0);
 }

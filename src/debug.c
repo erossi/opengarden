@@ -90,10 +90,8 @@ uint8_t debug_wait_for_y(struct debug_t *debug)
 	return(0);
 }
 
-struct debug_t *debug_init(void)
+struct debug_t *debug_init(struct debug_t *debug)
 {
-	struct debug_t *debug;
-
 	uart_init(0);
 	debug = malloc(sizeof(struct debug_t));
 	debug->line = malloc(MAX_LINE_LENGHT);
