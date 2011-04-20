@@ -37,7 +37,16 @@ struct programms_t *prog_init(void)
 		progs->number = 0; /* 0 valid program */
 	}
 
+	io_in_init();
+	io_out_init();
 	return(progs);
+}
+
+/*! Free the allocated memory and close the IO lines */
+void prog_free(struct programms_t *progs)
+{
+	/*! \todo shut IO down, to be implemented but useless. */
+	free(progs);
 }
 
 void change_io_line(const uint8_t oline, const uint8_t onoff)

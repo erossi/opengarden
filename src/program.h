@@ -24,6 +24,7 @@
 
 #include <avr/eeprom.h>
 #include "io_out.h"
+#include "io_input.h"
 #include "debug.h"
 
 /*! check code to control if a valid program is in memeory */
@@ -57,6 +58,7 @@ struct programms_t {
 extern struct programms_t EEMEM EE_progs;
 
 struct programms_t *prog_init(void);
+void prog_free(struct programms_t *progs);
 void prog_save(struct programms_t *progs);
 void prog_list(struct programms_t *progs, struct debug_t *debug);
 void prog_clear(struct programms_t *progs);

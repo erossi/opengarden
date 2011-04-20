@@ -71,3 +71,35 @@ void date_set(struct tm *date, struct debug_t *debug)
 	uart_putchar(0, '\n');
 	*/
 }
+
+/*! adjust the internal clock */
+void date_init(struct debug_t *debug)
+{
+	struct tm tm_clock;
+	time_t clock = 1299764113;
+
+	rtc_setup(); /* Prepare the HW clock counter */
+	date_set(&tm_clock, debug); /* Input the current time. */
+	clock = mktime(&tm_clock); /* convert the time into sec. */
+	settimeofday(clock); /* set the clock to the current time */
+}
+
+/*! print the current time */
+void date(struct debug_t *debug)
+{
+	time_t clock;
+
+	clock = time(NULL);
+	strcpy(debug->line, ctime(&clock));
+	debug_print(debug);
+}
+
+void date_hwclock_start(void)
+{
+	rtc_start();
+}
+
+void date_hwclock_stop(void)
+{
+	rtc_stop();
+}

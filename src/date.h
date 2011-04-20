@@ -26,5 +26,9 @@
 #include "time.h"
 
 void date_set(struct tm *date, struct debug_t *debug);
+void date_init(struct debug_t *debug);
+void date(struct debug_t *debug);
+void date_hwclock_start(void);
+void date_hwclock_stop(void);
 
 #endif

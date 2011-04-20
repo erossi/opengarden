@@ -25,9 +25,6 @@
 #include <util/delay.h>
 #include "debug.h"
 #include "led.h"
-#include "time.h"
-#include "io_input.h"
-#include "io_out.h"
 #include "date.h"
 #include "program.h"
 #include "cmdli.h"
@@ -38,28 +35,20 @@ struct programms_t EEMEM EE_progs;
 int main(void)
 {
 	struct debug_t *debug;
-	struct tm tm_clock;
 	struct programms_t *progs;
 	struct cmdli_t *cmdli;
-	/*! time start at ... */
-	time_t clock = 1299764113;
 	char c;
 
 	/* Init sequence, turn on both led */
 	led_init();
-	io_in_init();
-	io_out_init();
 	debug = debug_init();
 	progs = prog_init();
 	cmdli = cmdli_init(debug);
-	led_set(BOTH, OFF);
-	rtc_setup();
-	date_set(&tm_clock, debug);
-	clock = mktime(&tm_clock);
-	settimeofday(clock);
+	date_init(debug);
 
 	sei();
-	rtc_start();
+	date_hwclock_start();
+	led_set(BOTH, OFF);
 
 	while (1) {
 		/*
@@ -79,15 +68,14 @@ int main(void)
 
 		led_set(GREEN, BLINK);
 		_delay_ms(500);
-		clock = time(NULL);
-		strcpy(debug->line, ctime(&clock));
-		debug_print(debug);
+		date(debug);
 	}
 
-	rtc_stop();
+	date_hwclock_stop();
 	cli();
-	debug_free(debug);
 	cmdli_free(cmdli);
+	prog_free(progs);
+	debug_free(debug);
 
 	return(0);
 }
