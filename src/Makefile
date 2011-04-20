@@ -41,7 +41,7 @@ DUDE = sudo avrdude -c $(DUDEDEV) -p $(MCU) -P $(DUDEPORT) -e -U flash:w:$(PRGNA
 
 OBJCOPY = avr-objcopy -j .text -j .data -O ihex
 OBJDUMP = avr-objdump
-SIZE = avr-size
+SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 
 REMOVE = rm -f
 
@@ -68,3 +68,6 @@ clean:
 
 version:
 	# Last Git tag: $(GIT_TAG)
+
+size:
+	$(SIZE)
