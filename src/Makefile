@@ -69,5 +69,8 @@ clean:
 version:
 	# Last Git tag: $(GIT_TAG)
 
+doc:
+	cd ../ && ( cat doc/Doxyfile ; echo "PROJECT_NUMBER=$(GIT_TAG)" ) | doxygen -
+
 size:
 	$(SIZE)

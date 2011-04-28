@@ -1,4 +1,6 @@
 doc/html/
+Doxyfile
+.todo
 *.elf
 *.hex
 *.o
