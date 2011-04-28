@@ -29,8 +29,6 @@ PC3 - 5 ADDRESS
 
 void tcn75_init(void)
 {
-	DDRC = _BV(3) | _BV(4) | _BV(5);
-	PORTC = _BV(3) | _BV(4) | _BV(5);
 	i2c_init();
 }
 

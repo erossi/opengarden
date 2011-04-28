@@ -22,10 +22,10 @@
 
 #include "i2c.h"
 
-/*! Slave write address 1001 111 0 */
-#define ADDR_W 0x9e
-/*! Slave read address 1001 111 1 */
-#define ADDR_R 0x9f
+/*! Slave write address 1001 000 0 */
+#define ADDR_W 0x90
+/*! Slave read address 1001 000 1 */
+#define ADDR_R 0x91
 
 void tcn75_init(void);
 float tcn75_read_temperature(void);
