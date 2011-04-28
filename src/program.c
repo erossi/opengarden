@@ -24,6 +24,9 @@
 #include <string.h>
 #include "program.h"
 
+/*! global EEPROM variable */
+struct programms_t EEMEM EE_progs;
+
 void prog_load(struct programms_t *progs)
 {
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programms_t));
@@ -82,23 +85,20 @@ void change_io_line(const uint8_t oline, const uint8_t onoff)
 }
 
 /*! Check which program to exec.
-  \param hh time of the program 0..48 (half hour steps)
+  \param tm_clock time now.
  */
-void prog_run(struct programms_t *progs, const uint8_t hh, struct debug_t *debug)
+void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("Executing programms at hour %2d:\n"), hh);
-	debug_print(debug);
-
 	for (i=0; i<progs->number; i++) {
-		if (progs->p[i].hstart == hh) {
+		if ((progs->p[i].hstart == tm_clock->tm_hour) && (progs->p[i].mstart == tm_clock->tm_min)) {
 			sprintf_P(debug->line, PSTR(" prog %d start\n"), i);
 			debug_print(debug);
 			change_io_line(progs->p[i].oline, 1);
 		}
 
-		if (progs->p[i].hstop == hh) {
+		if ((progs->p[i].hstop == tm_clock->tm_hour) && (progs->p[i].mstop == tm_clock->tm_min)) {
 			sprintf_P(debug->line, PSTR(" prog %d stop\n"), i);
 			debug_print(debug);
 			change_io_line(progs->p[i].oline, 0);
@@ -111,12 +111,12 @@ void prog_list(struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("\nProgramms list [%2d]:\n"), progs->number);
+	sprintf_P(debug->line, PSTR("Programms list [%2d]:\n"), progs->number);
 	debug_print(debug);
 	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR("p%2d,%2d,%2d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].hstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR("p%2d,%2d%2d,%2d%2d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 }
@@ -128,10 +128,12 @@ void prog_clear(struct programms_t *progs)
 }
 
 /*! add a program into memory
-  \param s string in the form pHH,SS,DD,OO
+  \param s string in the form pShSm,shsm,DD,OO
   where
-  HH Start hour in the form 0..48 of 30min each.
-  SS Stop hour, same as HH.
+  Sh Start hour in the form 0..24.
+  Sm Start minutes.
+  sh Stop hour.
+  sm Stop minutes.
   DD Day of the week sun..sat bit for day (HEX number).
   OO output line 0..7 bit for line 0 to 7 (HEX number).
  */
@@ -141,17 +143,23 @@ void prog_add(struct programms_t *progs, const char *s)
 
 	if (progs->number + 1 < MAX_PROGS) {
 		substr = malloc(3);
-		/* get HH, copy from s char 1..2 (HH) into substr */
+		/* get Sh, copy from s char 1..2 into substr */
 		strlcpy(substr, s + 1, 3);
 		progs->p[progs->number].hstart = strtoul(substr, 0, 10);
-		/* get SS */
-		strlcpy(substr, s + 4, 3);
+		/* get Sm, copy from s char 3..4 into substr */
+		strlcpy(substr, s + 3, 3);
+		progs->p[progs->number].mstart = strtoul(substr, 0, 10);
+		/* get sh */
+		strlcpy(substr, s + 6, 3);
 		progs->p[progs->number].hstop = strtoul(substr, 0, 10);
+		/* get sm */
+		strlcpy(substr, s + 8, 3);
+		progs->p[progs->number].mstop = strtoul(substr, 0, 10);
 		/* get DD */
-		strlcpy(substr, s + 7, 3);
+		strlcpy(substr, s + 11, 3);
 		progs->p[progs->number].dow = strtoul(substr, 0, 16);
 		/* get OO */
-		strlcpy(substr, s + 10, 3);
+		strlcpy(substr, s + 14, 3);
 		progs->p[progs->number].oline = strtoul(substr, 0, 16);
 		free(substr);
 		progs->number++;

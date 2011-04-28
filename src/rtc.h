@@ -15,15 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*! \file main.c
-  \brief Main.
+/*! \file rtc.h
+  \brief low lever real time clock handler.
  */
 
 #ifndef RTC_H
 #define RTC_H
 
-/*! Global used in interrupt. */
-volatile unsigned long rtc_seconds; /* Global Wall clock */
+/*! Global used in interrupt.
+ * Global Wall clock.
+ */
+volatile unsigned long rtc_seconds;
 
 void rtc_setup(void);
 void rtc_start(void);

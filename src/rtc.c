@@ -17,7 +17,7 @@
 
 /*!
   \file rtc.c
-  \brief Counters managemet and IRQ routine.
+  \brief Counters handler and IRQ routine.
   */
 
 #include <stdint.h>
@@ -34,6 +34,7 @@ ISR(TIMER2_OVF_vect)
 	rtc_seconds++;
 }
 
+/*! setup timer/counter on 32Khz external clock. */
 void rtc_setup(void)
 {
 	ASSR = _BV(AS2);
@@ -44,6 +45,7 @@ void rtc_setup(void)
 	TIMSK2 = _BV(TOIE2);
 }
 
+/*! setup prescaler to scale to 1 sec counter and start counter. */
 void rtc_start(void)
 {
 	/*! counter prescaler 128 */
@@ -51,6 +53,7 @@ void rtc_start(void)
 	loop_until_bit_is_clear(ASSR, TCR2BUB);
 }
 
+/*! stop the counter. */
 void rtc_stop(void)
 {
 	TCCR2B = 0;

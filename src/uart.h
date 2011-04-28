@@ -15,16 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*! \file uart.h
+ * \brief RS232 - IO functions.
+ */
+
 #ifndef _UART_H_
 #define _UART_H_
 
-/* UART baud rate */
+/*! UART 0 baud rate */
 #define UART_BAUD_0 9600
+/*! UART 1 baud rate */
 #define UART_BAUD_1 9600
+/*! IO Buffers and masks */
 #define UART_RXBUF_SIZE 64
 #define UART_TXBUF_SIZE 64
 #define UART_RXBUF_MASK ( UART_RXBUF_SIZE - 1 )
 #define UART_TXBUF_MASK ( UART_TXBUF_SIZE - 1 )
+/*! Check if something is wrong in the definitions */
 #if ( UART_RXBUF_SIZE & UART_RXBUF_MASK )
 #error RX buffer size is not a power of 2
 #endif
@@ -32,6 +39,7 @@
 #error TX buffer size is not a power of 2
 #endif
 
+/*! Structure with IO buffers and indexes */
 struct uartStruct {
         char *rx_buffer;
         char *tx_buffer;

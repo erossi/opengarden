@@ -40,25 +40,33 @@ struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug)
 	return(cmdli);
 }
 
+/*! Free the struct from memory. */
 void cmdli_free(struct cmdli_t *cmdli)
 {
 	free(cmdli->cmd);
 	free(cmdli);
 }
 
+/*! Print the help. */
 void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("\nHelp command:\n"), debug);
 	debug_print_P(PSTR("c - clear all programms from memory.\n"), debug);
 	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("l - list programms.\n"), debug);
-	debug_print_P(PSTR("pHH,SS,DD,OO - HH[0..48] SS[0..48] DD[n/a] OO[oline].\n"), debug);
+	debug_print_P(PSTR("pShSm,shsm,DD,OO\n"), debug);
+	debug_print_P(PSTR(" where Sh and sh[0..24], Sm and sm [0..60], DD and OO [0..FF]\n"), debug);
 	debug_print_P(PSTR("r - re-load programms from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programms to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
 
+/*! Execute an input command:
+ * \param cmd char with the command,
+ * \param progs the programms structure,
+ * \param debug used to print things.
+ */
 void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t tmp;
@@ -101,6 +109,13 @@ void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 	}
 }
 
+/*! Get a char from the users and echo it, compose the command line and,
+ * if an \r is entered, execute the command.
+ * \param c input char,
+ * \param cmdli struct with the command line string,
+ * \param progs the programms structure,
+ * \param debug needed for printing things.
+ */
 void cmdli_exec(char c, struct cmdli_t *cmdli, struct programms_t *progs, struct debug_t *debug)
 {
 	if (c == '\r') {
@@ -117,4 +132,3 @@ void cmdli_exec(char c, struct cmdli_t *cmdli, struct programms_t *progs, struct
 			cmdli_clear(cmdli);
 	}
 }
-

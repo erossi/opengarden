@@ -1,5 +1,4 @@
-/*-------------------------------------------------------------------------
-  time.h - stdlib time conversion routines
+/* time.h - stdlib time conversion routines
 
   Written By - Johan Knol, johan.knol@iduna.nl
 
@@ -20,31 +19,46 @@
   In other words, you are welcome to use, share and improve this program.
   You are forbidden to forbid anyone else to use, share and improve
   what you give them.   Help stamp out software-hoarding!  
-  -------------------------------------------------------------------------*/
+  */
+
+/* Modified by Enrico Rossi */
+
+/*! \file time.h
+ * \brief standard libc time handling functions,
+ * reduced and adapted to atmega project. */
 
 #ifndef TIME_H
 #define TIME_H
 
 #include "rtc.h"
 
-/*
+/*!
    A leap year is ((((year%4)==0) && ((year%100)!=0)) || ((year%400)==0)) 
    but since we have no fancy years between 1970 and 2038 we can do:
  */
-
 #define LEAP_YEAR(year) ((year%4)==0)
 
+/*! The standard struct tm. */
 struct tm {
-	unsigned char tm_sec;  /* Seconds.     [0-60]  */
-	unsigned char tm_min;  /* Minutes.     [0-59]  */
-	unsigned char tm_hour; /* Hours.       [0-23]  */
-	unsigned char tm_mday; /* Day.         [1-31]  */
-	unsigned char tm_mon;  /* Month.       [0-11]  */
-	int tm_year;           /* Year since 1900      */
-	unsigned char tm_wday; /* Day of week. [0-6]   */
-	int tm_yday;           /* Days in year.[0-365] */
+	/*! Seconds. [0-60] */
+	unsigned char tm_sec;
+	/*! Minutes [0-59] */
+	unsigned char tm_min;
+	/*! Hours [0-23] */
+	unsigned char tm_hour;
+	/*! Day [1-31] */
+	unsigned char tm_mday;
+	/*! Month [0-11] */
+	unsigned char tm_mon;
+	/*! Year since 1900 */
+	int tm_year;
+	/*! Day of week [0-6] */
+	unsigned char tm_wday;
+	/*! Days in year [0-365] */
+	int tm_yday;
 };
 
+/*! seconds since the epoch */
 typedef unsigned long time_t;
 
 void settimeofday(const time_t seconds);

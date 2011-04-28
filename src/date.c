@@ -23,6 +23,14 @@
 #include "uart.h"
 #include "date.h"
 
+/*! \file date.c */
+
+/*! prompt the user for a date in the format of YYYYMMDDhhmm and
+ * set the tm struct.
+ * \param date the struct with all the date field to be compiled.
+ * \param debug printing and string stuff.
+ * \note the system clock is NOT changed in this function.
+ */
 void date_set(struct tm *date, struct debug_t *debug)
 {
         debug_print_P(PSTR("Enter date [YYYYMMDDhhmm]: "), debug);
@@ -99,25 +107,34 @@ struct tm *date_init(struct tm *tm_clock, struct debug_t *debug)
 	return(tm_clock);
 }
 
+/*! free the allocated structure */
 void date_free(struct tm *tm_clock)
 {
 	free(tm_clock);
 }
 
+/*! start the hardware clock now, high level call to rtc start. */
 void date_hwclock_start(void)
 {
 	rtc_start();
 }
 
+/*! stop the hardware clock */
 void date_hwclock_stop(void)
 {
 	rtc_stop();
 }
 
+/*! Do we have to check and execute programms in memory?
+ * \param *tm_clock The time.
+ * \param debug
+ * \return true - Execute, false - don't
+ */
 uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 {
 	time_t clock;
-	/*! min at which last time we executed, needed to avoid
+	/*! static store at which last time (minutes)
+	 * we run programms, needed to avoid
 	 * re-execution of programs in the same minute.
 	 */
 	static uint8_t flag = 99;
@@ -125,13 +142,12 @@ uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 	clock = gettimeofday();
 	tm_clock = gmtime(&clock);
 
-	if (flag != tm_clock->tm_min)
-		if ((tm_clock->tm_min == 0) || (tm_clock->tm_min == 30)) {
-			debug_print_P(PSTR("Executing programms at "), debug);
-			date(debug);
-			flag = tm_clock->tm_min;
-			return(1);
-		}
+	if (flag != tm_clock->tm_min) {
+		debug_print_P(PSTR("Executing programms at "), debug);
+		date(debug);
+		flag = tm_clock->tm_min;
+		return(1);
+	}
 
 	return(0);
 }

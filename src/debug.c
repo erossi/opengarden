@@ -22,6 +22,7 @@
 #include <util/delay.h>
 #include "debug.h"
 
+/*! Read a string from the user with echo. */
 void debug_get_str(char *str)
 {
 	uint8_t i = 0;
@@ -39,6 +40,9 @@ void debug_get_str(char *str)
 	*(str + i) = 0;
 }
 
+/*! Print a flash-stored string to the terminal.
+ * \param string MUST be a PSTR() string.
+ */
 void debug_print_P(PGM_P string, struct debug_t *debug)
 {
 	if (debug->active) {
@@ -47,26 +51,26 @@ void debug_print_P(PGM_P string, struct debug_t *debug)
 	}
 }
 
+/*! Print the debug->line string. */
 void debug_print(struct debug_t *debug)
 {
 	if (debug->active)
 		uart_printstr(0, debug->line);
 }
 
+/*! Print the greetings and release number. */
 static void hello(struct debug_t *debug)
 {
-        debug_print_P(PSTR("\n\n\n"), debug);
-        debug_print_P(PSTR("OpenGarden Rel: "), debug);
+        debug_print_P(PSTR("\n\n\nOpenGarden Rel: "), debug);
         debug_print_P(PSTR(GITREL), debug);
-        debug_print_P(PSTR("\n\n"), debug);
-        debug_print_P(PSTR("Nicola Galliani <1999tora@gmail.com>\n"), debug);
+        debug_print_P(PSTR("\n\nNicola Galliani <1999tora@gmail.com>\n"), debug);
         debug_print_P(PSTR("Andrea Marabini <info@marabo.it>\n"), debug);
         debug_print_P(PSTR("Enrico Rossi <e.rossi@tecnobrain.com>\n"), debug);
         debug_print_P(PSTR("URL: http://tecnobrain.com/\n"), debug);
-        debug_print_P(PSTR("GNU GPL v3 - use at your own risk!\n"), debug);
-        debug_print_P(PSTR("\n\n"), debug);
+        debug_print_P(PSTR("GNU GPL v3 - use at your own risk!\n\n\n"), debug);
 }
 
+/*! Prompt the user for and y/n answer */
 uint8_t debug_wait_for_y(struct debug_t *debug)
 {
 	uint8_t i;
@@ -90,6 +94,9 @@ uint8_t debug_wait_for_y(struct debug_t *debug)
 	return(0);
 }
 
+/*! Initialize the debug_t structure and ask if
+ * debug is active.
+ */
 struct debug_t *debug_init(struct debug_t *debug)
 {
 	uart_init(0);
@@ -98,6 +105,8 @@ struct debug_t *debug_init(struct debug_t *debug)
 	debug->string = malloc(MAX_STRING_LENGHT);
 	debug->active = 1;
 	hello(debug);
+
+#ifndef DEBUG_ALWAYS_ACTIVE
 	debug_print_P(PSTR("\nActivate debug? (y/N): "), debug);
 
 	if (!debug_wait_for_y(debug)) {
@@ -106,10 +115,12 @@ struct debug_t *debug_init(struct debug_t *debug)
 		free(debug->line);
 		free(debug->string);
 	}
+#endif
 
 	return(debug);
 }
 
+/*! Free the allocated structure. */
 void debug_free(struct debug_t *debug)
 {
 	if (debug->active) {

@@ -25,6 +25,9 @@
 #include <avr/pgmspace.h>
 #include "uart.h"
 
+/*! Activate debug output in anycase? */
+#define DEBUG_ALWAYS_ACTIVE
+
 #define QUOTEME_(x) #x
 #define QUOTEME(x) QUOTEME_(x)
 
@@ -37,9 +40,11 @@ conversions have to be made from int to string etc. */
 #define MAX_STRING_LENGHT 20
 
 #define PRINT_VALUE_X_LINE 16
+
+/*! Seconds to wait for an answer (y/n) */
 #define SEC_FOR_Y 5
 
-/* GITREL Environment check */
+/*! GITREL Environment check */
 #ifndef GITREL
 #define GITREL "unknown"
 #endif
@@ -49,8 +54,11 @@ conversions have to be made from int to string etc. */
   allocation of the two members char *.
   */
 struct debug_t {
+	/*! the line to be printed */
 	char *line;
+	/*! usefull pre-allocated space to use in strcat()... */
 	char *string;
+	/*! is debug active, shall we print the output? */
 	uint8_t active;
 };
 

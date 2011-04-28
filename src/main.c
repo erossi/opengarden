@@ -29,9 +29,6 @@
 #include "program.h"
 #include "cmdli.h"
 
-/*! Global EEPROM storage */
-struct programms_t EEMEM EE_progs;
-
 int main(void)
 {
 	struct debug_t *debug;
@@ -39,7 +36,6 @@ int main(void)
 	struct cmdli_t *cmdli;
 	/*! convenient pre-allcated structure */
 	struct tm *tm_clock;
-	uint8_t tmp;
 	char c;
 
 	/* anti warning for non initialized variables */
@@ -69,14 +65,8 @@ int main(void)
 		else
 			led_set(GREEN, BLINK);
 
-		if (date_timetorun(tm_clock, debug)) {
-			tmp = tm_clock->tm_hour * 2;
-
-			if (tm_clock->tm_min > 29)
-				tmp++;
-
-			prog_run(progs, tmp, debug);
-		}
+		if (date_timetorun(tm_clock, debug))
+			prog_run(progs, tm_clock, debug);
 	}
 
 	date_hwclock_stop();

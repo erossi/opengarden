@@ -16,7 +16,7 @@
  */
 
 /*! \file date.h
-  \brief Functions to activare and display (rs232) debug.
+  \brief time high level functions.
   */
 
 #ifndef DATE_H

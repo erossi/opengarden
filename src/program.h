@@ -16,7 +16,7 @@
  */
 
 /*! \file program.h
-  \brief Function to load/unload and exec programms
+  \brief Functions to handle programms
   */
 
 #ifndef PROGS_H
@@ -26,9 +26,12 @@
 #include "io_out.h"
 #include "io_input.h"
 #include "debug.h"
+#include "date.h"
 
-/*! check code to control if a valid program is in memeory */
-#define CHECK_VALID_CODE 0x7c
+/*! check code to control if a valid program is in memeory.
+ * Change this code any time the struct program_t has been changed
+ */
+#define CHECK_VALID_CODE 0x7d
 /*! maximum number of programms in memory */
 #define MAX_PROGS 20
 
@@ -38,10 +41,14 @@ struct program_t {
 	uint8_t dow;
 	/*! Output line */
 	uint8_t oline;
-	/*! start time */
+	/*! start time hours */
 	uint8_t hstart;
-	/*! stop time */
+	/*! start time minutes */
+	uint8_t mstart;
+	/*! stop time hours*/
 	uint8_t hstop;
+	/*! stop time minutes*/
+	uint8_t mstop;
 };
 
 /*! Single structure to keep all the programms */
@@ -54,9 +61,6 @@ struct programms_t {
 	struct program_t p[MAX_PROGS];
 };
 
-/*! global EEPROM variable */
-extern struct programms_t EEMEM EE_progs;
-
 struct programms_t *prog_init(struct programms_t *progs);
 void prog_free(struct programms_t *progs);
 void prog_load(struct programms_t *progs);
@@ -65,6 +69,6 @@ void prog_list(struct programms_t *progs, struct debug_t *debug);
 void prog_clear(struct programms_t *progs);
 void prog_add(struct programms_t *progs, const char *s);
 uint8_t prog_del(struct programms_t *progs, const uint8_t n);
-void prog_run(struct programms_t *progs, uint8_t time, struct debug_t *debug);
+void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *debug);
 
 #endif
