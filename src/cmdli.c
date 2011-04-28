@@ -33,6 +33,7 @@ void cmdli_clear(struct cmdli_t *cmdli)
 /*! initialize the struct cli and allocate memory. */
 struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug)
 {
+	tcn75_init();
 	cmdli = malloc(sizeof(struct cmdli_t));
 	cmdli->cmd = malloc(MAX_CMD_LENGHT);
 	cmdli_clear(cmdli);
@@ -53,6 +54,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("\nHelp command:\n"), debug);
 	debug_print_P(PSTR("c - clear all programms from memory.\n"), debug);
 	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
+	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programms.\n"), debug);
 	debug_print_P(PSTR("pShSm,shsm,DD,OO\n"), debug);
 	debug_print_P(PSTR(" where Sh and sh[0..24], Sm and sm [0..60], DD and OO [0..FF]\n"), debug);
@@ -70,6 +72,7 @@ void cmdli_help(struct debug_t *debug)
 void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t tmp;
+	float temp;
 
 	switch (*cmd) {
 		case '?':
@@ -84,6 +87,18 @@ void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 			prog_del(progs, tmp);
 			sprintf_P(debug->line, PSTR("The program %d has been removed.\n"), tmp);
 			debug_print(debug);
+			break;
+		case 'g':
+			temp = tcn75_read_temperature();
+
+			if (temp == -99) {
+				debug_print_P(PSTR("error\n"), debug);
+			} else {
+				debug_print_P(PSTR("Temp: "), debug);
+				debug->line = dtostrf(temp, 3, 5, debug->line);
+				debug_print(debug);
+				debug_print_P(PSTR("\n"), debug);
+			}
 			break;
 		case 'l':
 			prog_list(progs, debug);

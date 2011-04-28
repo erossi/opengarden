@@ -93,7 +93,7 @@ void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *de
 
 	for (i=0; i<progs->number; i++) {
 		if ((progs->p[i].hstart == tm_clock->tm_hour) && (progs->p[i].mstart == tm_clock->tm_min)) {
-			sprintf_P(debug->line, PSTR(" prog %d start\n"), i);
+			sprintf_P(debug->line, PSTR(" prog %02d start\n"), i);
 			debug_print(debug);
 			change_io_line(progs->p[i].oline, 1);
 		}
@@ -111,12 +111,12 @@ void prog_list(struct programms_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("Programms list [%2d]:\n"), progs->number);
+	sprintf_P(debug->line, PSTR("Programms list [%02d]:\n"), progs->number);
 	debug_print(debug);
 	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR("p%2d,%2d%2d,%2d%2d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR("p%02d,%02d%02d,%02d%02d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 }

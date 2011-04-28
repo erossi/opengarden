@@ -47,7 +47,9 @@ REMOVE = rm -f
 
 time_obj = rtc.o time.o date.o
 io_obj = io_input.o io_out.o
+tcn75_obj = i2c.o tcn75.o
 objects = led.o uart.o debug.o $(time_obj) $(io_obj) program.o cmdli.o
+objects += $(tcn75_obj)
 
 .PHONY: clean indent
 .SILENT: help
