@@ -125,7 +125,7 @@ void date_hwclock_stop(void)
 	rtc_stop();
 }
 
-/*! Do we have to check and execute programms in memory?
+/*! Do we have to check and execute programs in memory?
  * \param *tm_clock The time.
  * \param debug
  * \return true - Execute, false - don't
@@ -134,7 +134,7 @@ uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 {
 	time_t clock;
 	/*! static store at which last time (minutes)
-	 * we run programms, needed to avoid
+	 * we run programs, needed to avoid
 	 * re-execution of programs in the same minute.
 	 */
 	static uint8_t flag = 99;
@@ -143,7 +143,7 @@ uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 	tm_clock = gmtime(&clock);
 
 	if (flag != tm_clock->tm_min) {
-		debug_print_P(PSTR("Executing programms at "), debug);
+		debug_print_P(PSTR("Executing programs at "), debug);
 		date(debug);
 		flag = tm_clock->tm_min;
 		return(1);

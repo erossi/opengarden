@@ -16,7 +16,7 @@
  */
 
 /*! \file program.h
-  \brief Functions to handle programms
+  \brief Functions to handle programs
   */
 
 #ifndef PROGS_H
@@ -32,7 +32,7 @@
  * Change this code any time the struct program_t has been changed
  */
 #define CHECK_VALID_CODE 0x7d
-/*! maximum number of programms in memory */
+/*! maximum number of programs in memory */
 #define MAX_PROGS 20
 
 /*! A single program event structure */
@@ -51,24 +51,24 @@ struct program_t {
 	uint8_t mstop;
 };
 
-/*! Single structure to keep all the programms */
-struct programms_t {
+/*! Single structure to keep all the programs */
+struct programs_t {
 	/*! control code, should be == CHECK_VALID_CODE */
 	uint8_t check;
-	/*! number of valid programms 0..MAX_PROGS */
+	/*! number of valid programs 0..MAX_PROGS */
 	uint8_t number;
-	/*! array of the programms 0..(MAX_PROGS - 1)*/
+	/*! array of the programs 0..(MAX_PROGS - 1)*/
 	struct program_t p[MAX_PROGS];
 };
 
-struct programms_t *prog_init(struct programms_t *progs);
-void prog_free(struct programms_t *progs);
-void prog_load(struct programms_t *progs);
-void prog_save(struct programms_t *progs);
-void prog_list(struct programms_t *progs, struct debug_t *debug);
-void prog_clear(struct programms_t *progs);
-void prog_add(struct programms_t *progs, const char *s);
-uint8_t prog_del(struct programms_t *progs, const uint8_t n);
-void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *debug);
+struct programs_t *prog_init(struct programs_t *progs);
+void prog_free(struct programs_t *progs);
+void prog_load(struct programs_t *progs);
+void prog_save(struct programs_t *progs);
+void prog_list(struct programs_t *progs, struct debug_t *debug);
+void prog_clear(struct programs_t *progs);
+void prog_add(struct programs_t *progs, const char *s);
+uint8_t prog_del(struct programs_t *progs, const uint8_t n);
+void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug);
 
 #endif

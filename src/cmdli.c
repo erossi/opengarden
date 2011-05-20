@@ -52,24 +52,24 @@ void cmdli_free(struct cmdli_t *cmdli)
 void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("\nHelp command:\n"), debug);
-	debug_print_P(PSTR("c - clear all programms from memory.\n"), debug);
+	debug_print_P(PSTR("c - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
-	debug_print_P(PSTR("l - list programms.\n"), debug);
+	debug_print_P(PSTR("l - list programs.\n"), debug);
 	debug_print_P(PSTR("pShSm,shsm,DD,OO\n"), debug);
 	debug_print_P(PSTR(" where Sh and sh[0..24], Sm and sm [0..60], DD and OO [0..FF]\n"), debug);
-	debug_print_P(PSTR("r - re-load programms from EEPROM.\n"), debug);
-	debug_print_P(PSTR("s - save programms to EEPROM.\n"), debug);
+	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
+	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
 
 /*! Execute an input command:
  * \param cmd char with the command,
- * \param progs the programms structure,
+ * \param progs the programs structure,
  * \param debug used to print things.
  */
-void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
+void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t tmp;
 	float temp;
@@ -80,7 +80,7 @@ void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 			break;
 		case 'c':
 			prog_clear(progs);
-			debug_print_P(PSTR("All programms has been removed.\n"), debug);
+			debug_print_P(PSTR("All programs has been removed.\n"), debug);
 			break;
 		case 'd':
 			tmp = strtoul((cmd+1), 0, 10);
@@ -108,11 +108,11 @@ void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
 			break;
 		case 'r':
 			prog_load(progs);
-			debug_print_P(PSTR("All programms has been restored.\n"), debug);
+			debug_print_P(PSTR("All programs has been restored.\n"), debug);
 			break;
 		case 's':
 			prog_save(progs);
-			debug_print_P(PSTR("All programms has been saved.\n"), debug);
+			debug_print_P(PSTR("All programs has been saved.\n"), debug);
 			break;
 		case 't':
 			debug_print_P(PSTR("The time is: "), debug);
@@ -128,10 +128,10 @@ void exec_command(char *cmd, struct programms_t *progs, struct debug_t *debug)
  * if an \r is entered, execute the command.
  * \param c input char,
  * \param cmdli struct with the command line string,
- * \param progs the programms structure,
+ * \param progs the programs structure,
  * \param debug needed for printing things.
  */
-void cmdli_exec(char c, struct cmdli_t *cmdli, struct programms_t *progs, struct debug_t *debug)
+void cmdli_exec(char c, struct cmdli_t *cmdli, struct programs_t *progs, struct debug_t *debug)
 {
 	if (c == '\r') {
 		debug_print_P(PSTR("\n"), debug);

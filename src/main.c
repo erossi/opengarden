@@ -32,9 +32,9 @@
 int main(void)
 {
 	struct debug_t *debug;
-	struct programms_t *progs;
+	struct programs_t *progs;
 	struct cmdli_t *cmdli;
-	/*! convenient pre-allcated structure */
+	/* convenient pre-allcated structure */
 	struct tm *tm_clock;
 	char c;
 

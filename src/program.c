@@ -16,7 +16,7 @@
  */
 
 /*! \file program.c
-  \brief Function to load/unload and exec programms
+  \brief Function to load/unload and exec programs
   */
 
 #include <stdlib.h>
@@ -25,22 +25,22 @@
 #include "program.h"
 
 /*! global EEPROM variable */
-struct programms_t EEMEM EE_progs;
+struct programs_t EEMEM EE_progs;
 
-void prog_load(struct programms_t *progs)
+void prog_load(struct programs_t *progs)
 {
-	eeprom_read_block(progs, &EE_progs, sizeof(struct programms_t));
+	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
 
-	/* initialize a new programms struct */
+	/* initialize a new programs struct */
 	if (progs->check != CHECK_VALID_CODE) {
 		progs->check = CHECK_VALID_CODE;
 		progs->number = 0; /* 0 valid program */
 	}
 }
 
-struct programms_t *prog_init(struct programms_t *progs)
+struct programs_t *prog_init(struct programs_t *progs)
 {
-	progs = malloc(sizeof(struct programms_t));
+	progs = malloc(sizeof(struct programs_t));
 	prog_load(progs);
 	io_in_init();
 	io_out_init();
@@ -48,7 +48,7 @@ struct programms_t *prog_init(struct programms_t *progs)
 }
 
 /*! Free the allocated memory and close the IO lines */
-void prog_free(struct programms_t *progs)
+void prog_free(struct programs_t *progs)
 {
 	/*! \todo shut IO down, to be implemented but useless. */
 	free(progs);
@@ -87,7 +87,7 @@ void change_io_line(const uint8_t oline, const uint8_t onoff)
 /*! Check which program to exec.
   \param tm_clock time now.
  */
-void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *debug)
+void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
 	uint8_t i;
 
@@ -106,12 +106,12 @@ void prog_run(struct programms_t *progs, struct tm *tm_clock, struct debug_t *de
 	}
 }
 
-/*! list all valid programms */
-void prog_list(struct programms_t *progs, struct debug_t *debug)
+/*! list all valid programs */
+void prog_list(struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("Programms list [%02d]:\n"), progs->number);
+	sprintf_P(debug->line, PSTR("Programs list [%02d]:\n"), progs->number);
 	debug_print(debug);
 	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
@@ -121,8 +121,8 @@ void prog_list(struct programms_t *progs, struct debug_t *debug)
 	}
 }
 
-/*! remove all programms */
-void prog_clear(struct programms_t *progs)
+/*! remove all programs */
+void prog_clear(struct programs_t *progs)
 {
 	progs->number = 0;
 }
@@ -137,7 +137,7 @@ void prog_clear(struct programms_t *progs)
   DD Day of the week sun..sat bit for day (HEX number).
   OO output line 0..7 bit for line 0 to 7 (HEX number).
  */
-void prog_add(struct programms_t *progs, const char *s)
+void prog_add(struct programs_t *progs, const char *s)
 {
 	char *substr;
 
@@ -166,7 +166,7 @@ void prog_add(struct programms_t *progs, const char *s)
 	}
 }
 
-uint8_t prog_del(struct programms_t *progs, const uint8_t n)
+uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 {
 	uint8_t i;
 
@@ -181,7 +181,7 @@ uint8_t prog_del(struct programms_t *progs, const uint8_t n)
 	}
 }
 
-void prog_save(struct programms_t *progs)
+void prog_save(struct programs_t *progs)
 {
-	eeprom_update_block(progs, &EE_progs, sizeof(struct programms_t));
+	eeprom_update_block(progs, &EE_progs, sizeof(struct programs_t));
 }
