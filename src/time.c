@@ -67,7 +67,7 @@ static void CheckTime(struct tm *timeptr) {
 /* format the time into "Sat Feb 17 17:45:23 2001\n" */
 char *asctime(struct tm *timeptr) {
 	CheckTime(timeptr);
-	sprintf_P(ascTimeBuffer, PSTR("%s %s %2d %02d:%02d:%02d %04d\n"),
+	sprintf_P(ascTimeBuffer, PSTR("%s %s %2d %02d:%02d:%02d %04d"),
 			__day[timeptr->tm_wday], __month[timeptr->tm_mon], timeptr->tm_mday,
 			timeptr->tm_hour, timeptr->tm_min, timeptr->tm_sec, 
 			timeptr->tm_year+1900);

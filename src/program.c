@@ -59,16 +59,6 @@ void prog_free(struct programs_t *progs)
 
 void change_io_line(const uint8_t oline, const uint8_t onoff)
 {
-	/*
-	   if (io_in_get(IN_P0)) {
-	   io_out_set(OUT_P0, 1);
-	   io_out_set(OUT_P1, 1);
-	   } else {
-	   io_out_set(OUT_P0, 0);
-	   io_out_set(OUT_P1, 0);
-	   }
-	   */
-
 	if (oline & _BV(0))
 		io_out_set(OUT_P0, onoff);
 	if (oline & _BV(1))
@@ -97,6 +87,13 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 	tm_clock->tm_hour = progs->p[i].hstop;
 	tend = mktime(tm_clock);
 	tdelta = tend - tnow;
+	/* read temperature, calculate drift factor
+	 * based on temperature.
+	 * if tdelta * drift > max_irrigation_time, then
+	 * schedule for tomorrow,
+	 * else apply drift factor and store the new
+	 * end of the program.
+	 */
 
 	if (progs->qc < (MAX_PROGS - 1)) {
 		progs->q[progs->qc].time = 0;
@@ -121,7 +118,9 @@ void q_pop(struct programs_t *progs, const uint8_t i)
 }
 
 /*! Check which program to exec.
-  \param tm_clock time now.
+ * \param progs
+ * \param tm_clock time now.
+ * \param debug
  */
 void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
@@ -131,22 +130,32 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 	tnow = mktime(tm_clock);
 
 	for (i=0; i<progs->number; i++) {
-		if ((progs->p[i].hstart == tm_clock->tm_hour) && (progs->p[i].mstart == tm_clock->tm_min)) {
-			sprintf_P(debug->line, PSTR(" prog %02d queue for START\n"), i);
+		if ((progs->p[i].dow & _BV(tm_clock->tm_wday)) &&
+				(progs->p[i].hstart == tm_clock->tm_hour) &&
+				(progs->p[i].mstart == tm_clock->tm_min)) {
+			sprintf_P(debug->line, PSTR(" p%02d added to queue\n"), i);
 			debug_print(debug);
 			q_push(progs, tm_clock, i);
 			tm_clock = gmtime(&tnow);
 		}
 	}
+}
 
-	/* to be removed */
-	prog_list(progs, debug);
+/*! Check which program in the queue to exec.
+ * \param progs
+ * \param tm_clock time now.
+ * \param debug
+ */
+void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
+{
+	uint8_t i;
+	time_t tnow;
 
-	/* run the queue */
+	tnow = mktime(tm_clock);
 	i = 0;
 
 	while (i<progs->qc) {
-		sprintf_P(debug->line, PSTR(" queue %02d, tnow: %lu, time: %lu, status: "), i, tnow, progs->q[i].time);
+		sprintf_P(debug->line, PSTR(" time: %lu, oline: %2x, status: "), progs->q[i].time, progs->q[i].oline);
 		debug_print(debug);
 
 		if (progs->q[i].time <= tnow) {
@@ -178,10 +187,10 @@ void queue_list(struct programs_t *progs, struct debug_t *debug)
 
 	sprintf_P(debug->line, PSTR("Queue list [%02d]:\n"), progs->qc);
 	debug_print(debug);
-	debug_print_P(PSTR("<number>,<Tstart>,<out line>,flag\n"), debug);
+	debug_print_P(PSTR(" q<number>,<Tstart>,<out line>,<flag>\n"), debug);
 
 	for (i = 0; i < progs->qc; i++) {
-		sprintf_P(debug->line, PSTR("%02d,%lu,%2x,%2x\n"),i ,progs->q[i].time, progs->q[i].oline, progs->q[i].flag);
+		sprintf_P(debug->line, PSTR(" q%02d,%lu,%2x,%2x\n"),i ,progs->q[i].time, progs->q[i].oline, progs->q[i].flag);
 		debug_print(debug);
 	}
 }
@@ -193,10 +202,10 @@ void prog_list(struct programs_t *progs, struct debug_t *debug)
 
 	sprintf_P(debug->line, PSTR("Programs list [%02d]:\n"), progs->number);
 	debug_print(debug);
-	debug_print_P(PSTR("p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
+	debug_print_P(PSTR(" p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR("p%02d,%02d%02d,%02d%02d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR(" p%02d,%02d%02d,%02d%02d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 

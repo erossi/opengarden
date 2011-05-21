@@ -62,7 +62,10 @@ void date(struct debug_t *debug)
 	clock = time(NULL);
 	strcpy(debug->line, ctime(&clock));
 	debug_print(debug);
-	uart_putchar(0, '\n');
+	debug_print_P(PSTR(" ("), debug);
+	debug->line = ultoa(clock, debug->line, 10);
+	debug_print(debug);
+	debug_print_P(PSTR(")\n"), debug);
 }
 
 /*! adjust the internal clock */
@@ -152,11 +155,9 @@ uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 	tm_clock = gmtime(&clock);
 
 	if (flag != tm_clock->tm_min) {
-		debug_print_P(PSTR("Executing programs at "), debug);
-		date(debug);
 		flag = tm_clock->tm_min;
 		return(1);
+	} else {
+		return(0);
 	}
-
-	return(0);
 }

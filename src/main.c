@@ -65,8 +65,14 @@ int main(void)
 		else
 			led_set(GREEN, BLINK);
 
-		if (date_timetorun(tm_clock, debug))
+		if (date_timetorun(tm_clock, debug)) {
+			debug_print_P(PSTR("Executing programs at "), debug);
+			date(debug);
 			prog_run(progs, tm_clock, debug);
+			debug_print_P(PSTR("Run queue at "), debug);
+			date(debug);
+			queue_run(progs, tm_clock, debug);
+		}
 	}
 
 	date_hwclock_stop();
