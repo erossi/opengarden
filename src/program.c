@@ -80,13 +80,11 @@ void change_io_line(const uint8_t oline, const uint8_t onoff)
 /* \brief queue a program to be executed. */
 void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
-	time_t tnow, tend, tdelta;
+	time_t tnow, tend;
 
 	tnow = mktime(tm_clock);
-	tm_clock->tm_min = progs->p[i].mstop;
-	tm_clock->tm_hour = progs->p[i].hstop;
-	tend = mktime(tm_clock);
-	tdelta = tend - tnow;
+	tend = tnow + (progs->p[i].dmin * 60);
+
 	/* read temperature, calculate drift factor
 	 * based on temperature.
 	 * if tdelta * drift > max_irrigation_time, then
@@ -155,7 +153,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 	i = 0;
 
 	while (i<progs->qc) {
-		sprintf_P(debug->line, PSTR(" time: %lu, oline: %2x, status: "), progs->q[i].time, progs->q[i].oline);
+		sprintf_P(debug->line, PSTR(" time: %10lu, oline: %2x, status: "), progs->q[i].time, progs->q[i].oline);
 		debug_print(debug);
 
 		if (progs->q[i].time <= tnow) {
@@ -202,10 +200,10 @@ void prog_list(struct programs_t *progs, struct debug_t *debug)
 
 	sprintf_P(debug->line, PSTR("Programs list [%02d]:\n"), progs->number);
 	debug_print(debug);
-	debug_print_P(PSTR(" p<number>,<start>,<stop>,<DoW>,<out line>\n"), debug);
+	debug_print_P(PSTR(" p<number>,<start>,<duration>,<DoW>,<out line>\n"), debug);
 
 	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR(" p%02d,%02d%02d,%02d%02d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
+		sprintf_P(debug->line, PSTR(" p%02d,%02d%02d,%03d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].dmin, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
 
@@ -240,17 +238,14 @@ void prog_add(struct programs_t *progs, const char *s)
 		/* get Sm, copy from s char 3..4 into substr */
 		strlcpy(substr, s + 3, 3);
 		progs->p[progs->number].mstart = strtoul(substr, 0, 10);
-		/* get sh */
-		strlcpy(substr, s + 6, 3);
-		progs->p[progs->number].hstop = strtoul(substr, 0, 10);
-		/* get sm */
-		strlcpy(substr, s + 8, 3);
-		progs->p[progs->number].mstop = strtoul(substr, 0, 10);
+		/* get duration */
+		strlcpy(substr, s + 6, 4);
+		progs->p[progs->number].dmin = strtoul(substr, 0, 10);
 		/* get DD */
-		strlcpy(substr, s + 11, 3);
+		strlcpy(substr, s + 10, 3);
 		progs->p[progs->number].dow = strtoul(substr, 0, 16);
 		/* get OO */
-		strlcpy(substr, s + 14, 3);
+		strlcpy(substr, s + 13, 3);
 		progs->p[progs->number].oline = strtoul(substr, 0, 16);
 		free(substr);
 		progs->number++;

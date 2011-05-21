@@ -67,7 +67,7 @@ static void hello(struct debug_t *debug)
         debug_print_P(PSTR("Andrea Marabini <info@marabo.it>\n"), debug);
         debug_print_P(PSTR("Enrico Rossi <e.rossi@tecnobrain.com>\n"), debug);
         debug_print_P(PSTR("URL: http://tecnobrain.com/\n"), debug);
-        debug_print_P(PSTR("GNU GPL v3 - use at your own risk!\n\n\n"), debug);
+        debug_print_P(PSTR("GNU GPL v3 - use at your own risk!\n\n"), debug);
 }
 
 /*! Prompt the user for and y/n answer */

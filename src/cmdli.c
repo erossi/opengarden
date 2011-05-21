@@ -37,7 +37,6 @@ struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug)
 	cmdli = malloc(sizeof(struct cmdli_t));
 	cmdli->cmd = malloc(MAX_CMD_LENGHT);
 	cmdli_clear(cmdli);
-	cmdli_help(debug);
 	return(cmdli);
 }
 
@@ -56,8 +55,8 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programs.\n"), debug);
-	debug_print_P(PSTR("pShSm,shsm,DD,OO\n"), debug);
-	debug_print_P(PSTR(" where Sh and sh[0..24], Sm and sm [0..60], DD and OO [0..FF]\n"), debug);
+	debug_print_P(PSTR("pShSm,dtime,DD,OO\n"), debug);
+	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD and OO [0..FF]\n"), debug);
 	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
@@ -118,6 +117,8 @@ void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print_P(PSTR("The time is: "), debug);
 			date(debug);
 			break;	
+		case 0:
+			break;
 		default:
 			debug_print_P(PSTR("Wrong command! Use '?' to get help\n"), debug);
 			break;

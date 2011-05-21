@@ -34,8 +34,6 @@
 #define CHECK_VALID_CODE 0x7d
 /*! maximum number of programs in memory */
 #define MAX_PROGS 20
-/*! time in sec for the programs to be executed now */
-#define NOW 0
 
 /*! A single program event structure */
 struct program_t {
@@ -47,10 +45,8 @@ struct program_t {
 	uint8_t hstart;
 	/*! start time minutes */
 	uint8_t mstart;
-	/*! stop time hours*/
-	uint8_t hstop;
-	/*! stop time minutes*/
-	uint8_t mstop;
+	/*! duration minutes*/
+	uint16_t dmin;
 };
 
 struct queue_t {
