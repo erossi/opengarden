@@ -19,6 +19,7 @@
   \brief Function to load/unload and exec programs
   */
 
+/*! add a stack ? add the 1 time ram only flag? */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -38,10 +39,12 @@ void prog_load(struct programs_t *progs)
 	}
 }
 
+/*! \brief initialize the program area and IO lines */
 struct programs_t *prog_init(struct programs_t *progs)
 {
 	progs = malloc(sizeof(struct programs_t));
 	prog_load(progs);
+	progs->qc = 0; /* no element in the queue */
 	io_in_init();
 	io_out_init();
 	return(progs);
@@ -84,25 +87,102 @@ void change_io_line(const uint8_t oline, const uint8_t onoff)
 		io_out_set(OUT_P7, onoff);
 }
 
+/* \brief queue a program to be executed. */
+void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
+{
+	time_t tnow, tend, tdelta;
+
+	tnow = mktime(tm_clock);
+	tm_clock->tm_min = progs->p[i].mstop;
+	tm_clock->tm_hour = progs->p[i].hstop;
+	tend = mktime(tm_clock);
+	tdelta = tend - tnow;
+
+	if (progs->qc < (MAX_PROGS - 1)) {
+		progs->q[progs->qc].time = 0;
+		progs->q[progs->qc].oline = progs->p[i].oline;
+		progs->q[progs->qc].flag = 1;
+		progs->qc++;
+		progs->q[progs->qc].time = tend;
+		progs->q[progs->qc].oline = progs->p[i].oline;
+		progs->q[progs->qc].flag = 0;
+		progs->qc++;
+	}
+}
+
+void q_pop(struct programs_t *progs, const uint8_t i)
+{
+	uint8_t j;
+
+	for (j=i+1; j<progs->qc; j++)
+		progs->q[j-1] = progs->q[j];
+
+	progs->qc--;
+}
+
 /*! Check which program to exec.
   \param tm_clock time now.
  */
 void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
 	uint8_t i;
+	time_t tnow;
+
+	tnow = mktime(tm_clock);
 
 	for (i=0; i<progs->number; i++) {
 		if ((progs->p[i].hstart == tm_clock->tm_hour) && (progs->p[i].mstart == tm_clock->tm_min)) {
-			sprintf_P(debug->line, PSTR(" prog %02d start\n"), i);
+			sprintf_P(debug->line, PSTR(" prog %02d queue for START\n"), i);
 			debug_print(debug);
-			change_io_line(progs->p[i].oline, 1);
+			q_push(progs, tm_clock, i);
+			tm_clock = gmtime(&tnow);
 		}
+	}
 
-		if ((progs->p[i].hstop == tm_clock->tm_hour) && (progs->p[i].mstop == tm_clock->tm_min)) {
-			sprintf_P(debug->line, PSTR(" prog %d stop\n"), i);
-			debug_print(debug);
-			change_io_line(progs->p[i].oline, 0);
+	/* to be removed */
+	prog_list(progs, debug);
+
+	/* run the queue */
+	i = 0;
+
+	while (i<progs->qc) {
+		sprintf_P(debug->line, PSTR(" queue %02d, tnow: %lu, time: %lu, status: "), i, tnow, progs->q[i].time);
+		debug_print(debug);
+
+		if (progs->q[i].time <= tnow) {
+			switch (progs->q[i].flag) {
+				case 0:
+					debug_print_P(PSTR("off\n"), debug);
+					change_io_line(progs->q[i].oline, 0);
+					break;
+				case 1:
+					debug_print_P(PSTR("on\n"), debug);
+					change_io_line(progs->q[i].oline, 1);
+					break;
+				default:
+					debug_print_P(PSTR("none\n"), debug);
+			}
+
+			q_pop(progs, i);
+		} else {
+			debug_print_P(PSTR("skip\n"), debug);
+			i++;
 		}
+	}
+}
+
+/*! list all valid programs */
+void queue_list(struct programs_t *progs, struct debug_t *debug)
+{
+	uint8_t i;
+
+	sprintf_P(debug->line, PSTR("Queue list [%02d]:\n"), progs->qc);
+	debug_print(debug);
+	debug_print_P(PSTR("<number>,<Tstart>,<out line>,flag\n"), debug);
+
+	for (i = 0; i < progs->qc; i++) {
+		sprintf_P(debug->line, PSTR("%02d,%lu,%2x,%2x\n"),i ,progs->q[i].time, progs->q[i].oline, progs->q[i].flag);
+		debug_print(debug);
 	}
 }
 
@@ -119,6 +199,8 @@ void prog_list(struct programs_t *progs, struct debug_t *debug)
 		sprintf_P(debug->line, PSTR("p%02d,%02d%02d,%02d%02d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].hstop, progs->p[i].mstop, progs->p[i].dow, progs->p[i].oline);
 		debug_print(debug);
 	}
+
+	queue_list(progs, debug);
 }
 
 /*! remove all programs */

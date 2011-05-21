@@ -125,10 +125,19 @@ void date_hwclock_stop(void)
 	rtc_stop();
 }
 
-/*! Do we have to check and execute programs in memory?
+/*!
+ * \breif check if it is the time to run a program.
+ *
+ * Every time date_timetorun is called, it has stored in a
+ * static variable the last time as minute we activate a check
+ * trough all the programs to see if some has to start or to stop.
+ * If the time (minutes) are the same stored, then for this minute we
+ * are done and exit, else, if for this minute we did not check
+ * the programs list, do it.
  * \param *tm_clock The time.
  * \param debug
  * \return true - Execute, false - don't
+ * \note any call updates the struct tm to now.
  */
 uint8_t date_timetorun(struct tm *tm_clock, struct debug_t *debug)
 {

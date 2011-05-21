@@ -34,6 +34,8 @@
 #define CHECK_VALID_CODE 0x7d
 /*! maximum number of programs in memory */
 #define MAX_PROGS 20
+/*! time in sec for the programs to be executed now */
+#define NOW 0
 
 /*! A single program event structure */
 struct program_t {
@@ -51,14 +53,22 @@ struct program_t {
 	uint8_t mstop;
 };
 
+struct queue_t {
+	time_t time;
+	uint8_t oline;
+	uint8_t flag;
+};
+
 /*! Single structure to keep all the programs */
 struct programs_t {
 	/*! control code, should be == CHECK_VALID_CODE */
 	uint8_t check;
 	/*! number of valid programs 0..MAX_PROGS */
 	uint8_t number;
+	uint8_t qc;
 	/*! array of the programs 0..(MAX_PROGS - 1)*/
 	struct program_t p[MAX_PROGS];
+	struct queue_t q[MAX_PROGS];
 };
 
 struct programs_t *prog_init(struct programs_t *progs);
