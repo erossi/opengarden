@@ -22,12 +22,22 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include "io_out.h"
+#include "io_pin.h"
 
-void io_out_init(void)
+void io_pin_init(void)
 {
+	IN_DDR = 0;
+	IN_PORT = 0;
 	OUT_DDR = 0xff; /* all output */
 	OUT_PORT = 0;
+}
+
+uint8_t io_in_get(const uint8_t port)
+{
+	if (IN_PIN & _BV(port))
+		return(1);
+	else
+		return(0);
 }
 
 void io_out_set(const uint8_t pin, const uint8_t val)

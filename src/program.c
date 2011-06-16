@@ -54,8 +54,7 @@ struct programs_t *prog_init(struct programs_t *progs)
 	progs->qc = 0; /* no element in the queue */
 	progs->tnow = -99;
 	progs->tmedia = TMEDIA_INIT;
-	io_in_init();
-	io_out_init();
+	io_pin_init();
 	return(progs);
 }
 

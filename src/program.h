@@ -23,8 +23,7 @@
 #define PROGS_H
 
 #include <avr/eeprom.h>
-#include "io_out.h"
-#include "io_input.h"
+#include "io_pin.h"
 #include "debug.h"
 #include "date.h"
 #include "tcn75.h"

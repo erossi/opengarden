@@ -15,13 +15,13 @@
 
 PRG_NAME = opengarden
 MCU = atmega164p
-OPTLEV = 2
+OPTLEV = s
 FCPU = 1000000UL
 PWD = $(shell pwd)
 INC = -I/usr/lib/avr/include/
 
 CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
-LFLAGS =
+LFLAGS = -lm
 
 PRGNAME = $(PRG_NAME)
 GIT_TAG = "Unknown"
@@ -46,7 +46,7 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 REMOVE = rm -f
 
 time_obj = rtc.o time.o date.o
-io_obj = io_input.o io_out.o
+io_obj = io_pin.o
 tcn75_obj = i2c.o tcn75.o
 objects = led.o uart.o debug.o $(time_obj) $(io_obj) program.o cmdli.o
 objects += $(tcn75_obj)
