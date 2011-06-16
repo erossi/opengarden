@@ -46,9 +46,8 @@ SIZE = avr-size --format=avr --mcu=$(MCU) $(PRGNAME).elf
 REMOVE = rm -f
 
 time_obj = rtc.o time.o date.o
-io_obj = io_pin.o
 tcn75_obj = i2c.o tcn75.o
-objects = led.o uart.o debug.o $(time_obj) $(io_obj) program.o cmdli.o
+objects = led.o uart.o debug.o $(time_obj) io_pin.o program.o cmdli.o
 objects += $(tcn75_obj)
 
 .PHONY: clean indent

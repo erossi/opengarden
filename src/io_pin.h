@@ -48,5 +48,6 @@ uint8_t io_in_get(const uint8_t port);
 void io_out_set(const uint8_t pin, const uint8_t val);
 uint8_t io_out_get(const uint8_t pin);
 void io_out_change_line(const uint8_t oline, const uint8_t onoff);
+uint8_t io_in_allarm(void);
 
 #endif

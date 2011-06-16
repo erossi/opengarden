@@ -69,10 +69,20 @@ int main(void)
 			debug_print_P(PSTR("Executing programs at "), debug);
 			date(debug);
 			prog_run(progs, tm_clock, debug);
+
+			if (prog_allarm(progs)) {
+				debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
+			} else {
 			debug_print_P(PSTR("Run queue at "), debug);
 			date(debug);
 			queue_run(progs, tm_clock, debug);
+			}
 		}
+
+		/*! \fixme not so good continuing call this */
+		if (prog_allarm(progs))
+			debug_print_P(PSTR("ALLARM! queue removed, I/O lines closed!\n"), debug);
+
 	}
 
 	date_hwclock_stop();

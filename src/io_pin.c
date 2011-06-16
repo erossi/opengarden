@@ -75,3 +75,14 @@ void io_out_change_line(const uint8_t oline, const uint8_t onoff)
 	if (oline & _BV(7))
 		io_out_set(OUT_P7, onoff);
 }
+
+uint8_t io_in_allarm(void)
+{
+	uint8_t err = 0;
+
+	err = IN_PIN & _BV(IN_P0);
+	err |= IN_PIN & _BV(IN_P1);
+	err |= IN_PIN & _BV(IN_P2);
+	err |= IN_PIN & _BV(IN_P3);
+	return(err);
+}
