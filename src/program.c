@@ -66,26 +66,6 @@ void prog_free(struct programs_t *progs)
 	free(progs);
 }
 
-void change_io_line(const uint8_t oline, const uint8_t onoff)
-{
-	if (oline & _BV(0))
-		io_out_set(OUT_P0, onoff);
-	if (oline & _BV(1))
-		io_out_set(OUT_P1, onoff);
-	if (oline & _BV(2))
-		io_out_set(OUT_P2, onoff);
-	if (oline & _BV(3))
-		io_out_set(OUT_P3, onoff);
-	if (oline & _BV(4))
-		io_out_set(OUT_P4, onoff);
-	if (oline & _BV(5))
-		io_out_set(OUT_P5, onoff);
-	if (oline & _BV(6))
-		io_out_set(OUT_P6, onoff);
-	if (oline & _BV(7))
-		io_out_set(OUT_P7, onoff);
-}
-
 /* \brief queue a program to be executed. */
 void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
@@ -170,11 +150,11 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 			switch (progs->q[i].flag) {
 				case 0:
 					debug_print_P(PSTR("off\n"), debug);
-					change_io_line(progs->q[i].oline, 0);
+					io_out_change_line(progs->q[i].oline, 0);
 					break;
 				case 1:
 					debug_print_P(PSTR("on\n"), debug);
-					change_io_line(progs->q[i].oline, 1);
+					io_out_change_line(progs->q[i].oline, 1);
 					break;
 				default:
 					debug_print_P(PSTR("none\n"), debug);
@@ -220,7 +200,7 @@ void prog_list(struct programs_t *progs, struct debug_t *debug)
 	queue_list(progs, debug);
 }
 
-/*! remove all programs */
+/*! remove all programs from the memory */
 void prog_clear(struct programs_t *progs)
 {
 	progs->number = 0;
@@ -262,6 +242,7 @@ void prog_add(struct programs_t *progs, const char *s)
 	}
 }
 
+/*! \brief remove a program from the memory */
 uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 {
 	uint8_t i;
@@ -277,7 +258,12 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 	}
 }
 
+/*! \brief Store the programs into the eeprom area */
 void prog_save(struct programs_t *progs)
 {
 	eeprom_update_block(progs, &EE_progs, sizeof(struct programs_t));
+}
+
+void prog_allarm(struct programs_t *progs)
+{
 }

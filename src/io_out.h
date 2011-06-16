@@ -38,5 +38,6 @@
 void io_out_init(void);
 void io_out_set(const uint8_t pin, const uint8_t val);
 uint8_t io_out_get(const uint8_t pin);
+void io_out_change_line(const uint8_t oline, const uint8_t onoff);
 
 #endif

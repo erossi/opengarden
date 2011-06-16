@@ -45,3 +45,23 @@ uint8_t io_out_get(const uint8_t pin)
 	else
 		return(0);
 }
+
+void io_out_change_line(const uint8_t oline, const uint8_t onoff)
+{
+	if (oline & _BV(0))
+		io_out_set(OUT_P0, onoff);
+	if (oline & _BV(1))
+		io_out_set(OUT_P1, onoff);
+	if (oline & _BV(2))
+		io_out_set(OUT_P2, onoff);
+	if (oline & _BV(3))
+		io_out_set(OUT_P3, onoff);
+	if (oline & _BV(4))
+		io_out_set(OUT_P4, onoff);
+	if (oline & _BV(5))
+		io_out_set(OUT_P5, onoff);
+	if (oline & _BV(6))
+		io_out_set(OUT_P6, onoff);
+	if (oline & _BV(7))
+		io_out_set(OUT_P7, onoff);
+}
