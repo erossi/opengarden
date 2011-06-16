@@ -71,7 +71,6 @@ void cmdli_help(struct debug_t *debug)
 void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t tmp;
-	float temp;
 
 	switch (*cmd) {
 		case '?':
@@ -88,13 +87,16 @@ void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print(debug);
 			break;
 		case 'g':
-			temp = tcn75_read_temperature();
+			/* temp = tcn75_read_temperature(); */
 
-			if (temp == -99) {
+			if (progs->tnow == -99) {
 				debug_print_P(PSTR("error\n"), debug);
 			} else {
-				debug_print_P(PSTR("Temp: "), debug);
-				debug->line = dtostrf(temp, 3, 5, debug->line);
+				debug_print_P(PSTR("Temperature:  now "), debug);
+				debug->line = dtostrf(progs->tnow, 3, 5, debug->line);
+				debug_print(debug);
+				debug_print_P(PSTR(" - media "), debug);
+				debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
 				debug_print(debug);
 				debug_print_P(PSTR("\n"), debug);
 			}

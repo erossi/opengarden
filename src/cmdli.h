@@ -25,7 +25,6 @@
 #include "debug.h"
 #include "date.h"
 #include "program.h"
-#include "tcn75.h"
 
 /*! maximum chars a command is made of */
 #define MAX_CMD_LENGHT 20

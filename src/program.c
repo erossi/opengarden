@@ -28,6 +28,13 @@
 /*! global EEPROM variable */
 struct programs_t EEMEM EE_progs;
 
+/*! \brief update the temperature and the media */
+void temperature_update(struct programs_t *progs)
+{
+	progs->tnow = tcn75_read_temperature();
+	progs->tmedia = (progs->tmedia * TMEDIA_WALL) + (progs->tnow * TMEDIA_WSING);
+}
+
 void prog_load(struct programs_t *progs)
 {
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
@@ -45,6 +52,8 @@ struct programs_t *prog_init(struct programs_t *progs)
 	progs = malloc(sizeof(struct programs_t));
 	prog_load(progs);
 	progs->qc = 0; /* no element in the queue */
+	progs->tnow = -99;
+	progs->tmedia = TMEDIA_INIT;
 	io_in_init();
 	io_out_init();
 	return(progs);
@@ -126,6 +135,7 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 	time_t tnow;
 
 	tnow = mktime(tm_clock);
+	temperature_update(progs);
 
 	for (i=0; i<progs->number; i++) {
 		if ((progs->p[i].dow & _BV(tm_clock->tm_wday)) &&
