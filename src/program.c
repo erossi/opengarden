@@ -33,6 +33,7 @@ void temperature_update(struct programs_t *progs)
 {
 	progs->tnow = tcn75_read_temperature();
 	progs->tmedia = (progs->tmedia * TMEDIA_WALL) + (progs->tnow * TMEDIA_WSING);
+	progs->dfactor = (progs->tmedia - TMEDIA_BASE)/TMEDIA_RATIO + 1.0;
 }
 
 void prog_load(struct programs_t *progs)
@@ -70,9 +71,6 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
 	time_t tnow, tend;
 
-	tnow = mktime(tm_clock);
-	tend = tnow + (progs->p[i].dmin * 60);
-
 	/* read temperature, calculate drift factor
 	 * based on temperature.
 	 * if tdelta * drift > max_irrigation_time, then
@@ -80,19 +78,24 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 	 * else apply drift factor and store the new
 	 * end of the program.
 	 */
+	if (progs->dfactor > 0) {
+		tnow = mktime(tm_clock);
+		tend = tnow + (int)(progs->p[i].dmin * 60.0 * progs->dfactor);
 
-	if (progs->qc < (MAX_PROGS - 1)) {
-		progs->q[progs->qc].time = 0;
-		progs->q[progs->qc].oline = progs->p[i].oline;
-		progs->q[progs->qc].flag = 1;
-		progs->qc++;
-		progs->q[progs->qc].time = tend;
-		progs->q[progs->qc].oline = progs->p[i].oline;
-		progs->q[progs->qc].flag = 0;
-		progs->qc++;
+		if (progs->qc < (MAX_PROGS - 1)) {
+			progs->q[progs->qc].time = 0;
+			progs->q[progs->qc].oline = progs->p[i].oline;
+			progs->q[progs->qc].flag = 1;
+			progs->qc++;
+			progs->q[progs->qc].time = tend;
+			progs->q[progs->qc].oline = progs->p[i].oline;
+			progs->q[progs->qc].flag = 0;
+			progs->qc++;
+		}
 	}
 }
 
+/*! \brief pop the next program from the queue */
 void q_pop(struct programs_t *progs, const uint8_t i)
 {
 	uint8_t j;

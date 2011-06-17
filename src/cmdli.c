@@ -87,8 +87,6 @@ void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print(debug);
 			break;
 		case 'g':
-			/* temp = tcn75_read_temperature(); */
-
 			if (progs->tnow == -99) {
 				debug_print_P(PSTR("error\n"), debug);
 			} else {
@@ -97,6 +95,9 @@ void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 				debug_print(debug);
 				debug_print_P(PSTR(" - media "), debug);
 				debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
+				debug_print(debug);
+				debug_print_P(PSTR(" - dfactor "), debug);
+				debug->line = dtostrf(progs->dfactor, 3, 5, debug->line);
 				debug_print(debug);
 				debug_print_P(PSTR("\n"), debug);
 			}

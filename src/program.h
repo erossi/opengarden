@@ -39,7 +39,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x7d
+#define CHECK_VALID_CODE 0x7e
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 /*! \brief temperature media at boot time */
@@ -52,6 +52,13 @@
  */
 #define TMEDIA_WSING 0.0007
 #define TMEDIA_WALL 0.9993
+
+/*! The formula is:
+ * dfactor = (temperature media - TMEDIA_BASE)/TMEDIA_RATIO + 1
+ */
+#define TMEDIA_RATIO 8.0 /* keep it float */
+/*! \brief temperature at which time is considered ok */
+#define TMEDIA_BASE 20.0
 
 /*! A single program event structure */
 struct program_t {
@@ -88,6 +95,8 @@ struct programs_t {
 	float tnow;
 	/*! temperature media */
 	float tmedia;
+	/*! Drifting factor */
+	float dfactor;
 };
 
 struct programs_t *prog_init(struct programs_t *progs);
