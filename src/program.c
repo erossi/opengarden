@@ -70,6 +70,10 @@ void prog_free(struct programs_t *progs)
 void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
 	time_t tnow, tend;
+	uint8_t tomorrow;
+
+	/* now in seconds */
+	tnow = mktime(tm_clock);
 
 	/* read temperature, calculate drift factor
 	 * based on temperature.
@@ -78,8 +82,33 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 	 * else apply drift factor and store the new
 	 * end of the program.
 	 */
+	if (progs->dfactor > PROG_MAX_FACTOR) {
+		progs->dfactor = PROG_MAX_FACTOR;
+		/* set tomorrow */
+		tomorrow = _BV(tm_clock->tm_wday) << 1;
+
+		/* Saturday case */
+		if (tomorrow > 32)
+			tomorrow = 1;
+
+		/* if the program does not run tomorrow */
+		if (!(progs->p[i].dow & tomorrow)) {
+			tend = tnow + (int)(progs->p[i].dmin * 60.0 * PROG_TOMORROW_FACTOR);
+
+			if (progs->qc < (MAX_PROGS - 1)) {
+				progs->q[progs->qc].time = tnow + 86400l;
+				progs->q[progs->qc].oline = progs->p[i].oline;
+				progs->q[progs->qc].flag = 1;
+				progs->qc++;
+				progs->q[progs->qc].time = tend + 86400l;
+				progs->q[progs->qc].oline = progs->p[i].oline;
+				progs->q[progs->qc].flag = 0;
+				progs->qc++;
+			}
+		}
+	}
+
 	if (progs->dfactor > 0) {
-		tnow = mktime(tm_clock);
 		tend = tnow + (int)(progs->p[i].dmin * 60.0 * progs->dfactor);
 
 		if (progs->qc < (MAX_PROGS - 1)) {

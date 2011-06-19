@@ -60,17 +60,42 @@
 /*! \brief temperature at which time is considered ok */
 #define TMEDIA_BASE 20.0
 
+#define PROG_MAX_FACTOR 3.0
+#define PROG_TOMORROW_FACTOR 2.0
+
 /*! A single program event structure */
 struct program_t {
-	/*! Days of the week */
+	/*! \brief Days of the week
+	 *
+	 * equal to _BV(struct tm->tm_wday)
+	 * 0 Sunday
+	 * 1 Monday
+	 * 2 Tuesday
+	 * 4 Wednesday
+	 * 8 Thursday
+	 * 16 Friday
+	 * 32 Saturday
+	 */
 	uint8_t dow;
-	/*! Output line */
+
+	/*! \brief Output line (bitmapped)
+	 * 0 line 0
+	 * 1 line 1
+	 * 2 line 2
+	 * 4 line 3
+	 * 8 line 4
+	 * 16 line 5
+	 * 32 line 6
+	 * 64 line 7
+	 * 128 line 8
+	 */
 	uint8_t oline;
-	/*! start time hours */
+
+	/*! \brief start time (hours) */
 	uint8_t hstart;
-	/*! start time minutes */
+	/*! start time (minutes) */
 	uint8_t mstart;
-	/*! duration minutes*/
+	/*! duration (minutes) */
 	uint16_t dmin;
 };
 
