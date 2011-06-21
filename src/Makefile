@@ -14,7 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 PRG_NAME = opengarden
-MCU = atmega164p
+#MCU = atmega164p
+MCU = atmega1284p
 OPTLEV = s
 FCPU = 1000000UL
 PWD = $(shell pwd)
@@ -32,12 +33,12 @@ PRGNAME = $(PRG_NAME)_$(GIT_TAG)
 AR = avr-ar
 CC = avr-gcc
 
-DUDEPORT = /dev/ttyUSB0
-DUDEDEV = stk500v2
-DUDEPORT = usb
-DUDEDEV = avrispmkII
+DUDESPORT = /dev/ttyUSB0
+DUDESDEV = stk500v2
+DUDEUPORT = usb
+DUDEUDEV = avrispmkII
 # Use sudo for USB avrispmkII
-DUDE = sudo avrdude -c $(DUDEDEV) -p $(MCU) -P $(DUDEPORT) -e -U flash:w:$(PRGNAME).hex
+DUDE = sudo avrdude -p $(MCU) -e -U flash:w:$(PRGNAME).hex
 
 OBJCOPY = avr-objcopy -j .text -j .data -O ihex
 OBJDUMP = avr-objdump
@@ -61,8 +62,11 @@ all: $(objects)
 debug.o:
 	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
 
-program:
-	$(DUDE)
+programs:
+	$(DUDE) -c $(DUDESDEV) -P $(DUDESPORT)
+
+programu:
+	$(DUDE) -c $(DUDEUDEV) -P $(DUDEUPORT)
 
 clean:
 	$(REMOVE) *.elf *.hex $(objects)
