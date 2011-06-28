@@ -36,6 +36,24 @@ void temperature_update(struct programs_t *progs)
 	progs->dfactor = (progs->tmedia - TMEDIA_BASE)/TMEDIA_RATIO + 1.0;
 }
 
+void temperature_print(struct programs_t *progs, struct debug_t *debug)
+{
+	if (progs->tnow == -99) {
+		debug_print_P(PSTR("error\n"), debug);
+	} else {
+		debug_print_P(PSTR("Temperature:  now "), debug);
+		debug->line = dtostrf(progs->tnow, 3, 5, debug->line);
+		debug_print(debug);
+		debug_print_P(PSTR(" - media "), debug);
+		debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
+		debug_print(debug);
+		debug_print_P(PSTR(" - dfactor "), debug);
+		debug->line = dtostrf(progs->dfactor, 3, 5, debug->line);
+		debug_print(debug);
+		debug_print_P(PSTR("\n"), debug);
+	}
+}
+
 void prog_load(struct programs_t *progs)
 {
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));

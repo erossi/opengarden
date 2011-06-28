@@ -68,7 +68,7 @@ void cmdli_help(struct debug_t *debug)
  * \param progs the programs structure,
  * \param debug used to print things.
  */
-void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
+void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t tmp;
 
@@ -87,20 +87,7 @@ void exec_command(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print(debug);
 			break;
 		case 'g':
-			if (progs->tnow == -99) {
-				debug_print_P(PSTR("error\n"), debug);
-			} else {
-				debug_print_P(PSTR("Temperature:  now "), debug);
-				debug->line = dtostrf(progs->tnow, 3, 5, debug->line);
-				debug_print(debug);
-				debug_print_P(PSTR(" - media "), debug);
-				debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
-				debug_print(debug);
-				debug_print_P(PSTR(" - dfactor "), debug);
-				debug->line = dtostrf(progs->dfactor, 3, 5, debug->line);
-				debug_print(debug);
-				debug_print_P(PSTR("\n"), debug);
-			}
+			temperature_print(progs, debug);
 			break;
 		case 'l':
 			prog_list(progs, debug);
@@ -140,7 +127,7 @@ void cmdli_exec(char c, struct cmdli_t *cmdli, struct programs_t *progs, struct 
 	if (c == '\r') {
 		debug_print_P(PSTR("\n"), debug);
 		*(cmdli->cmd + cmdli->idx) = 0;
-		exec_command(cmdli->cmd, progs, debug);
+		cmdli_run(cmdli->cmd, progs, debug);
 		cmdli_clear(cmdli);
 	} else {
 		*(cmdli->cmd + cmdli->idx) = c;

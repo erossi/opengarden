@@ -124,6 +124,7 @@ struct programs_t {
 	float dfactor;
 };
 
+void temperature_print(struct programs_t *progs, struct debug_t *debug);
 struct programs_t *prog_init(struct programs_t *progs);
 void prog_free(struct programs_t *progs);
 void prog_load(struct programs_t *progs);

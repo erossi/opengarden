@@ -77,6 +77,11 @@ int main(void)
 			date(debug);
 			queue_run(progs, tm_clock, debug);
 			}
+
+			/* print the temperature updated
+			 * from the prog_run call
+			 */
+			temperature_print(progs, debug);
 		}
 
 		/*! \fixme not so good continuing call this */
