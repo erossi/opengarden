@@ -23,64 +23,40 @@
 #include <util/twi.h>
 #include "i2c.h"
 
-uint8_t i2c_send_start(void)
+uint8_t i2c_send(const uint8_t code, const uint8_t data)
 {
-	/* send start condition */
-	TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
-	return(TW_STATUS);
-}
+	switch (code) {
+		case START:
+			TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
+			loop_until_bit_is_set(TWCR, TWINT);
+			break;
+		case STOP:
+			TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
+			break;
+		case SLA:
+			TWDR = data;
+			/* clear interrupt to start transmission */
+			TWCR = _BV(TWINT) | _BV(TWEN); 
+			loop_until_bit_is_set(TWCR, TWINT);
+			break;
+		case DATA:
+			TWDR = data;
+			/* clear interrupt to start transmission */
+			TWCR = _BV(TWINT) | _BV(TWEN); 
+			loop_until_bit_is_set(TWCR, TWINT);
+			break;
+		case ACK:
+			TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
+			loop_until_bit_is_set(TWCR, TWINT);
+			break;
+		case NACK:
+			TWCR = _BV(TWINT) | _BV(TWEN);
+			loop_until_bit_is_set(TWCR, TWINT);
+			break;
+		default:
+			break;
+	}
 
-void i2c_send_stop(void)
-{
-	/* send stop condition */
-	TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
-}
-
-uint8_t i2c_send_sla_w(const uint8_t addr)
-{
-	TWDR = addr;
-	/* clear interrupt to start transmission */
-	TWCR = _BV(TWINT) | _BV(TWEN); 
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
-	return(TW_STATUS);
-}
-
-uint8_t i2c_send_sla_r(const uint8_t addr)
-{
-	TWDR = addr;
-	/* clear interrupt to start transmission */
-	TWCR = _BV(TWINT) | _BV(TWEN); 
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
-	return(TW_STATUS);
-}
-
-uint8_t i2c_send_data(const uint8_t data)
-{
-	TWDR = data;
-	/* clear interrupt to start transmission */
-	TWCR = _BV(TWINT) | _BV(TWEN); 
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
-	return(TW_STATUS);
-}
-
-uint8_t i2c_send_ack(void)
-{
-	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
-	return(TW_STATUS);
-}
-
-uint8_t i2c_send_nack(void)
-{
-	TWCR = _BV(TWINT) | _BV(TWEN);
-	/* wait for transmission */
-	loop_until_bit_is_set(TWCR, TWINT);
 	return(TW_STATUS);
 }
 
@@ -100,51 +76,115 @@ uint8_t i2c_master_send_b(const uint8_t addr, const uint8_t data)
 	uint8_t err;
 
 	/* Send ADDR_W reg. 0 req. */
-	err = i2c_send_start();
+	err = i2c_send(START, 0);
 
-	if (err == TW_START)
-		err = i2c_send_sla_w(addr);
-	else
-		return(err);
+	if ((err == TW_START) || (err == TW_REP_START))
+		err = i2c_send(SLA, addr | WRITE);
 
 	if (err == TW_MT_SLA_ACK)
-		err = i2c_send_data(0);
-	else
-		return(err);
+		err = i2c_send(DATA, data);
 
 	if (err == TW_MT_DATA_ACK)
-		return(0);
-	else
-		return(err);
+		err = 0;
+
+	i2c_send(STOP, 0);
+	return(err);
 }
 
+/*! \brief i2c master send a word.
+ * Send a word to the i2c slave with stop at the end.
+ * \param addr address of the slave.
+ * \param msb byte to send first.
+ * \param lsb byte to send last.
+ * \return 0 - OK, 1 - Error
+ */
+uint8_t i2c_master_send_w(const uint8_t addr, const uint8_t msb, const uint8_t lsb)
+{
+	uint8_t err;
+
+	/* Send ADDR_W reg. 0 req. */
+	err = i2c_send(START, 0);
+
+	if ((err == TW_START) || (err == TW_REP_START))
+		err = i2c_send(SLA, addr | WRITE);
+
+	if (err == TW_MT_SLA_ACK)
+		err = i2c_send(DATA, msb);
+
+	if (err == TW_MT_DATA_ACK)
+		err = i2c_send(DATA, lsb);
+
+	if (err == TW_MT_DATA_ACK)
+		err = 0;
+
+	i2c_send(STOP, 0);
+	return(err);
+}
+
+/*! \brief i2c master read byte.
+ * Read a byte from the slave with a stop at the end.
+ * \param addr address of the slave.
+ * \param pre-allocated byte.
+ * \return 1 - value OK, 0 - Error.
+ */
+uint8_t i2c_master_read_b(const uint8_t addr, uint8_t *byte)
+{
+	uint8_t err;
+
+	err = i2c_send(START, 0);
+
+	if ((err == TW_START) || (err == TW_REP_START))
+		err = i2c_send(SLA, addr | READ);
+
+	/* send an ACK to start the TX */
+	if (err == TW_MR_SLA_ACK)
+		err = i2c_send(ACK, 0);
+
+	if (err == TW_MR_DATA_ACK) {
+		*byte = TWDR;
+		err = i2c_send(NACK, 0);
+	}
+	
+	if (err == TW_MR_DATA_NACK)
+		err = 0;
+
+	i2c_send(STOP, 0);
+	return(err);
+}
 /*! Read a word (2 byte) from the slave.
  * \param addr address of the slave.
  * \param pre-allocated word.
  * \return 1 - value OK, 0 - Error.
  */
-uint8_t i2c_master_read_w(const uint8_t addr, int16_t *word)
+uint8_t i2c_master_read_w(const uint8_t addr, uint8_t *msb, uint8_t *lsb)
 {
 	uint8_t err;
 
-	err = i2c_send_start();
+	err = i2c_send(START, 0);
 
-	if (err == TW_REP_START)
-		err = i2c_send_sla_r(addr);
+	if ((err == TW_START) || (err == TW_REP_START))
+		err = i2c_send(SLA, addr | READ);
 
-	if (err == TW_MR_SLA_ACK)
-		err = i2c_send_ack();
+	if (err == TW_MR_SLA_ACK) {
+		/* send an ACK to start the TX */
+		err = i2c_send(ACK, 0);
+	}
 
 	if (err == TW_MR_DATA_ACK) {
-		*word = TWDR << 8;
-		err = i2c_send_nack();
+		/* read the first data */
+		*msb = TWDR;
+		err = i2c_send(ACK, 0);
 	}
 
-	if (err == TW_MR_DATA_NACK) {
-		*word |= TWDR;
+	if (err == TW_MR_DATA_ACK) {
+		/* read a byte */
+		*lsb = TWDR;
+		err = i2c_send(NACK, 0);
+	}
+
+	if (err == TW_MR_DATA_NACK)
 		err = 0;
-	}
 
-	i2c_send_stop();
+	i2c_send(STOP, 0);
 	return(err);
 }
