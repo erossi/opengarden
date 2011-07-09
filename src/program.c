@@ -63,6 +63,17 @@ void prog_load(struct programs_t *progs)
 		progs->check = CHECK_VALID_CODE;
 		progs->number = 0; /* 0 valid program */
 	}
+
+	progs->qc = 0; /* no element in the queue */
+	progs->tnow = -99;
+	progs->tmedia = TMEDIA_INIT;
+	progs->dfactor = 1;
+}
+
+/*! \brief Store the programs into the eeprom area */
+void prog_save(struct programs_t *progs)
+{
+	eeprom_update_block(progs, &EE_progs, sizeof(struct programs_t));
 }
 
 /*! \brief initialize the program area and IO lines */
@@ -70,9 +81,6 @@ struct programs_t *prog_init(struct programs_t *progs)
 {
 	progs = malloc(sizeof(struct programs_t));
 	prog_load(progs);
-	progs->qc = 0; /* no element in the queue */
-	progs->tnow = -99;
-	progs->tmedia = TMEDIA_INIT;
 	io_pin_init();
 	return(progs);
 }
@@ -305,12 +313,6 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 	} else {
 		return(0);
 	}
-}
-
-/*! \brief Store the programs into the eeprom area */
-void prog_save(struct programs_t *progs)
-{
-	eeprom_update_block(progs, &EE_progs, sizeof(struct programs_t));
 }
 
 uint8_t prog_allarm(struct programs_t *progs)
