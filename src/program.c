@@ -316,7 +316,7 @@ void prog_save(struct programs_t *progs)
 uint8_t prog_allarm(struct programs_t *progs)
 {
 	/* if there is an allarm */
-	if (io_in_allarm()) {
+	if (!io_in_allarm()) {
 		io_out_change_line(0xff, 0); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);

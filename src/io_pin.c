@@ -80,9 +80,17 @@ uint8_t io_in_allarm(void)
 {
 	uint8_t err = 0;
 
-	err = IN_PIN & _BV(IN_P0);
-	err |= IN_PIN & _BV(IN_P1);
-	err |= IN_PIN & _BV(IN_P2);
-	err |= IN_PIN & _BV(IN_P3);
+	if (!(IN_PIN & _BV(IN_P0)))
+		err = _BV(0);
+
+	if (!(IN_PIN & _BV(IN_P1)))
+		err |= _BV(1);
+
+	if (!(IN_PIN & _BV(IN_P2)))
+		err |= _BV(2);
+
+	if (!(IN_PIN & _BV(IN_P3)))
+		err |= _BV(3);
+
 	return(err);
 }
