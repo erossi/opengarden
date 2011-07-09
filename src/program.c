@@ -56,6 +56,11 @@ void temperature_print(struct programs_t *progs, struct debug_t *debug)
 
 void prog_load(struct programs_t *progs)
 {
+	float tmedia;
+
+	/* keep the Tmedia after the load */
+	tmedia = progs->tmedia;
+
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
 
 	/* initialize a new programs struct */
@@ -66,7 +71,7 @@ void prog_load(struct programs_t *progs)
 
 	progs->qc = 0; /* no element in the queue */
 	progs->tnow = -99;
-	progs->tmedia = TMEDIA_INIT;
+	progs->tmedia = tmedia;
 	progs->dfactor = 1;
 }
 
@@ -80,6 +85,7 @@ void prog_save(struct programs_t *progs)
 struct programs_t *prog_init(struct programs_t *progs)
 {
 	progs = malloc(sizeof(struct programs_t));
+	progs->tmedia = TMEDIA_INIT; /* initalize the Tmedia */
 	prog_load(progs);
 	io_pin_init();
 	return(progs);
