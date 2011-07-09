@@ -27,6 +27,7 @@
 #include "led.h"
 #include "date.h"
 #include "program.h"
+#include "queue.h"
 #include "cmdli.h"
 
 int main(void)

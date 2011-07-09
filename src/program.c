@@ -28,32 +28,6 @@
 /*! global EEPROM variable */
 struct programs_t EEMEM EE_progs;
 
-/*! \brief update the temperature and the media */
-void temperature_update(struct programs_t *progs)
-{
-	progs->tnow = tcn75_read_temperature();
-	progs->tmedia = (progs->tmedia * TMEDIA_WALL) + (progs->tnow * TMEDIA_WSING);
-	progs->dfactor = (progs->tmedia - TMEDIA_BASE)/TMEDIA_RATIO + 1.0;
-}
-
-void temperature_print(struct programs_t *progs, struct debug_t *debug)
-{
-	if (progs->tnow == -99) {
-		debug_print_P(PSTR("error\n"), debug);
-	} else {
-		debug_print_P(PSTR("Temperature:  now "), debug);
-		debug->line = dtostrf(progs->tnow, 3, 5, debug->line);
-		debug_print(debug);
-		debug_print_P(PSTR(" - media "), debug);
-		debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
-		debug_print(debug);
-		debug_print_P(PSTR(" - dfactor "), debug);
-		debug->line = dtostrf(progs->dfactor, 3, 5, debug->line);
-		debug_print(debug);
-		debug_print_P(PSTR("\n"), debug);
-	}
-}
-
 void prog_load(struct programs_t *progs)
 {
 	float tmedia;
@@ -98,75 +72,6 @@ void prog_free(struct programs_t *progs)
 	free(progs);
 }
 
-/* \brief queue a program to be executed. */
-void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
-{
-	time_t tnow, tend;
-	uint8_t tomorrow;
-
-	/* now in seconds */
-	tnow = mktime(tm_clock);
-
-	/* read temperature, calculate drift factor
-	 * based on temperature.
-	 * if tdelta * drift > max_irrigation_time, then
-	 * schedule for tomorrow,
-	 * else apply drift factor and store the new
-	 * end of the program.
-	 */
-	if (progs->dfactor > PROG_MAX_FACTOR) {
-		progs->dfactor = PROG_MAX_FACTOR;
-		/* set tomorrow */
-		tomorrow = _BV(tm_clock->tm_wday) << 1;
-
-		/* Saturday case */
-		if (tomorrow > 32)
-			tomorrow = 1;
-
-		/* if the program does not run tomorrow */
-		if (!(progs->p[i].dow & tomorrow)) {
-			tend = tnow + (int)(progs->p[i].dmin * 60.0 * PROG_TOMORROW_FACTOR);
-
-			if (progs->qc < (MAX_PROGS - 1)) {
-				progs->q[progs->qc].time = tnow + 86400l;
-				progs->q[progs->qc].oline = progs->p[i].oline;
-				progs->q[progs->qc].flag = 1;
-				progs->qc++;
-				progs->q[progs->qc].time = tend + 86400l;
-				progs->q[progs->qc].oline = progs->p[i].oline;
-				progs->q[progs->qc].flag = 0;
-				progs->qc++;
-			}
-		}
-	}
-
-	if (progs->dfactor > 0) {
-		tend = tnow + (int)(progs->p[i].dmin * 60.0 * progs->dfactor);
-
-		if (progs->qc < (MAX_PROGS - 1)) {
-			progs->q[progs->qc].time = 0;
-			progs->q[progs->qc].oline = progs->p[i].oline;
-			progs->q[progs->qc].flag = 1;
-			progs->qc++;
-			progs->q[progs->qc].time = tend;
-			progs->q[progs->qc].oline = progs->p[i].oline;
-			progs->q[progs->qc].flag = 0;
-			progs->qc++;
-		}
-	}
-}
-
-/*! \brief pop the next program from the queue */
-void q_pop(struct programs_t *progs, const uint8_t i)
-{
-	uint8_t j;
-
-	for (j=i+1; j<progs->qc; j++)
-		progs->q[j-1] = progs->q[j];
-
-	progs->qc--;
-}
-
 /*! Check which program to exec.
  * \param progs
  * \param tm_clock time now.
@@ -189,60 +94,6 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 			q_push(progs, tm_clock, i);
 			tm_clock = gmtime(&tnow);
 		}
-	}
-}
-
-/*! Check which program in the queue to exec.
- * \param progs
- * \param tm_clock time now.
- * \param debug
- */
-void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
-{
-	uint8_t i;
-	time_t tnow;
-
-	tnow = mktime(tm_clock);
-	i = 0;
-
-	while (i<progs->qc) {
-		sprintf_P(debug->line, PSTR(" time: %10lu, oline: %2x, status: "), progs->q[i].time, progs->q[i].oline);
-		debug_print(debug);
-
-		if (progs->q[i].time <= tnow) {
-			switch (progs->q[i].flag) {
-				case 0:
-					debug_print_P(PSTR("off\n"), debug);
-					io_out_change_line(progs->q[i].oline, 0);
-					break;
-				case 1:
-					debug_print_P(PSTR("on\n"), debug);
-					io_out_change_line(progs->q[i].oline, 1);
-					break;
-				default:
-					debug_print_P(PSTR("none\n"), debug);
-			}
-
-			q_pop(progs, i);
-		} else {
-			debug_print_P(PSTR("skip\n"), debug);
-			i++;
-		}
-	}
-}
-
-/*! list all valid programs */
-void queue_list(struct programs_t *progs, struct debug_t *debug)
-{
-	uint8_t i;
-
-	sprintf_P(debug->line, PSTR("Queue list [%02d]:\n"), progs->qc);
-	debug_print(debug);
-	debug_print_P(PSTR(" q<number>,<Tstart>,<out line>,<flag>\n"), debug);
-
-	for (i = 0; i < progs->qc; i++) {
-		sprintf_P(debug->line, PSTR(" q%02d,%lu,%2x,%2x\n"),i ,progs->q[i].time, progs->q[i].oline, progs->q[i].flag);
-		debug_print(debug);
 	}
 }
 
