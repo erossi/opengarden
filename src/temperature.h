@@ -46,5 +46,6 @@
 
 void temperature_update(struct programs_t *progs);
 void temperature_print(struct programs_t *progs, struct debug_t *debug);
+void temperature_init(void);
 
 #endif

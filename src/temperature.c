@@ -46,3 +46,8 @@ void temperature_print(struct programs_t *progs, struct debug_t *debug)
 		debug_print_P(PSTR("\n"), debug);
 	}
 }
+
+void temperature_init(void)
+{
+	tcn75_init();
+}

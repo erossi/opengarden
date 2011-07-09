@@ -49,7 +49,7 @@ int main(void)
 	led_init();
 	debug = debug_init(debug);
 	progs = prog_init(progs);
-	cmdli = cmdli_init(cmdli, debug);
+	cmdli = cmdli_init(cmdli);
 	tm_clock = date_init(tm_clock, debug);
 
 	sei();
@@ -74,9 +74,9 @@ int main(void)
 			if (prog_allarm(progs)) {
 				debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
 			} else {
-			debug_print_P(PSTR("Run queue at "), debug);
-			date(debug);
-			queue_run(progs, tm_clock, debug);
+				debug_print_P(PSTR("Run queue at "), debug);
+				date(debug);
+				queue_run(progs, tm_clock, debug);
 			}
 
 			/* print the temperature updated

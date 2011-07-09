@@ -31,9 +31,9 @@ void cmdli_clear(struct cmdli_t *cmdli)
 }
 
 /*! initialize the struct cli and allocate memory. */
-struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug)
+struct cmdli_t *cmdli_init(struct cmdli_t *cmdli)
 {
-	tcn75_init();
+	temperature_init();
 	cmdli = malloc(sizeof(struct cmdli_t));
 	cmdli->cmd = malloc(MAX_CMD_LENGHT);
 	cmdli_clear(cmdli);

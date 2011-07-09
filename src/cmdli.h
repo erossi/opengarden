@@ -24,6 +24,7 @@
 
 #include "debug.h"
 #include "date.h"
+#include "temperature.h"
 #include "program.h"
 
 /*! maximum chars a command is made of */
@@ -37,7 +38,7 @@ struct cmdli_t {
 	uint8_t idx;
 };
 
-struct cmdli_t *cmdli_init(struct cmdli_t *cmdli, struct debug_t *debug);
+struct cmdli_t *cmdli_init(struct cmdli_t *cmdli);
 void cmdli_free(struct cmdli_t *cmdli);
 void cmdli_help(struct debug_t *debug);
 void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug);
