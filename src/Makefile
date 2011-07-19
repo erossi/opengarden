@@ -28,7 +28,7 @@ PRGNAME = $(PRG_NAME)
 GIT_TAG = "Unknown"
 # Uncomment if git tag is in use
 GIT_TAG = "$(shell git describe --tags)"
-PRGNAME = $(PRG_NAME)_$(GIT_TAG)
+PRGNAME = $(PRG_NAME)_$(GIT_TAG)_$(MCU)
 
 AR = avr-ar
 CC = avr-gcc

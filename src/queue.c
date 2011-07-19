@@ -25,6 +25,29 @@
 #include <string.h>
 #include "program.h"
 
+void print_qline(struct queue_t *q, struct debug_t *debug)
+{
+	sprintf_P(debug->line, PSTR(" %10lu - %10lu, oline: %2x, status: "), q->start, q->stop, q->oline);
+	debug_print(debug);
+
+	switch (q->status) {
+		case Q_NEW:
+			debug_print_P(PSTR("new\n"), debug);
+			break;
+		case Q_OFF:
+			debug_print_P(PSTR("off\n"), debug);
+			break;
+		case Q_RUN:
+			debug_print_P(PSTR("on\n"), debug);
+			break;
+		case Q_DELAYED:
+			debug_print_P(PSTR("delayed\n"), debug);
+			break;
+		default:
+			debug_print_P(PSTR("error\n"), debug);
+	}
+}
+
 /* \brief queue a program to be executed.
  * \param progs the programs struct.
  * \param tm_clock the time.
@@ -59,13 +82,10 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 			tend = tnow + (int)(progs->p[i].dmin * 60.0 * PROG_TOMORROW_FACTOR);
 
 			if (progs->qc < (MAX_PROGS - 1)) {
-				progs->q[progs->qc].time = tnow + 86400l;
+				progs->q[progs->qc].start = tnow + 86400l;
+				progs->q[progs->qc].stop = tend + 86400l;
 				progs->q[progs->qc].oline = progs->p[i].oline;
-				progs->q[progs->qc].flag = 1;
-				progs->qc++;
-				progs->q[progs->qc].time = tend + 86400l;
-				progs->q[progs->qc].oline = progs->p[i].oline;
-				progs->q[progs->qc].flag = 0;
+				progs->q[progs->qc].status = Q_NEW;
 				progs->qc++;
 			}
 		}
@@ -75,13 +95,10 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 		tend = tnow + (int)(progs->p[i].dmin * 60.0 * progs->dfactor);
 
 		if (progs->qc < (MAX_PROGS - 1)) {
-			progs->q[progs->qc].time = 0;
+			progs->q[progs->qc].start = tnow;
+			progs->q[progs->qc].stop = tend;
 			progs->q[progs->qc].oline = progs->p[i].oline;
-			progs->q[progs->qc].flag = 1;
-			progs->qc++;
-			progs->q[progs->qc].time = tend;
-			progs->q[progs->qc].oline = progs->p[i].oline;
-			progs->q[progs->qc].flag = 0;
+			progs->q[progs->qc].status = Q_NEW;
 			progs->qc++;
 		}
 	}
@@ -112,26 +129,49 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 	i = 0;
 
 	while (i<progs->qc) {
-		sprintf_P(debug->line, PSTR(" time: %10lu, oline: %2x, status: "), progs->q[i].time, progs->q[i].oline);
-		debug_print(debug);
+		if (progs->q[i].start <= tnow) {
+			switch (progs->q[i].status) {
+				case Q_NEW:
+					if (io_line_in_use()) {
+						progs->q[i].status = Q_DELAYED;
+					} else {
+						progs->q[i].status = Q_RUN;
+						io_out_change_line(progs->q[i].oline, 1);
+					}
 
-		if (progs->q[i].time <= tnow) {
-			switch (progs->q[i].flag) {
-				case 0:
-					debug_print_P(PSTR("off\n"), debug);
-					io_out_change_line(progs->q[i].oline, 0);
+					print_qline(&progs->q[i], debug);
+					i++;
 					break;
-				case 1:
-					debug_print_P(PSTR("on\n"), debug);
-					io_out_change_line(progs->q[i].oline, 1);
+				case Q_RUN:
+					if (progs->q[i].stop <= tnow) {
+						progs->q[i].status = Q_OFF;
+						io_out_change_line(progs->q[i].oline, 0);
+						print_qline(&progs->q[i], debug);
+						q_pop(progs, i);
+					} else {
+						print_qline(&progs->q[i], debug);
+						i++;
+					}
+
+					break;
+				case Q_DELAYED:
+					if (!io_line_in_use()) {
+						/* recalculate tstart and tend */
+						progs->q[i].stop += tnow - progs->q[i].start;
+						progs->q[i].start = tnow;
+						progs->q[i].status = Q_RUN;
+						io_out_change_line(progs->q[i].oline, 1);
+					}
+
+					print_qline(&progs->q[i], debug);
+					i++;
 					break;
 				default:
-					debug_print_P(PSTR("none\n"), debug);
+					debug_print_P(PSTR("ERROR\n"), debug);
+					break;
 			}
-
-			q_pop(progs, i);
 		} else {
-			debug_print_P(PSTR("skip\n"), debug);
+			print_qline(&progs->q[i], debug);
 			i++;
 		}
 	}
@@ -144,10 +184,7 @@ void queue_list(struct programs_t *progs, struct debug_t *debug)
 
 	sprintf_P(debug->line, PSTR("Queue list [%02d]:\n"), progs->qc);
 	debug_print(debug);
-	debug_print_P(PSTR(" q<number>,<Tstart>,<out line>,<flag>\n"), debug);
 
-	for (i = 0; i < progs->qc; i++) {
-		sprintf_P(debug->line, PSTR(" q%02d,%lu,%2x,%2x\n"),i ,progs->q[i].time, progs->q[i].oline, progs->q[i].flag);
-		debug_print(debug);
-	}
+	for (i = 0; i < progs->qc; i++)
+		print_qline(&progs->q[i], debug);
 }

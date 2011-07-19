@@ -50,7 +50,7 @@ void io_out_set(const uint8_t pin, const uint8_t val)
 
 uint8_t io_out_get(const uint8_t pin)
 {
-	if (OUT_PORT & pin)
+	if (OUT_PORT & _BV(pin))
 		return(1);
 	else
 		return(0);
@@ -93,4 +93,19 @@ uint8_t io_in_allarm(void)
 		err |= _BV(3);
 
 	return(err);
+}
+
+/*! \brief How many IO out line are in use?
+ */
+uint8_t io_line_in_use(void)
+{
+	uint8_t i, j;
+
+	j = 0;
+
+	for (i=0; i<8; i++)
+		if (OUT_PORT & _BV(i))
+			j++;
+
+	return(j);
 }

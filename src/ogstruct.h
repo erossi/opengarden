@@ -41,6 +41,12 @@
 #define PROG_MAX_FACTOR 3.0
 #define PROG_TOMORROW_FACTOR 2.0
 
+/*! queue status */
+#define Q_NEW 0
+#define Q_OFF 1
+#define Q_RUN 2
+#define Q_DELAYED 3
+
 /*! A single program event structure */
 struct program_t {
 	/*! \brief Days of the week
@@ -79,9 +85,14 @@ struct program_t {
 
 /*! \brief the queue buffer */
 struct queue_t {
-	time_t time;
+	/*! absolute time to open the oline */
+	time_t start;
+	/*! absolute time to close the oline */
+	time_t stop;
+	/*! the output line */
 	uint8_t oline;
-	uint8_t flag;
+	/*! the status of the queue */
+	uint8_t status;
 };
 
 /*! Single structure to keep all the programs */
