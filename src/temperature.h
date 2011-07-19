@@ -27,7 +27,7 @@
 #include "debug.h"
 
 /*! \brief temperature media at boot time */
-#define TMEDIA_INIT 20
+#define TMEDIA_INIT 15
 /*! \brief temperature media weight.
  *
  * 24h = 1440 minutes
@@ -40,9 +40,9 @@
 /*! The formula is:
  * dfactor = (temperature media - TMEDIA_BASE)/TMEDIA_RATIO + 1
  */
-#define TMEDIA_RATIO 8.0 /* keep it float */
+#define TMEDIA_RATIO 5.0 /* keep it float */
 /*! \brief temperature at which time is considered ok */
-#define TMEDIA_BASE 20.0
+#define TMEDIA_BASE 15.0
 
 void temperature_update(struct programs_t *progs);
 void temperature_print(struct programs_t *progs, struct debug_t *debug);

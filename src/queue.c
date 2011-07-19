@@ -25,7 +25,11 @@
 #include <string.h>
 #include "program.h"
 
-/* \brief queue a program to be executed. */
+/* \brief queue a program to be executed.
+ * \param progs the programs struct.
+ * \param tm_clock the time.
+ * \param i the program number to be pushed into the queue.
+ */
 void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
 	time_t tnow, tend;
