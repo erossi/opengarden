@@ -57,9 +57,13 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 {
 	time_t tnow, tend;
 	uint8_t tomorrow;
+	float dfactor;
 
 	/* now in seconds */
 	tnow = mktime(tm_clock);
+
+	/* save dfactor value */
+	dfactor = progs->dfactor;
 
 	/* read temperature, calculate drift factor
 	 * based on temperature.
@@ -68,8 +72,8 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 	 * else apply drift factor and store the new
 	 * end of the program.
 	 */
-	if (progs->dfactor > PROG_MAX_FACTOR) {
-		progs->dfactor = PROG_MAX_FACTOR;
+	if (dfactor > PROG_MAX_FACTOR) {
+		dfactor = PROG_MAX_FACTOR;
 		/* set tomorrow */
 		tomorrow = _BV(tm_clock->tm_wday) << 1;
 
@@ -91,8 +95,8 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 		}
 	}
 
-	if (progs->dfactor > 0) {
-		tend = tnow + (int)(progs->p[i].dmin * 60.0 * progs->dfactor);
+	if (dfactor > 0) {
+		tend = tnow + (int)(progs->p[i].dmin * 60.0 * dfactor);
 
 		if (progs->qc < (MAX_PROGS - 1)) {
 			progs->q[progs->qc].start = tnow;

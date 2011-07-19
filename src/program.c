@@ -83,8 +83,10 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 	time_t tnow;
 
 	tnow = mktime(tm_clock);
+	/* update temperature and dfactor */
 	temperature_update(progs);
 
+	/* remember you must not change the temperature or dfactor */
 	for (i=0; i<progs->number; i++) {
 		if ((progs->p[i].dow & _BV(tm_clock->tm_wday)) &&
 				(progs->p[i].hstart == tm_clock->tm_hour) &&

@@ -129,7 +129,7 @@ void date_hwclock_stop(void)
 }
 
 /*!
- * \breif check if it is the time to run a program.
+ * \brief check if it is the time to run a program.
  *
  * Every time date_timetorun is called, it has stored in a
  * static variable the last time as minute we activate a check
