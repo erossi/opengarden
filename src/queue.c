@@ -83,7 +83,7 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 
 		/* if the program does not run tomorrow */
 		if (!(progs->p[i].dow & tomorrow)) {
-			tend = tnow + (int)(progs->p[i].dmin * 60.0 * PROG_TOMORROW_FACTOR);
+			tend = tnow + (unsigned long int)(progs->p[i].dmin * 60.0 * PROG_TOMORROW_FACTOR);
 
 			if (progs->qc < (MAX_PROGS - 1)) {
 				progs->q[progs->qc].start = tnow + 86400l;
@@ -96,7 +96,7 @@ void q_push(struct programs_t *progs, struct tm *tm_clock, const uint8_t i)
 	}
 
 	if (dfactor > 0) {
-		tend = tnow + (int)(progs->p[i].dmin * 60.0 * dfactor);
+		tend = tnow + (unsigned long int)(progs->p[i].dmin * 60.0 * dfactor);
 
 		if (progs->qc < (MAX_PROGS - 1)) {
 			progs->q[progs->qc].start = tnow;
