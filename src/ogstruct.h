@@ -52,13 +52,13 @@ struct program_t {
 	/*! \brief Days of the week
 	 *
 	 * equal to _BV(struct tm->tm_wday)
-	 * 0 Sunday
-	 * 1 Monday
-	 * 2 Tuesday
-	 * 4 Wednesday
-	 * 8 Thursday
-	 * 16 Friday
-	 * 32 Saturday
+	 * 1 Sunday
+	 * 2 Monday
+	 * 4 Tuesday
+	 * 8 Wednesday
+	 * 16 Thursday
+	 * 32 Friday
+	 * 64 Saturday
 	 */
 	uint8_t dow;
 

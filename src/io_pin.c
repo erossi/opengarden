@@ -86,10 +86,11 @@ uint8_t io_in_allarm(void)
 	if (!(IN_PIN & _BV(IN_P1)))
 		err |= _BV(1);
 
-	if (!(IN_PIN & _BV(IN_P2)))
+	/* reverse allarm */
+	if (IN_PIN & _BV(IN_P2))
 		err |= _BV(2);
 
-	if (!(IN_PIN & _BV(IN_P3)))
+	if (IN_PIN & _BV(IN_P3))
 		err |= _BV(3);
 
 	return(err);
