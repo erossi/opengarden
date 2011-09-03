@@ -41,6 +41,7 @@ void prog_load(struct programs_t *progs)
 	if (progs->check != CHECK_VALID_CODE) {
 		progs->check = CHECK_VALID_CODE;
 		progs->number = 0; /* 0 valid program */
+		progs->position = FULLSUN;
 	}
 
 	progs->qc = 0; /* no element in the queue */

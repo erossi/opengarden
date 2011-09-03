@@ -39,10 +39,15 @@
 
 /*! The formula is:
  * dfactor = (temperature media - TMEDIA_BASE)/TMEDIA_RATIO + 1
+ * \note keep this float
  */
-#define TMEDIA_RATIO 5.0 /* keep it float */
+#define TMEDIA_RATIO_FS 5.0
+#define TMEDIA_RATIO_HS 6.0
+#define TMEDIA_RATIO_SW 5.0
 /*! \brief temperature at which time is considered ok */
-#define TMEDIA_BASE 15.0
+#define TMEDIA_BASE_FS 24.0
+#define TMEDIA_BASE_HS 20.0
+#define TMEDIA_BASE_SW 15.0
 
 void temperature_update(struct programs_t *progs);
 void temperature_print(struct programs_t *progs, struct debug_t *debug);

@@ -35,7 +35,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x7e
+#define CHECK_VALID_CODE 0x02
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -46,6 +46,11 @@
 #define Q_OFF 1
 #define Q_RUN 2
 #define Q_DELAYED 3
+
+/*! sunlight position of the circuit */
+#define FULLSUN 0
+#define HALFSUN 1
+#define SHADOW 2
 
 /*! A single program event structure */
 struct program_t {
@@ -111,6 +116,8 @@ struct programs_t {
 	float tmedia;
 	/*! Drifting factor */
 	float dfactor;
+	/*! sunlight position */
+	uint8_t position;
 };
 
 #endif

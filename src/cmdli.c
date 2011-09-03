@@ -23,6 +23,46 @@
 #include <stdio.h>
 #include "cmdli.h"
 
+void print_sunsite(struct programs_t *progs, struct debug_t *debug)
+{
+	debug_print_P(PSTR("Sunsite now is: "), debug);
+
+	switch (progs->position) {
+		case FULLSUN:
+			debug_print_P(PSTR(" Full Sun (0)\n"), debug);
+			break;
+		case HALFSUN:
+			debug_print_P(PSTR(" Half Sun (1)\n"), debug);
+			break;
+		default:
+			debug_print_P(PSTR(" Shadow (2)\n"), debug);
+	}
+
+}
+
+void change_sunsite(struct programs_t *progs, struct debug_t *debug)
+{
+	char c;
+
+	print_sunsite(progs, debug);
+	debug_print_P(PSTR("\nChange the sun site:\n"), debug);
+	debug_print_P(PSTR(" Enter 0 (Full Sun), 1 (Half sun), 2 (Shadow): "), debug);
+	c = uart_getchar(0, 0);
+	uart_putchar(0, c);
+	debug_print_P(PSTR("\n"), debug);
+
+	switch (c) {
+		case '0': progs->position = FULLSUN;
+			  break;
+		case '1': progs->position = HALFSUN;
+			  break;
+		default: progs->position = SHADOW;
+	}
+
+	print_sunsite(progs, debug);
+	debug_print_P(PSTR("\nREMEMBER: Save the programs to store the sunsite in the EEPROM\n"), debug);
+}
+
 /*! Clear the cli_t struct */
 void cmdli_clear(struct cmdli_t *cmdli)
 {
@@ -60,6 +100,8 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
+	debug_print_P(PSTR("x - print the sun site.\n"), debug);
+	debug_print_P(PSTR("y - change the sun site.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
 
@@ -106,6 +148,12 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 't':
 			debug_print_P(PSTR("The time is: "), debug);
 			date(debug);
+			break;	
+		case 'x':
+			print_sunsite(progs, debug);
+			break;	
+		case 'y':
+			change_sunsite(progs, debug);
 			break;	
 		case 0:
 			break;

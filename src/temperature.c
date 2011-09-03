@@ -26,7 +26,18 @@ void temperature_update(struct programs_t *progs)
 {
 	progs->tnow = tcn75_read_temperature();
 	progs->tmedia = (progs->tmedia * TMEDIA_WALL) + (progs->tnow * TMEDIA_WSING);
-	progs->dfactor = (progs->tmedia - TMEDIA_BASE)/TMEDIA_RATIO + 1.0;
+
+	switch (progs->position) {
+		case FULLSUN:
+			progs->dfactor = (progs->tmedia - TMEDIA_BASE_FS)/TMEDIA_RATIO_FS + 1.0;
+			break;
+		case HALFSUN:
+			progs->dfactor = (progs->tmedia - TMEDIA_BASE_HS)/TMEDIA_RATIO_HS + 1.0;
+			break;
+		default:
+			progs->dfactor = (progs->tmedia - TMEDIA_BASE_SW)/TMEDIA_RATIO_SW + 1.0;
+			break;
+	}
 }
 
 void temperature_print(struct programs_t *progs, struct debug_t *debug)
