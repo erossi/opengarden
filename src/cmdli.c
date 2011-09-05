@@ -47,7 +47,7 @@ void change_sunsite(struct programs_t *progs, struct debug_t *debug)
 	print_sunsite(progs, debug);
 	debug_print_P(PSTR("\nChange the sun site:\n"), debug);
 	debug_print_P(PSTR(" Enter 0 (Full Sun), 1 (Half sun), 2 (Shadow): "), debug);
-	c = uart_getchar(0, 0);
+	c = uart_getchar(0, 1);
 	uart_putchar(0, c);
 	debug_print_P(PSTR("\n"), debug);
 
