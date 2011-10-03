@@ -58,12 +58,19 @@ void debug_print(struct debug_t *debug)
 		uart_printstr(0, debug->line);
 }
 
+void debug_version(struct debug_t *debug)
+{
+	debug_print_P(PSTR("OpenGarden "), debug);
+	debug_print_P(PSTR(GITREL), debug);
+	debug_print_P(PSTR("\n"), debug);
+}
+
 /*! Print the greetings and release number. */
 static void hello(struct debug_t *debug)
 {
-        debug_print_P(PSTR("\n\n\nOpenGarden Rel: "), debug);
-        debug_print_P(PSTR(GITREL), debug);
-        debug_print_P(PSTR("\n\nNicola Galliani <1999tora@gmail.com>\n"), debug);
+        debug_print_P(PSTR("\n\n\n"), debug);
+	debug_version(debug);
+        debug_print_P(PSTR("\nNicola Galliani <1999tora@gmail.com>\n"), debug);
         debug_print_P(PSTR("Andrea Marabini <info@marabo.it>\n"), debug);
         debug_print_P(PSTR("Enrico Rossi <e.rossi@tecnobrain.com>\n"), debug);
         debug_print_P(PSTR("URL: http://tecnobrain.com/\n"), debug);

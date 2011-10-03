@@ -65,6 +65,7 @@ struct debug_t {
 void debug_get_str(char *str);
 void debug_print_P(PGM_P string, struct debug_t *debug);
 void debug_print(struct debug_t *debug);
+void debug_version(struct debug_t *debug);
 uint8_t debug_wait_for_y(struct debug_t *debug);
 struct debug_t *debug_init(struct debug_t *debug);
 void debug_free(struct debug_t *debug);

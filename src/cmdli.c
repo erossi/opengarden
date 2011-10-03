@@ -100,6 +100,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t - time status.\n"), debug);
+	debug_print_P(PSTR("v - version.\n"), debug);
 	debug_print_P(PSTR("x - print the sun site.\n"), debug);
 	debug_print_P(PSTR("y - change the sun site.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
@@ -149,6 +150,9 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print_P(PSTR("The time is: "), debug);
 			date(debug);
 			break;	
+		case 'v':
+			debug_version(debug);
+			break;
 		case 'x':
 			print_sunsite(progs, debug);
 			break;	
