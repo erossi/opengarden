@@ -91,15 +91,16 @@ void cmdli_free(struct cmdli_t *cmdli)
 void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("\nHelp command:\n"), debug);
-	debug_print_P(PSTR("c - clear all programs from memory.\n"), debug);
-	debug_print_P(PSTR("dNN - delete program number NN.\n"), debug);
+	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
+	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
+	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programs.\n"), debug);
-	debug_print_P(PSTR("pShSm,dtime,DD,OO\n"), debug);
-	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD and OO [0..FF]\n"), debug);
+	debug_print_P(PSTR("pShSm,dtime,DD,OL\n"), debug);
+	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD and OL [0..FF]\n"), debug);
 	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
-	debug_print_P(PSTR("t - time status.\n"), debug);
+	debug_print_P(PSTR("t[YYYYMMDDhhmm] - print or set the date.\n"), debug);
 	debug_print_P(PSTR("v - version.\n"), debug);
 	debug_print_P(PSTR("x - print the sun site.\n"), debug);
 	debug_print_P(PSTR("y - change the sun site.\n"), debug);
@@ -119,11 +120,18 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case '?':
 			cmdli_help(debug);
 			break;
-		case 'c':
+		case 'C':
 			prog_clear(progs);
 			debug_print_P(PSTR("All programs has been removed.\n"), debug);
 			break;
 		case 'd':
+			/* strip the string from the 1st char */
+			if (*(cmd + 1))
+				date_setrtc(cmd + 1);
+			else
+				date(debug);
+			break;
+		case 'D':
 			tmp = strtoul((cmd+1), 0, 10);
 			prog_del(progs, tmp);
 			sprintf_P(debug->line, PSTR("The program %d has been removed.\n"), tmp);
@@ -147,8 +155,11 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			debug_print_P(PSTR("All programs has been saved.\n"), debug);
 			break;
 		case 't':
-			debug_print_P(PSTR("The time is: "), debug);
-			date(debug);
+			/* strip the string from the 1st char */
+			if (*(cmd + 1))
+				date_set(cmd + 1, debug);
+			else
+				date(debug);
 			break;	
 		case 'v':
 			debug_version(debug);

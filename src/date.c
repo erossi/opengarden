@@ -25,33 +25,47 @@
 
 /*! \file date.c */
 
-/*! prompt the user for a date in the format of YYYYMMDDhhmm and
- * set the tm struct.
- * \param date the struct with all the date field to be compiled.
+/*! Set the date from the command line in a human form.
+ * \param cmd the string in the format YYYYMMDDhhmm.
  * \param debug printing and string stuff.
- * \note the system clock is NOT changed in this function.
  */
-void date_set(struct tm *date, struct debug_t *debug)
+void date_set(char *cmd, struct debug_t *debug)
 {
-        debug_print_P(PSTR("Enter date [YYYYMMDDhhmm]: "), debug);
-	debug_get_str(debug->line);
-	uart_putchar(0, '\n');
+	struct tm *date;
+	time_t sec;
+
+	date = malloc(sizeof(struct tm));
+
 	/* Year */
-	strlcpy(debug->string, debug->line, 5);
+	strlcpy(debug->string, cmd, 5);
 	date->tm_year = atoi(debug->string) - 1900;
 	/* Month */
-	strlcpy(debug->string, debug->line + 4, 3);
+	strlcpy(debug->string, cmd + 4, 3);
 	date->tm_mon = atoi(debug->string) - 1;
 	/* Day */
-	strlcpy(debug->string, debug->line + 6, 3);
+	strlcpy(debug->string, cmd + 6, 3);
 	date->tm_mday = atoi(debug->string);
 	/* Hour */
-	strlcpy(debug->string, debug->line + 8, 3);
+	strlcpy(debug->string, cmd + 8, 3);
 	date->tm_hour = atoi(debug->string);
 	/* Minute */
-	strlcpy(debug->string, debug->line + 10, 3);
+	strlcpy(debug->string, cmd + 10, 3);
 	date->tm_min = atoi(debug->string);
 	date->tm_sec = 0;
+
+	sec = mktime(date);
+	settimeofday(sec);
+
+	free(date);
+}
+
+/*! Extract abstime from the command and set it to the RTC clock */
+void date_setrtc(char *cmd)
+{
+	time_t sec;
+
+	sec = strtoul(cmd, NULL, 10);
+	settimeofday(sec);
 }
 
 /*! print the current time */
@@ -71,7 +85,7 @@ void date(struct debug_t *debug)
 /*! adjust the internal clock */
 struct tm *date_init(struct tm *tm_clock, struct debug_t *debug)
 {
-	time_t clock = 1299764113;
+	time_t clock = 1318612980;
 
 	/* this should set the pointer to the
 	 * preallocated area of lastTime.
@@ -79,33 +93,10 @@ struct tm *date_init(struct tm *tm_clock, struct debug_t *debug)
 	tm_clock = gmtime(&clock);
 
 	rtc_setup(); /* Prepare the HW clock counter */
-	date_set(tm_clock, debug); /* Input the current time. */
-	clock = mktime(tm_clock); /* convert the time into sec. */
 	settimeofday(clock); /* set the clock to the current time */
 
         debug_print_P(PSTR("The date is now: "), debug);
 	date(debug);
-
-	/*
-	debug->line = itoa(date->tm_year, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	debug->line = itoa(date->tm_mon, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	debug->line = itoa(date->tm_mday, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	debug->line = itoa(date->tm_hour, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	debug->line = itoa(date->tm_min, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	debug->line = itoa(date->tm_sec, debug->line, 10);
-	debug_print(debug);
-	uart_putchar(0, '\n');
-	*/
 
 	return(tm_clock);
 }
