@@ -30,6 +30,9 @@ void io_pin_init(void)
 	IN_PORT = 0;
 	OUT_DDR = 0xff; /* all output */
 	OUT_PORT = 0;
+	/*! \bug fix either _BV(PB0) */
+	OUT_CMD_DDR = 3; /* pb0 and pb1 out */
+	OUT_CMD_PORT = 0; /* bug should use only pb0 and pb1 lines */
 }
 
 uint8_t io_in_get(const uint8_t port)
@@ -42,10 +45,16 @@ uint8_t io_in_get(const uint8_t port)
 
 void io_out_set(const uint8_t pin, const uint8_t val)
 {
-	if (val)
+	/* \bug insert 1ms delay from ONOFF and PN switch */
+	/* \bug limit the IO to only 1 line at a time to save
+	 * hardware from fried */
+	if (val) {
 		OUT_PORT |= _BV(pin);
-	else
+		OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
+	} else {
+		OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
 		OUT_PORT &= ~_BV(pin);
+	}
 }
 
 uint8_t io_out_get(const uint8_t pin)
@@ -87,11 +96,13 @@ uint8_t io_in_allarm(void)
 		err |= _BV(1);
 
 	/* reverse allarm */
+	/*
 	if (IN_PIN & _BV(IN_P2))
 		err |= _BV(2);
 
 	if (IN_PIN & _BV(IN_P3))
 		err |= _BV(3);
+		*/
 
 	return(err);
 }

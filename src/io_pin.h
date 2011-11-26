@@ -43,6 +43,11 @@
 #define IN_P2 PIND6
 #define IN_P3 PIND7
 
+#define OUT_CMD_PORT PORTB
+#define OUT_CMD_DDR DDRB
+#define OUT_CMD_ONOFF PB0
+#define OUT_CMD_PN PB1
+
 void io_pin_init(void);
 uint8_t io_in_get(const uint8_t port);
 void io_out_set(const uint8_t pin, const uint8_t val);
