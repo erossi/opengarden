@@ -23,9 +23,9 @@
 #include <stdio.h>
 #include "cmdli.h"
 
-void print_sunsite(struct programs_t *progs, struct debug_t *debug)
+void sunsite_print(struct programs_t *progs, struct debug_t *debug)
 {
-	debug_print_P(PSTR("Sunsite now is: "), debug);
+	debug_print_P(PSTR("Sunsite: "), debug);
 
 	switch (progs->position) {
 		case FULLSUN:
@@ -40,17 +40,8 @@ void print_sunsite(struct programs_t *progs, struct debug_t *debug)
 
 }
 
-void change_sunsite(struct programs_t *progs, struct debug_t *debug)
+void sunsite_set(struct programs_t *progs, struct debug_t *debug, const char c)
 {
-	char c;
-
-	print_sunsite(progs, debug);
-	debug_print_P(PSTR("\nChange the sun site:\n"), debug);
-	debug_print_P(PSTR(" Enter 0 (Full Sun), 1 (Half sun), 2 (Shadow): "), debug);
-	c = uart_getchar(0, 1);
-	uart_putchar(0, c);
-	debug_print_P(PSTR("\n"), debug);
-
 	switch (c) {
 		case '0': progs->position = FULLSUN;
 			  break;
@@ -58,9 +49,6 @@ void change_sunsite(struct programs_t *progs, struct debug_t *debug)
 			  break;
 		default: progs->position = SHADOW;
 	}
-
-	print_sunsite(progs, debug);
-	debug_print_P(PSTR("\nREMEMBER: Save the programs to store the sunsite in the EEPROM\n"), debug);
 }
 
 /*! Clear the cli_t struct */
@@ -102,8 +90,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t[YYYYMMDDhhmm] - print or set the date.\n"), debug);
 	debug_print_P(PSTR("v - version.\n"), debug);
-	debug_print_P(PSTR("x - print the sun site.\n"), debug);
-	debug_print_P(PSTR("y - change the sun site.\n"), debug);
+	debug_print_P(PSTR("y[0..2] - print or set the sun site.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
 
@@ -164,11 +151,11 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 'v':
 			debug_version(debug);
 			break;
-		case 'x':
-			print_sunsite(progs, debug);
-			break;	
 		case 'y':
-			change_sunsite(progs, debug);
+			if (*(cmd + 1))
+				sunsite_set(progs, debug, *(cmd + 1));
+			else
+				sunsite_print(progs, debug);
 			break;	
 		case 0:
 			break;
