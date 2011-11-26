@@ -123,6 +123,7 @@ void q_pop(struct programs_t *progs, const uint8_t i)
  * \param progs
  * \param tm_clock time now.
  * \param debug
+ * \bug With bistable valve opening and closing oline cannot be done at the same time, any io-action must be done on separate queue-run.
  */
 void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
@@ -140,7 +141,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						progs->q[i].status = Q_DELAYED;
 					} else {
 						progs->q[i].status = Q_RUN;
-						io_out_change_line(progs->q[i].oline, 1);
+						io_out_set(progs->q[i].oline, ON);
 					}
 
 					print_qline(&progs->q[i], debug);
@@ -149,7 +150,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 				case Q_RUN:
 					if (progs->q[i].stop <= tnow) {
 						progs->q[i].status = Q_OFF;
-						io_out_change_line(progs->q[i].oline, 0);
+						io_out_set(progs->q[i].oline, OFF);
 						print_qline(&progs->q[i], debug);
 						q_pop(progs, i);
 					} else {
@@ -164,7 +165,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						progs->q[i].stop += tnow - progs->q[i].start;
 						progs->q[i].start = tnow;
 						progs->q[i].status = Q_RUN;
-						io_out_change_line(progs->q[i].oline, 1);
+						io_out_set(progs->q[i].oline, ON);
 					}
 
 					print_qline(&progs->q[i], debug);

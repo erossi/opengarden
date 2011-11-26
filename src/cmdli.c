@@ -97,7 +97,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programs.\n"), debug);
 	debug_print_P(PSTR("pShSm,dtime,DD,OL\n"), debug);
-	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD and OL [0..FF]\n"), debug);
+	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD [0..FF] OL [0..7]\n"), debug);
 	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t[YYYYMMDDhhmm] - print or set the date.\n"), debug);

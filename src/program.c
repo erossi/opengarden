@@ -151,9 +151,9 @@ void prog_add(struct programs_t *progs, const char *s)
 		/* get DD */
 		strlcpy(substr, s + 10, 3);
 		progs->p[progs->number].dow = strtoul(substr, 0, 16);
-		/* get OO */
-		strlcpy(substr, s + 13, 3);
-		progs->p[progs->number].oline = strtoul(substr, 0, 16);
+		/* get OL */
+		strlcpy(substr, s + 13, 2);
+		progs->p[progs->number].oline = strtoul(substr, 0, 10);
 		free(substr);
 		progs->number++;
 	}
@@ -175,11 +175,15 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 	}
 }
 
+/*! test allarm lines and act accordingly.
+ *
+ * \bug Bistable valve non-compatible.
+ */
 uint8_t prog_allarm(struct programs_t *progs)
 {
 	/* if there is an allarm */
 	if (io_in_allarm()) {
-		io_out_change_line(0xff, 0); /* close all the lines */
+		io_out_off(); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);
 	} else {
