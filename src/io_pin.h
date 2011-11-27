@@ -51,11 +51,10 @@
 #define OFF 0
 #define ON 1
 #define PULSE 2
+#define PULSE_MSEC 100
 
 void io_pin_init(void);
-uint8_t io_in_get(const uint8_t port);
 void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype);
-uint8_t io_out_get(const uint8_t pin);
 uint8_t io_in_allarm(void);
 uint8_t io_line_in_use(void);
 void io_out_off(struct programs_t *progs);

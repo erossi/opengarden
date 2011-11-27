@@ -24,22 +24,7 @@
 #include <util/delay.h>
 #include "io_pin.h"
 
-/*! Return how many bits are 1 in a byte
- */
-uint8_t bit_set(const uint8_t byte)
-{
-	uint8_t i, bit;
-
-	bit = 0;
-
-	for (i=0; i<8; i++)
-		if (byte & _BV(i))
-			bit++;
-
-	return(bit);
-}
-
-/*! set a valve to On, Off or a pulse of 100msec */
+/*! set a valve to On, Off or a pulse of PULSE_MSEC msec. */
 void onoff_pulse(const uint8_t status)
 {
 	switch (status) {
@@ -50,7 +35,7 @@ void onoff_pulse(const uint8_t status)
 		case PULSE:
 			_delay_ms(1);
 			OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
-			_delay_ms(100);
+			_delay_ms(PULSE_MSEC);
 			OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
 			_delay_ms(1);
 			break;
@@ -107,14 +92,6 @@ void io_pin_init(void)
 	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 }
 
-uint8_t io_in_get(const uint8_t port)
-{
-	if (IN_PIN & _BV(port))
-		return(1);
-	else
-		return(0);
-}
-
 /*! Set IO oline.
  *
  * \param oline the output line to be set or clear.
@@ -133,14 +110,6 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetyp
 	}
 }
 
-uint8_t io_out_get(const uint8_t pin)
-{
-	if (OUT_PORT & _BV(pin))
-		return(1);
-	else
-		return(0);
-}
-
 uint8_t io_in_allarm(void)
 {
 	uint8_t err = 0;
@@ -154,11 +123,11 @@ uint8_t io_in_allarm(void)
 	return(err);
 }
 
-/*! \brief How many IO out line are in use?
+/*! \brief Are there any IO out line in use?
  */
 uint8_t io_line_in_use(void)
 {
-	return(bit_set(OUT_PORT));
+	return(OUT_PORT);
 }
 
 /*! Close all the output line.
