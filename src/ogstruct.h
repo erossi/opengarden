@@ -35,7 +35,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x02
+#define CHECK_VALID_CODE 0x03
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -52,6 +52,10 @@
 #define HALFSUN 1
 #define SHADOW 2
 
+/*! valve type */
+#define MONOSTABLE 1
+#define BISTABLE 2
+
 /*! A single program event structure */
 struct program_t {
 	/*! \brief Days of the week
@@ -67,17 +71,7 @@ struct program_t {
 	 */
 	uint8_t dow;
 
-	/*! \brief Output line (bitmapped)
-	 * 0 line 0
-	 * 1 line 1
-	 * 2 line 2
-	 * 4 line 3
-	 * 8 line 4
-	 * 16 line 5
-	 * 32 line 6
-	 * 64 line 7
-	 * 128 line 8
-	 */
+	/*! \brief Output line from 0 to 7. */
 	uint8_t oline;
 
 	/*! \brief start time (hours) */
@@ -102,10 +96,16 @@ struct queue_t {
 
 /*! Single structure to keep all the programs */
 struct programs_t {
-	/*! control code, should be == CHECK_VALID_CODE */
+	/*! control code, should be == CHECK_VALID_CODE.
+	 *
+	 * at any new software release this code is used to
+	 * know if the program stored in the flash memory is still
+	 * compatibile with the new software.
+	 */
 	uint8_t check;
 	/*! number of valid programs 0..MAX_PROGS */
 	uint8_t number;
+	/*! number of valid queue elements */
 	uint8_t qc;
 	/*! array of the programs 0..(MAX_PROGS - 1)*/
 	struct program_t p[MAX_PROGS];
@@ -118,6 +118,8 @@ struct programs_t {
 	float dfactor;
 	/*! sunlight position */
 	uint8_t position;
+	/*! valve type */
+	uint8_t valve;
 };
 
 #endif

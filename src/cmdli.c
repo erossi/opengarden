@@ -23,31 +23,55 @@
 #include <stdio.h>
 #include "cmdli.h"
 
-void sunsite_print(struct programs_t *progs, struct debug_t *debug)
-{
-	debug_print_P(PSTR("Sunsite: "), debug);
-
-	switch (progs->position) {
-		case FULLSUN:
-			debug_print_P(PSTR(" Full Sun (0)\n"), debug);
-			break;
-		case HALFSUN:
-			debug_print_P(PSTR(" Half Sun (1)\n"), debug);
-			break;
-		default:
-			debug_print_P(PSTR(" Shadow (2)\n"), debug);
-	}
-
-}
-
-void sunsite_set(struct programs_t *progs, struct debug_t *debug, const char c)
+void sunsite_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 {
 	switch (c) {
 		case '0': progs->position = FULLSUN;
+			  debug_print_P(PSTR("OK\n"), debug);
 			  break;
 		case '1': progs->position = HALFSUN;
+			  debug_print_P(PSTR("OK\n"), debug);
 			  break;
-		default: progs->position = SHADOW;
+		case '2': progs->position = SHADOW;
+			  debug_print_P(PSTR("OK\n"), debug);
+			  break;
+		case 0:
+			 switch (progs->position) {
+				 case FULLSUN:
+					 debug_print_P(PSTR("Full Sun (0)\n"), debug);
+					 break;
+				 case HALFSUN:
+					 debug_print_P(PSTR("Half Sun (1)\n"), debug);
+					 break;
+				 default:
+					 debug_print_P(PSTR("Shadow (2)\n"), debug);
+			 }
+
+			 break;
+		default:
+			 debug_print_P(PSTR("ERROR\n"), debug);
+	}
+}
+
+void valve_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
+{
+	switch (c) {
+		case '1':
+			progs->valve = MONOSTABLE;
+			debug_print_P(PSTR("OK\n"), debug);
+			break;
+		case '2':
+			progs->valve = BISTABLE;
+			debug_print_P(PSTR("OK\n"), debug);
+			break;
+		case 0:
+			if (progs->valve == MONOSTABLE)
+				debug_print_P(PSTR("monostable (1)\n"), debug);
+			else
+				debug_print_P(PSTR("bistable (2)\n"), debug);
+			break;
+		default:
+			debug_print_P(PSTR("ERROR\n"), debug);
 	}
 }
 
@@ -90,6 +114,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t[YYYYMMDDhhmm] - print or set the date.\n"), debug);
 	debug_print_P(PSTR("v - version.\n"), debug);
+	debug_print_P(PSTR("V[1 | 2] - Valve type: 1 Monostable, 2 Bistable.\n"), debug);
 	debug_print_P(PSTR("y[0..2] - print or set the sun site.\n"), debug);
 	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
 }
@@ -109,7 +134,7 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			break;
 		case 'C':
 			prog_clear(progs);
-			debug_print_P(PSTR("All programs has been removed.\n"), debug);
+			debug_print_P(PSTR("OK\n"), debug);
 			break;
 		case 'd':
 			/* strip the string from the 1st char */
@@ -121,8 +146,7 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 'D':
 			tmp = strtoul((cmd+1), 0, 10);
 			prog_del(progs, tmp);
-			sprintf_P(debug->line, PSTR("The program %d has been removed.\n"), tmp);
-			debug_print(debug);
+			debug_print_P(PSTR("OK\n"), debug);
 			break;
 		case 'g':
 			temperature_print(progs, debug);
@@ -151,16 +175,16 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 'v':
 			debug_version(debug);
 			break;
+		case 'V':
+			valve_cmd(progs, debug, *(cmd + 1));
+			break;
 		case 'y':
-			if (*(cmd + 1))
-				sunsite_set(progs, debug, *(cmd + 1));
-			else
-				sunsite_print(progs, debug);
+			sunsite_cmd(progs, debug, *(cmd + 1));
 			break;	
 		case 0:
 			break;
 		default:
-			debug_print_P(PSTR("Wrong command! Use '?' to get help\n"), debug);
+			debug_print_P(PSTR("ERROR\n"), debug);
 			break;
 	}
 }

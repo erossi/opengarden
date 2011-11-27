@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*! \file main.c
-  \brief Main.
+/*! \file io_pin.h
+ * \brief IO lines definitions.
  */
 
 #ifndef OG_IO_OUT_H
 #define OG_IO_OUT_H
+
+#include "ogstruct.h"
 
 #define OUT_PORT PORTA
 #define OUT_PIN PINA
@@ -46,18 +48,16 @@
 #define OUT_CMD_ONOFF PB0
 #define OUT_CMD_PN PB1
 
-#define MONOSTABLE 1
-#define BISTABLE 2
 #define OFF 0
 #define ON 1
 #define PULSE 2
 
 void io_pin_init(void);
 uint8_t io_in_get(const uint8_t port);
-void io_out_set(const uint8_t oline, const uint8_t onoff);
+void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype);
 uint8_t io_out_get(const uint8_t pin);
 uint8_t io_in_allarm(void);
 uint8_t io_line_in_use(void);
-void io_out_off(void);
+void io_out_off(struct programs_t *progs);
 
 #endif

@@ -119,15 +119,16 @@ uint8_t io_in_get(const uint8_t port)
  *
  * \param oline the output line to be set or clear.
  * \param onoff set or clear.
+ * \valvetype type of the valve in used.
  * \note online is in the range 1 to 8.
  */
-void io_out_set(const uint8_t oline, const uint8_t onoff)
+void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype)
 {
 	if (onoff) {
 		OUT_PORT |= _BV(oline);
-		valve_open(MONOSTABLE);
+		valve_open(valvetype);
 	} else {
-		valve_close(MONOSTABLE);
+		valve_close(valvetype);
 		OUT_PORT &= ~_BV(oline);
 	}
 }
@@ -160,10 +161,13 @@ uint8_t io_line_in_use(void)
 	return(bit_set(OUT_PORT));
 }
 
-void io_out_off(void)
+/*! Close all the output line.
+ * \bug non compatibile with bistable valve, too quick.
+ */
+void io_out_off(struct programs_t *progs)
 {
 	uint8_t i;
 
 	for (i=0; i<8; i++)
-		io_out_set(_BV(i), OFF);
+		io_out_set(i, OFF, progs->valve);
 }

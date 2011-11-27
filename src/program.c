@@ -37,11 +37,15 @@ void prog_load(struct programs_t *progs)
 
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
 
-	/* initialize a new programs struct */
+	/* initialize a new programs struct.
+	 * if the program stored in flash is not a valid
+	 * program then do some defaults.
+	 */
 	if (progs->check != CHECK_VALID_CODE) {
 		progs->check = CHECK_VALID_CODE;
 		progs->number = 0; /* 0 valid program */
 		progs->position = FULLSUN;
+		progs->valve = BISTABLE;
 	}
 
 	progs->qc = 0; /* no element in the queue */
@@ -183,7 +187,7 @@ uint8_t prog_allarm(struct programs_t *progs)
 {
 	/* if there is an allarm */
 	if (io_in_allarm()) {
-		io_out_off(); /* close all the lines */
+		io_out_off(progs); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);
 	} else {

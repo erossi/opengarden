@@ -141,7 +141,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						progs->q[i].status = Q_DELAYED;
 					} else {
 						progs->q[i].status = Q_RUN;
-						io_out_set(progs->q[i].oline, ON);
+						io_out_set(progs->q[i].oline, ON, progs->valve);
 					}
 
 					print_qline(&progs->q[i], debug);
@@ -150,7 +150,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 				case Q_RUN:
 					if (progs->q[i].stop <= tnow) {
 						progs->q[i].status = Q_OFF;
-						io_out_set(progs->q[i].oline, OFF);
+						io_out_set(progs->q[i].oline, OFF, progs->valve);
 						print_qline(&progs->q[i], debug);
 						q_pop(progs, i);
 					} else {
@@ -165,7 +165,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						progs->q[i].stop += tnow - progs->q[i].start;
 						progs->q[i].start = tnow;
 						progs->q[i].status = Q_RUN;
-						io_out_set(progs->q[i].oline, ON);
+						io_out_set(progs->q[i].oline, ON, progs->valve);
 					}
 
 					print_qline(&progs->q[i], debug);
