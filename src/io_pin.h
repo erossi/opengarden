@@ -23,6 +23,7 @@
 #define OG_IO_OUT_H
 
 #include "ogstruct.h"
+#include "led.h"
 
 #define OUT_PORT PORTA
 #define OUT_PIN PINA

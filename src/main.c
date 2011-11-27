@@ -63,10 +63,9 @@ int main(void)
 
 		if (c)
 			cmdli_exec(c, cmdli, progs, debug);
-		else
-			led_set(GREEN, BLINK);
 
 		if (date_timetorun(tm_clock, debug)) {
+			led_set(GREEN, ON);
 			debug_print_P(PSTR("Executing programs at "), debug);
 			date(debug);
 			prog_run(progs, tm_clock, debug);
@@ -83,6 +82,7 @@ int main(void)
 			 * from the prog_run call
 			 */
 			temperature_print(progs, debug);
+			led_set(GREEN, OFF);
 		}
 
 		/*! \fixme not so good continuing call this */

@@ -31,17 +31,19 @@ void onoff_pulse(const uint8_t status)
 		case ON:
 			/* OnOff pin to on */
 			OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
+			led_set(RED, ON);
 			break;
 		case PULSE:
 			_delay_ms(1);
-			OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
+			onoff_pulse(ON);
 			_delay_ms(PULSE_MSEC);
-			OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
+			onoff_pulse(OFF);
 			_delay_ms(1);
 			break;
 		default:
 			/* OnOff pin to off */
 			OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
+			led_set(RED, OFF);
 	}
 }
 

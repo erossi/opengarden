@@ -27,7 +27,7 @@
 
 void print_qline(struct queue_t *q, struct debug_t *debug)
 {
-	sprintf_P(debug->line, PSTR(" %10lu, %10lu, %2x, "), q->start, q->stop, q->oline);
+	sprintf_P(debug->line, PSTR(" %10lu, %10lu, %1x, "), q->start, q->stop, q->oline);
 	debug_print(debug);
 
 	switch (q->status) {
