@@ -24,34 +24,28 @@ void led_set(const uint8_t led, const uint8_t status)
 {
 	switch (status) {
 		case ON:
-			led_set(NONE, OFF);
-
 			if ((led == RED) || (led == BOTH))
-				 LED_PORT &= ~_BV(LED_RED);
+				LED_PORT &= ~_BV(LED_RED);
 
 			if ((led == GREEN) || (led == BOTH))
 				LED_PORT &= ~_BV(LED_GREEN);
 
 			break;
+		case OFF:
+			if ((led == RED) || (led == BOTH))
+				LED_PORT |= _BV(LED_RED);
+
+			if ((led == GREEN) || (led == BOTH))
+				LED_PORT |= _BV(LED_GREEN);
+
+			break;
 		case BLINK:
+			led_set(led, ON);
 			LED_DELAY;
-
-			switch (led) {
-				case RED:
-					led_set(RED, ON);
-					break;
-				case GREEN:
-					led_set(GREEN, ON);
-					break;
-				default:
-					led_set(BOTH, ON);
-			}
-
-			LED_DELAY;
-			led_set(NONE, OFF);
+			led_set(led, OFF);
 			break;
 		default:
-			LED_PORT |= (_BV(LED_RED) | _BV(LED_GREEN));
+			led_set(BOTH, OFF);
 	}
 }
 
