@@ -68,6 +68,17 @@ void date_setrtc(char *cmd)
 	settimeofday(sec);
 }
 
+/*! print the current rtc time */
+void date_rtc(struct debug_t *debug)
+{
+	time_t clock;
+
+	clock = time(NULL);
+	debug->line = ultoa(clock, debug->line, 10);
+	debug_print(debug);
+	debug_print_P(PSTR("\n"), debug);
+}
+
 /*! print the current time */
 void date(struct debug_t *debug)
 {

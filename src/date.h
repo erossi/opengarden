@@ -29,6 +29,7 @@ void date_set(char *cmd, struct debug_t *debug);
 void date_setrtc(char *cmd);
 struct tm *date_init(struct tm *tm_clock, struct debug_t *debug);
 void date_free(struct tm *tm_clock);
+void date_rtc(struct debug_t *debug);
 void date(struct debug_t *debug);
 void date_hwclock_start(void);
 void date_hwclock_stop(void);

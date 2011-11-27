@@ -138,10 +138,13 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			break;
 		case 'd':
 			/* strip the string from the 1st char */
-			if (*(cmd + 1))
+			if (*(cmd + 1)) {
 				date_setrtc(cmd + 1);
-			else
-				date(debug);
+				debug_print_P(PSTR("OK\n"), debug);
+			} else {
+				date_rtc(debug);
+			}
+
 			break;
 		case 'D':
 			tmp = strtoul((cmd+1), 0, 10);
@@ -159,11 +162,11 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			break;
 		case 'r':
 			prog_load(progs);
-			debug_print_P(PSTR("All programs has been restored.\n"), debug);
+			debug_print_P(PSTR("OK\n"), debug);
 			break;
 		case 's':
 			prog_save(progs);
-			debug_print_P(PSTR("All programs has been saved.\n"), debug);
+			debug_print_P(PSTR("OK\n"), debug);
 			break;
 		case 't':
 			/* strip the string from the 1st char */
