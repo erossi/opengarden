@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "program.h"
 #include "queue.h"
 #include "cmdli.h"
+#include "usb.h"
 
 int main(void)
 {
@@ -47,6 +48,7 @@ int main(void)
 
 	/* Init sequence, turn on both led */
 	led_init();
+	usb_init();
 	debug = debug_init(debug);
 	progs = prog_init(progs);
 	cmdli = cmdli_init(cmdli);
@@ -57,12 +59,17 @@ int main(void)
 	led_set(BOTH, OFF);
 
 	while (1) {
-		c = uart_getchar(0, 0);
-		/* echo, shoud not be used */
-		uart_putchar(0, c);
+		if (usb_connected) {
+			debug->active = TRUE;
+			c = uart_getchar(0, 0);
+			/* echo, shoud not be used */
+			uart_putchar(0, c);
 
-		if (c)
-			cmdli_exec(c, cmdli, progs, debug);
+			if (c)
+				cmdli_exec(c, cmdli, progs, debug);
+		} else {
+			debug->active = FALSE;
+		}
 
 		if (date_timetorun(tm_clock, debug)) {
 			led_set(GREEN, ON);
