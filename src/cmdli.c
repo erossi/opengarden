@@ -38,13 +38,13 @@ void sunsite_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 		case 0:
 			 switch (progs->position) {
 				 case FULLSUN:
-					 debug_print_P(PSTR("Full Sun (0)\n"), debug);
+					 debug_print_P(PSTR("0 - Full Sun\n"), debug);
 					 break;
 				 case HALFSUN:
-					 debug_print_P(PSTR("Half Sun (1)\n"), debug);
+					 debug_print_P(PSTR("1 - Half Sun\n"), debug);
 					 break;
 				 default:
-					 debug_print_P(PSTR("Shadow (2)\n"), debug);
+					 debug_print_P(PSTR("2 - Shadow\n"), debug);
 			 }
 
 			 break;
