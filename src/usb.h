@@ -22,6 +22,11 @@
 #ifndef USB_H
 #define USB_H
 
+#define USB_PORT PORTD
+#define USB_DDR DDRD
+#define USB_PORTIN PIND
+#define USB_PIN PIND2
+
 #define TRUE 1
 #define FALSE 0
 
@@ -30,6 +35,7 @@
  */
 volatile uint8_t usb_connected;
 
+uint8_t usb_is_connected(void);
 void usb_init(void);
 void usb_shutdown(void);
 

@@ -28,17 +28,28 @@
 /*! IRQ wakes up when PC/usb connect or disconnect. */
 ISR(INT0_vect)
 {
-	if (PORTD & PD2)
+	usb_is_connected();
+}
+
+uint8_t usb_is_connected(void)
+{
+	if (USB_PORTIN & _BV(USB_PIN))
 		usb_connected = TRUE;
 	else
 		usb_connected = FALSE;
+
+	return(usb_connected);
 }
 
 /*! enable irq int0 */
 void usb_init(void)
 {
 	/* PD2 input */
-	DDRD &= ~_BV(PD2);
+	USB_DDR &= ~_BV(USB_PIN);
+	USB_PORT &= ~_BV(USB_PIN);
+
+	usb_is_connected();
+
 	/* Trigger irq on any edge of the INT0 pin */
 	EICRA |= _BV(ISC00);
 	/* Enable irq0 */
