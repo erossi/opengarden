@@ -62,11 +62,12 @@ int main(void)
 		if (usb_connected) {
 			debug->active = TRUE;
 			c = uart_getchar(0, 0);
-			/* echo, shoud not be used */
-			uart_putchar(0, c);
 
-			if (c)
+			if (c) {
+				/* echo, shoud not be used */
+				uart_putchar(0, c);
 				cmdli_exec(c, cmdli, progs, debug);
+			}
 		} else {
 			debug->active = FALSE;
 		}

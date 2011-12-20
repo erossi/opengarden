@@ -95,9 +95,6 @@ char uart_getchar(const uint8_t port, const uint8_t locked)
  */
 void uart_putchar(const uint8_t port, const char c)
 {
-  if (c == '\n')
-    uart_putchar(port, '\r');
-
   if (port) {
 	  loop_until_bit_is_set(UCSR1A, UDRE1);
 	  UDR1 = c;
@@ -114,7 +111,7 @@ void uart_printstr(const uint8_t port, const char *s)
 {
 
   while (*s) {
-/*
+/* \todo change with a #defined solution
       if (*s == '\n')
 	uart_putchar(port, '\r');
 */

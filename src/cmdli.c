@@ -201,8 +201,8 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
  */
 void cmdli_exec(char c, struct cmdli_t *cmdli, struct programs_t *progs, struct debug_t *debug)
 {
-	if (c == '\r') {
-		debug_print_P(PSTR("\n"), debug);
+	if (c == '\n') {
+		/* debug_print_P(PSTR("\n"), debug); */
 		*(cmdli->cmd + cmdli->idx) = 0;
 		cmdli_run(cmdli->cmd, progs, debug);
 		cmdli_clear(cmdli);
