@@ -147,7 +147,9 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						flag = 1;
 					}
 
-					print_qline(&progs->q[i], debug);
+					if (progs->log)
+						print_qline(&progs->q[i], debug);
+
 					i++;
 					break;
 				case Q_RUN:
@@ -157,7 +159,9 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						flag = 1;
 					}
 
-					print_qline(&progs->q[i], debug);
+					if (progs->log)
+						print_qline(&progs->q[i], debug);
+
 					i++;
 					break;
 				case Q_DELAYED:
@@ -170,7 +174,9 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						flag = 1;
 					}
 
-					print_qline(&progs->q[i], debug);
+					if (progs->log)
+						print_qline(&progs->q[i], debug);
+
 					i++;
 					break;
 				case Q_OFF:
@@ -179,7 +185,9 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 					break;
 			}
 		} else {
-			print_qline(&progs->q[i], debug);
+			if (progs->log)
+				print_qline(&progs->q[i], debug);
+
 			i++;
 		}
 	}

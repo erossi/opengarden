@@ -74,27 +74,36 @@ int main(void)
 
 		if (date_timetorun(tm_clock, debug)) {
 			led_set(GREEN, ON);
-			debug_print_P(PSTR("Executing programs at "), debug);
-			date(debug);
+
+			if (progs->log) {
+				debug_print_P(PSTR("Executing programs at "), debug);
+				date(debug);
+			}
+
 			prog_run(progs, tm_clock, debug);
 
-			if (prog_allarm(progs)) {
+			if (prog_allarm(progs) && progs->log) {
 				debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
 			} else {
-				debug_print_P(PSTR("Run queue at "), debug);
-				date(debug);
+				if (progs->log) {
+					debug_print_P(PSTR("Run queue at "), debug);
+					date(debug);
+				}
+
 				queue_run(progs, tm_clock, debug);
 			}
 
 			/* print the temperature updated
 			 * from the prog_run call
 			 */
-			temperature_print(progs, debug);
+			if (progs->log)
+				temperature_print(progs, debug);
+
 			led_set(GREEN, OFF);
 		}
 
 		/*! \fixme not so good continuing call this */
-		if (prog_allarm(progs))
+		if (prog_allarm(progs) && progs->log)
 			debug_print_P(PSTR("ALLARM! queue removed, I/O lines closed!\n"), debug);
 
 	}

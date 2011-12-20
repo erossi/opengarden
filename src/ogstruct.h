@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x03
+#define CHECK_VALID_CODE 0x04
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -55,6 +55,9 @@
 /*! valve type */
 #define MONOSTABLE 1
 #define BISTABLE 2
+
+#define FALSE 0
+#define TRUE 1
 
 /*! A single program event structure */
 struct program_t {
@@ -120,6 +123,8 @@ struct programs_t {
 	uint8_t position;
 	/*! valve type */
 	uint8_t valve;
+	/*! log enable */
+	uint8_t log;
 };
 
 #endif

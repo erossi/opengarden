@@ -52,6 +52,7 @@ void prog_load(struct programs_t *progs)
 	progs->tnow = -99;
 	progs->tmedia = tmedia;
 	progs->dfactor = 1;
+	progs->log = FALSE;
 }
 
 /*! \brief Store the programs into the eeprom area */
@@ -96,8 +97,12 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 		if ((progs->p[i].dow & _BV(tm_clock->tm_wday)) &&
 				(progs->p[i].hstart == tm_clock->tm_hour) &&
 				(progs->p[i].mstart == tm_clock->tm_min)) {
-			sprintf_P(debug->line, PSTR(" p%02d added to queue\n"), i);
-			debug_print(debug);
+
+			if (progs->log) {
+				sprintf_P(debug->line, PSTR(" p%02d added to queue\n"), i);
+				debug_print(debug);
+			}
+
 			q_push(progs, tm_clock, i);
 			tm_clock = gmtime(&tnow);
 		}
