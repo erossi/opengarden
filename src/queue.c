@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 void print_qline(struct queue_t *q, struct debug_t *debug)
 {
-	sprintf_P(debug->line, PSTR(" %10lu, %10lu, %1x, "), q->start, q->stop, q->oline);
+	sprintf_P(debug->line, PSTR(" %10lu,%10lu,%1x,"), q->start, q->stop, q->oline);
 	debug_print(debug);
 
 	switch (q->status) {
@@ -44,7 +44,7 @@ void print_qline(struct queue_t *q, struct debug_t *debug)
 			debug_print_P(PSTR("delayed\n"), debug);
 			break;
 		default:
-			debug_print_P(PSTR("error\n"), debug);
+			debug_print_P(PSTR("ERROR\n"), debug);
 	}
 }
 
@@ -198,7 +198,7 @@ void queue_list(struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("Queue list [%02d]:\n"), progs->qc);
+	sprintf_P(debug->line, PSTR("Queue [%02d]\n"), progs->qc);
 	debug_print(debug);
 
 	for (i = 0; i < progs->qc; i++)

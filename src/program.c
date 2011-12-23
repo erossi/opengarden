@@ -28,6 +28,15 @@
 /*! global EEPROM variable */
 struct programs_t EEMEM EE_progs;
 
+void print_program_details(const uint8_t i, struct programs_t *progs, struct debug_t *debug)
+{
+	sprintf_P(debug->line, PSTR(" %02d,%02d%02d,%03d,%2x,%1x\n"), i, \
+			progs->p[i].hstart, progs->p[i].mstart, \
+			progs->p[i].dmin, progs->p[i].dow, \
+			progs->p[i].oline);
+	debug_print(debug);
+}
+
 void prog_load(struct programs_t *progs)
 {
 	float tmedia;
@@ -98,10 +107,8 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 				(progs->p[i].hstart == tm_clock->tm_hour) &&
 				(progs->p[i].mstart == tm_clock->tm_min)) {
 
-			if (progs->log) {
-				sprintf_P(debug->line, PSTR(" p%02d added to queue\n"), i);
-				debug_print(debug);
-			}
+			if (progs->log)
+				print_program_details(i, progs, debug);
 
 			q_push(progs, tm_clock, i);
 			tm_clock = gmtime(&tnow);
@@ -114,16 +121,11 @@ void prog_list(struct programs_t *progs, struct debug_t *debug)
 {
 	uint8_t i;
 
-	sprintf_P(debug->line, PSTR("Programs list [%02d]:\n"), progs->number);
+	sprintf_P(debug->line, PSTR("Programs [%02d]\n"), progs->number);
 	debug_print(debug);
-	debug_print_P(PSTR(" p<number>,<start>,<duration>,<DoW>,<out line>\n"), debug);
 
-	for (i = 0; i < progs->number; i++) {
-		sprintf_P(debug->line, PSTR(" p%02d,%02d%02d,%03d,%2x,%2x\n"),i ,progs->p[i].hstart, progs->p[i].mstart, progs->p[i].dmin, progs->p[i].dow, progs->p[i].oline);
-		debug_print(debug);
-	}
-
-	queue_list(progs, debug);
+	for (i = 0; i < progs->number; i++)
+		print_program_details(i, progs, debug);
 }
 
 /*! remove all programs from the memory */

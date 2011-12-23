@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,15 +43,15 @@ void temperature_update(struct programs_t *progs)
 void temperature_print(struct programs_t *progs, struct debug_t *debug)
 {
 	if (progs->tnow == -99) {
-		debug_print_P(PSTR("error\n"), debug);
+		debug_print_P(PSTR("ERROR\n"), debug);
 	} else {
-		debug_print_P(PSTR("Temperature:  now "), debug);
+		debug_print_P(PSTR("Temperature: "), debug);
 		debug->line = dtostrf(progs->tnow, 3, 5, debug->line);
 		debug_print(debug);
-		debug_print_P(PSTR(" - media "), debug);
+		debug_print_P(PSTR(","), debug);
 		debug->line = dtostrf(progs->tmedia, 3, 5, debug->line);
 		debug_print(debug);
-		debug_print_P(PSTR(" - dfactor "), debug);
+		debug_print_P(PSTR(","), debug);
 		debug->line = dtostrf(progs->dfactor, 3, 5, debug->line);
 		debug_print(debug);
 		debug_print_P(PSTR("\n"), debug);
