@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "date.h"
 #include "temperature.h"
 #include "program.h"
+#include "queue.h"
 
 /*! maximum chars a command is made of */
 #define MAX_CMD_LENGHT 20

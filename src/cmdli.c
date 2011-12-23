@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,10 +108,11 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programs.\n"), debug);
-	debug_print_P(PSTR("L - toggle logs ON/OFF\n"), debug);
+	debug_print_P(PSTR("L[0 | 1] - logs OFF/ON\n"), debug);
 	debug_print_P(PSTR("pShSm,dtime,DD,OL\n"), debug);
 	debug_print_P(PSTR(" where Sh [0..24], Sm [0..60], dtime [000-999], DD [0..FF] OL [0..7]\n"), debug);
-	debug_print_P(PSTR("r - re-load programs from EEPROM.\n"), debug);
+	debug_print_P(PSTR("q - queue list.\n"), debug);
+	debug_print_P(PSTR("r - load programs from EEPROM.\n"), debug);
 	debug_print_P(PSTR("s - save programs to EEPROM.\n"), debug);
 	debug_print_P(PSTR("t[YYYYMMDDhhmm] - print or set the date.\n"), debug);
 	debug_print_P(PSTR("v - version.\n"), debug);
@@ -159,17 +160,28 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			prog_list(progs, debug);
 			break;
 		case 'L':
-			if (progs->log) {
-				progs->log = FALSE;
-				debug_print_P(PSTR("OFF\n"), debug);
-			} else {
-				progs->log = TRUE;
-				debug_print_P(PSTR("ON\n"), debug);
+			switch (*(cmd + 1)) {
+				case '0':
+					progs->log = FALSE;
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				case '1':
+					progs->log = TRUE;
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				default:
+					if (progs->log)
+						debug_print_P(PSTR("ON\n"), debug);
+					else
+						debug_print_P(PSTR("OFF\n"), debug);
 			}
 
 			break;
 		case 'p':
 			prog_add(progs, cmd);
+			break;
+		case 'q':
+			queue_list(progs, debug);
 			break;
 		case 'r':
 			prog_load(progs);
