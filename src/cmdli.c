@@ -150,8 +150,12 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			break;
 		case 'D':
 			tmp = strtoul((cmd+1), 0, 10);
-			prog_del(progs, tmp);
-			debug_print_P(PSTR("OK\n"), debug);
+
+			if (prog_del(progs, tmp))
+				debug_print_P(PSTR("OK\n"), debug);
+			else
+				debug_print_P(PSTR("ERROR\n"), debug);
+
 			break;
 		case 'g':
 			temperature_print(progs, debug);
