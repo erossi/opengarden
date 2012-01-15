@@ -102,7 +102,7 @@ void cmdli_free(struct cmdli_t *cmdli)
 /*! Print the help. */
 void cmdli_help(struct debug_t *debug)
 {
-	debug_print_P(PSTR("\nHelp command:\n"), debug);
+	debug_print_P(PSTR("Help command:\n"), debug);
 	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
@@ -118,7 +118,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("v - version.\n"), debug);
 	debug_print_P(PSTR("V[1 | 2] - Valve type: 1 Monostable, 2 Bistable.\n"), debug);
 	debug_print_P(PSTR("y[0..2] - print or set the sun site.\n"), debug);
-	debug_print_P(PSTR("? - this help screen.\n\n"), debug);
+	debug_print_P(PSTR("? - this help screen.\n"), debug);
 }
 
 /*! Execute an input command:

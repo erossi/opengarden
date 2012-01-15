@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  */
 ISR(TIMER2_OVF_vect)
 {
-	rtc_seconds++;
+	rtc_seconds+=8;
 }
 
 /*! setup timer/counter on 32Khz external clock. */
@@ -48,8 +48,12 @@ void rtc_setup(void)
 /*! setup prescaler to scale to 1 sec counter and start counter. */
 void rtc_start(void)
 {
+	/*! counter prescaler 1024 */
+        TCCR2B = _BV(CS22) | _BV(CS21) | _BV(CS20);
+
 	/*! counter prescaler 128 */
-	TCCR2B = _BV(CS22) | _BV(CS20);
+	/* TCCR2B = _BV(CS22) | _BV(CS20); */
+
 	loop_until_bit_is_clear(ASSR, TCR2BUB);
 }
 
