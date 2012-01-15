@@ -67,6 +67,13 @@ void i2c_init(void)
 	TWBR = 32;
 }
 
+/*! Shutdown the i2c bus */
+void i2c_shut(void)
+{
+	TWSR = 0;
+	TWBR = 0;
+}
+
 /*! Send a byte to the i2c slave.
  * \param addr address of the slave.
  * \param data byte to send.

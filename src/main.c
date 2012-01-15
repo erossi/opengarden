@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/interrupt.h>
+#include <avr/sleep.h>
 #include <util/delay.h>
+#include "i2c.h"
 #include "debug.h"
 #include "led.h"
 #include "date.h"
@@ -48,11 +50,17 @@ int main(void)
 
 	/* Init sequence, turn on both led */
 	led_init();
+	led_set(BOTH, ON);
+
+	io_pin_init();
+
 	usb_init();
 	debug = debug_init(debug);
 	progs = prog_init(progs);
 	cmdli = cmdli_init(cmdli);
 	tm_clock = date_init(tm_clock, debug);
+
+        set_sleep_mode(SLEEP_MODE_PWR_SAVE);
 
 	sei();
 	date_hwclock_start();
@@ -69,7 +77,22 @@ int main(void)
 				cmdli_exec(c, cmdli, progs, debug);
 			}
 		} else {
+			/* shut down everything */
+			i2c_shut();
+			debug_stop(debug);
+			io_pin_shut();
+			led_shut();
+			/* start sleep procedure */
+			sleep_enable();
+			sleep_bod_disable();
+			sleep_cpu();
+			sleep_disable();
+			/* restart everything */
+			led_init();
+			io_pin_init();
+			debug_start(debug);
 			debug->active = FALSE;
+			i2c_init();
 		}
 
 		if (date_timetorun(tm_clock, debug)) {

@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@
 #define PULSE_MSEC 100
 
 void io_pin_init(void);
+void io_pin_shut(void);
 void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype);
 uint8_t io_in_allarm(void);
 uint8_t io_line_in_use(void);

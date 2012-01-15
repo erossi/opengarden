@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,6 @@ struct programs_t *prog_init(struct programs_t *progs)
 	progs = malloc(sizeof(struct programs_t));
 	progs->tmedia = TMEDIA_INIT; /* initalize the Tmedia */
 	prog_load(progs);
-	io_pin_init();
 	return(progs);
 }
 

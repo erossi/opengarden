@@ -32,6 +32,7 @@
 
 uint8_t i2c_send(const uint8_t code, const uint8_t data);
 void i2c_init(void);
+void i2c_shut(void);
 uint8_t i2c_master_send_b(const uint8_t addr, const uint8_t data);
 uint8_t i2c_master_send_w(const uint8_t addr, const uint8_t msb, const uint8_t lsb);
 uint8_t i2c_master_read_b(const uint8_t addr, uint8_t *byte);

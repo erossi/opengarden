@@ -94,6 +94,14 @@ void io_pin_init(void)
 	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 }
 
+void io_pin_shut(void)
+{
+	OUT_PORT = 0;
+	OUT_DDR = 0;
+	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
+	OUT_CMD_DDR &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
+}
+
 /*! Set IO oline.
  *
  * \param oline the output line to be set or clear.

@@ -1,5 +1,5 @@
 /* This file is part of chpc
- * Copyright (C) 2010, 2011 Enrico Rossi
+ * Copyright (C) 2010, 2011, 2012 Enrico Rossi
  *
  * Chpc is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,5 +41,6 @@
 
 void led_set(const uint8_t led, const uint8_t status);
 void led_init(void);
+void led_shut(void);
 
 #endif

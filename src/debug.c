@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,24 +101,34 @@ uint8_t debug_wait_for_y(struct debug_t *debug)
 	return(0);
 }
 
+void debug_start(struct debug_t *debug)
+{
+	uart_init(0);
+	debug->active = 1;
+}
+
+void debug_stop(struct debug_t *debug)
+{
+	uart_shutdown(0);
+	debug->active = 0;
+}
+
 /*! Initialize the debug_t structure and ask if
  * debug is active.
  */
 struct debug_t *debug_init(struct debug_t *debug)
 {
-	uart_init(0);
 	debug = malloc(sizeof(struct debug_t));
 	debug->line = malloc(MAX_LINE_LENGHT);
 	debug->string = malloc(MAX_STRING_LENGHT);
-	debug->active = 1;
+	debug_start(debug);
 	hello(debug);
 
 #ifndef DEBUG_ALWAYS_ACTIVE
 	debug_print_P(PSTR("\nActivate debug? (y/N): "), debug);
 
 	if (!debug_wait_for_y(debug)) {
-		uart_shutdown(0);
-		debug->active = 0;
+		debug_stop(debug);
 		free(debug->line);
 		free(debug->string);
 	}

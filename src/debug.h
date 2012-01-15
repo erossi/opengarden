@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,8 @@ void debug_print_P(PGM_P string, struct debug_t *debug);
 void debug_print(struct debug_t *debug);
 void debug_version(struct debug_t *debug);
 uint8_t debug_wait_for_y(struct debug_t *debug);
+void debug_start(struct debug_t *debug);
+void debug_stop(struct debug_t *debug);
 struct debug_t *debug_init(struct debug_t *debug);
 void debug_free(struct debug_t *debug);
 
