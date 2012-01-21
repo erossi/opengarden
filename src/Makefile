@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Enrico Rossi
+# Copyright (C) 2011, 2012 Enrico Rossi
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ all: $(objects)
 debug.o:
 	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
 
-programs:
+programstk:
 	$(DUDE) -c $(DUDESDEV) -P $(DUDESPORT)
 
-programu:
+program:
 	$(DUDE) -c $(DUDEUDEV) -P $(DUDEUPORT)
 
 clean:

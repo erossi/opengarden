@@ -43,7 +43,7 @@ void temperature_update(struct programs_t *progs)
 void temperature_print(struct programs_t *progs, struct debug_t *debug)
 {
 	if (progs->tnow == -99) {
-		debug_print_P(PSTR("ERROR\n"), debug);
+		debug_print_P(PSTR("Not available!\n"), debug);
 	} else {
 		debug_print_P(PSTR("Temperature: "), debug);
 		debug->line = dtostrf(progs->tnow, 3, 5, debug->line);

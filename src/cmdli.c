@@ -66,9 +66,9 @@ void valve_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 			break;
 		case 0:
 			if (progs->valve == MONOSTABLE)
-				debug_print_P(PSTR("monostable (1)\n"), debug);
+				debug_print_P(PSTR("1 - monostable\n"), debug);
 			else
-				debug_print_P(PSTR("bistable (2)\n"), debug);
+				debug_print_P(PSTR("2 - bistable\n"), debug);
 			break;
 		default:
 			debug_print_P(PSTR("ERROR\n"), debug);

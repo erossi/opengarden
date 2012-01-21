@@ -37,12 +37,25 @@ void print_program_details(const uint8_t i, struct programs_t *progs, struct deb
 	debug_print(debug);
 }
 
+/*! \brief Load or re-load the programs from the eeprom.
+ *
+ * There are 2 case scenario, one on boot or after a reset,
+ * the other after an 'C' command.
+ * In the first case we do not have many valid information
+ * like all the temperature informations and log status.
+ * On the other case instead we have all the information
+ * updated.
+ */
 void prog_load(struct programs_t *progs)
 {
-	float tmedia;
+	float tnow, tmedia, dfact;
+	uint8_t log;
 
-	/* keep the Tmedia after the load */
+	/* keep this values after the load */
+	tnow = progs->tnow;
 	tmedia = progs->tmedia;
+	dfact = progs->dfactor;
+	log = progs->log;
 
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
 
@@ -58,10 +71,11 @@ void prog_load(struct programs_t *progs)
 	}
 
 	progs->qc = 0; /* no element in the queue */
-	progs->tnow = -99;
+	/* recover the valid data preserved. */
+	progs->tnow = tnow;
 	progs->tmedia = tmedia;
-	progs->dfactor = 1;
-	progs->log = FALSE;
+	progs->dfactor = dfact;
+	progs->log = log;
 }
 
 /*! \brief Store the programs into the eeprom area */
@@ -74,7 +88,11 @@ void prog_save(struct programs_t *progs)
 struct programs_t *prog_init(struct programs_t *progs)
 {
 	progs = malloc(sizeof(struct programs_t));
-	progs->tmedia = TMEDIA_INIT; /* initalize the Tmedia */
+	/* default temperature infos and log status. */
+	progs->tnow = TNOW_INIT;
+	progs->tmedia = TMEDIA_INIT;
+	progs->dfactor = DFACTOR_INIT;
+	progs->log = FALSE;
 	prog_load(progs);
 	return(progs);
 }

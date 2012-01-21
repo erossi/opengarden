@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 
 /*! \brief temperature media at boot time */
 #define TMEDIA_INIT 15
+#define TNOW_INIT -99
+#define DFACTOR_INIT 0
+
 /*! \brief temperature media weight.
  *
  * 24h = 1440 minutes
