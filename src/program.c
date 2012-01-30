@@ -28,6 +28,20 @@
 /*! global EEPROM variable */
 struct programs_t EEMEM EE_progs;
 
+/*! setup program's struct to sane defaults. */
+void setup_defaults(struct programs_t *progs)
+{
+	progs->check = CHECK_VALID_CODE;
+	progs->number = 0; /* 0 valid program */
+	progs->qc = 0; /* no element in the queue */
+	progs->tnow = TNOW_INIT;
+	progs->tmedia = TMEDIA_INIT;
+	progs->dfactor = DFACTOR_INIT;
+	progs->position = FULLSUN;
+	progs->valve = BISTABLE;
+	progs->log = FALSE;
+}
+
 void print_program_details(const uint8_t i, struct programs_t *progs, struct debug_t *debug)
 {
 	sprintf_P(debug->line, PSTR(" %02d,%02d%02d,%03d,%2x,%1x\n"), i, \
@@ -89,11 +103,7 @@ struct programs_t *prog_init(struct programs_t *progs)
 {
 	progs = malloc(sizeof(struct programs_t));
 	/* default temperature infos and log status. */
-	progs->tnow = TNOW_INIT;
-	progs->tmedia = TMEDIA_INIT;
-	progs->dfactor = DFACTOR_INIT;
-	progs->log = FALSE;
-	prog_load(progs);
+	setup_defaults(progs);
 	return(progs);
 }
 
