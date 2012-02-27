@@ -52,7 +52,7 @@
 #define OFF 0
 #define ON 1
 #define PULSE 2
-#define PULSE_MSEC 100
+#define PULSE_MSEC 25
 
 void io_pin_init(void);
 void io_pin_shut(void);
