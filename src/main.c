@@ -33,6 +33,57 @@
 #include "cmdli.h"
 #include "usb.h"
 
+void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm *tm_clock)
+{
+	led_set(GREEN, ON);
+
+	if (progs->log) {
+		debug_print_P(PSTR("Executing programs at "), debug);
+		date(debug);
+	}
+
+	prog_run(progs, tm_clock, debug);
+
+	if (prog_allarm(progs) && progs->log) {
+		debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
+	} else {
+		if (progs->log) {
+			debug_print_P(PSTR("Run queue at "), debug);
+			date(debug);
+		}
+
+		queue_run(progs, tm_clock, debug);
+	}
+
+	/* print the temperature updated
+	 * from the prog_run call
+	 */
+	if (progs->log)
+		temperature_print(progs, debug);
+
+	led_set(GREEN, OFF);
+}
+
+void going_to_sleep(struct debug_t *debug)
+{
+	/* shut down everything */
+	i2c_shut();
+	debug_stop(debug);
+	io_pin_shut();
+	led_shut();
+	/* start sleep procedure */
+	sleep_enable();
+	sleep_bod_disable();
+	sleep_cpu();
+	sleep_disable();
+	/* restart everything */
+	led_init();
+	io_pin_init();
+	debug_start(debug);
+	debug->active = FALSE;
+	i2c_init();
+}
+
 int main(void)
 {
 	struct debug_t *debug;
@@ -72,58 +123,16 @@ int main(void)
 			c = uart_getchar(0, 0);
 
 			if (c) {
-				/* echo, shoud not be used */
+				/* echo */
 				uart_putchar(0, c);
 				cmdli_exec(c, cmdli, progs, debug);
 			}
 		} else {
-			/* shut down everything */
-			i2c_shut();
-			debug_stop(debug);
-			io_pin_shut();
-			led_shut();
-			/* start sleep procedure */
-			sleep_enable();
-			sleep_bod_disable();
-			sleep_cpu();
-			sleep_disable();
-			/* restart everything */
-			led_init();
-			io_pin_init();
-			debug_start(debug);
-			debug->active = FALSE;
-			i2c_init();
+			going_to_sleep(debug);
 		}
 
-		if (date_timetorun(tm_clock, debug)) {
-			led_set(GREEN, ON);
-
-			if (progs->log) {
-				debug_print_P(PSTR("Executing programs at "), debug);
-				date(debug);
-			}
-
-			prog_run(progs, tm_clock, debug);
-
-			if (prog_allarm(progs) && progs->log) {
-				debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
-			} else {
-				if (progs->log) {
-					debug_print_P(PSTR("Run queue at "), debug);
-					date(debug);
-				}
-
-				queue_run(progs, tm_clock, debug);
-			}
-
-			/* print the temperature updated
-			 * from the prog_run call
-			 */
-			if (progs->log)
-				temperature_print(progs, debug);
-
-			led_set(GREEN, OFF);
-		}
+		if (date_timetorun(tm_clock, debug))
+			job_on_the_field(progs, debug, tm_clock);
 
 		/*! \fixme not so good continuing call this */
 		if (prog_allarm(progs) && progs->log)
@@ -131,6 +140,7 @@ int main(void)
 
 	}
 
+	/* This part should never be reached */
 	date_hwclock_stop();
 	cli();
 	date_free(tm_clock);
