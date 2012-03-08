@@ -120,15 +120,24 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetyp
 	}
 }
 
-uint8_t io_in_allarm(void)
+/*! \brief get allarm status */
+uint8_t io_in_allarm(struct programs_t *progs)
 {
 	uint8_t err = 0;
 
-	if (!(IN_PIN & _BV(IN_P0)))
-		err = _BV(0);
+	if (progs->flags & _BV(FL_ALRM)) {
+		if (IN_PIN & _BV(IN_P0))
+			err |= _BV(0);
 
-	if (!(IN_PIN & _BV(IN_P1)))
-		err |= _BV(1);
+		if (IN_PIN & _BV(IN_P1))
+			err |= _BV(1);
+	} else {
+		if (!(IN_PIN & _BV(IN_P0)))
+			err |= _BV(0);
+
+		if (!(IN_PIN & _BV(IN_P1)))
+			err |= _BV(1);
+	}
 
 	return(err);
 }

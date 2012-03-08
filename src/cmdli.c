@@ -103,6 +103,7 @@ void cmdli_free(struct cmdli_t *cmdli)
 void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("Help command:\n"), debug);
+	debug_print_P(PSTR("a[L | H] - Allarm LOW/HIGH.\n"), debug);
 	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
@@ -133,6 +134,24 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 	switch (*cmd) {
 		case '?':
 			cmdli_help(debug);
+			break;
+		case 'a':
+			switch (*(cmd + 1)) {
+				case 'L':
+					progs->flags &= ~_BV(FL_ALRM);
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				case 'H':
+					progs->flags |= _BV(FL_ALRM);
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				default:
+					if (progs->flags & _BV(FL_ALRM))
+						debug_print_P(PSTR("HIGH\n"), debug);
+					else
+						debug_print_P(PSTR("LOW\n"), debug);
+			}
+
 			break;
 		case 'C':
 			prog_clear(progs);

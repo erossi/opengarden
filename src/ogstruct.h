@@ -35,7 +35,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x04
+#define CHECK_VALID_CODE 0x05
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -56,8 +56,18 @@
 #define MONOSTABLE 1
 #define BISTABLE 2
 
+/*! sunsite 2 bit */
+#define FL_SUNSITE 0
+/*! binary value */
+#define FL_VTYPE 2
+#define FL_LOG_ENA 3
+#define FL_ALRM 4
+
+/*! trivial value */
 #define FALSE 0
 #define TRUE 1
+#define LOW 0
+#define HIGH 1
 
 /*! A single program event structure */
 struct program_t {
@@ -125,6 +135,8 @@ struct programs_t {
 	uint8_t valve;
 	/*! log enable */
 	uint8_t log;
+	/*! I/O allarm active high or low */
+	uint8_t flags;
 };
 
 #endif

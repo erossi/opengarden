@@ -40,6 +40,9 @@ void setup_defaults(struct programs_t *progs)
 	progs->position = FULLSUN;
 	progs->valve = BISTABLE;
 	progs->log = FALSE;
+	/* flags setup */
+	progs->flags = FULLSUN; /* sunsite */
+	progs->flags |= (_BV(FL_ALRM) & HIGH);
 }
 
 void print_program_details(const uint8_t i, struct programs_t *progs, struct debug_t *debug)
@@ -220,7 +223,7 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 uint8_t prog_allarm(struct programs_t *progs)
 {
 	/* if there is an allarm */
-	if (io_in_allarm()) {
+	if (io_in_allarm(progs)) {
 		io_out_off(progs); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);
