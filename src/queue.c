@@ -48,7 +48,7 @@ void print_qline(struct queue_t *q, struct debug_t *debug)
 	}
 }
 
-/* \brief queue a program to be executed.
+/*! \brief queue a program to be executed.
  * \param progs the programs struct.
  * \param tm_clock the time.
  * \param i the program number to be pushed into the queue.
@@ -119,6 +119,19 @@ void q_pop(struct programs_t *progs, const uint8_t i)
 	progs->qc--;
 }
 
+/*! Remove Q_OFF element from the queue.
+ */
+void q_purge(struct programs_t *progs)
+{
+	uint8_t i = 0;
+
+	while (i<progs->qc)
+		if (progs->q[i].status == Q_OFF)
+			q_pop(progs, i);
+		else
+			i++;
+}
+
 /*! Check which program in the queue to exec.
  * \param progs
  * \param tm_clock time now.
@@ -128,8 +141,6 @@ void q_pop(struct programs_t *progs, const uint8_t i)
 void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
 	uint8_t i;
-	/* flag if an IO action has been performed. Used to avoid more than 1 IO operation per minutes. */
-	uint8_t flag = 0;
 	time_t tnow;
 
 	tnow = mktime(tm_clock);
@@ -139,58 +150,51 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 		if (progs->q[i].start <= tnow) {
 			switch (progs->q[i].status) {
 				case Q_NEW:
-					if (io_line_in_use() || flag) {
+					if (io_line_in_use()) {
 						progs->q[i].status = Q_DELAYED;
 					} else {
 						progs->q[i].status = Q_RUN;
 						io_out_set(progs->q[i].oline, ON, progs->valve);
-						flag = 1;
+						/* force exit */
+						i = MAX_PROGS;
 					}
 
-					if (progs->log)
-						print_qline(&progs->q[i], debug);
-
-					i++;
 					break;
 				case Q_RUN:
 					if (progs->q[i].stop <= tnow) {
 						progs->q[i].status = Q_OFF;
 						io_out_set(progs->q[i].oline, OFF, progs->valve);
-						flag = 1;
+						/* force exit */
+						i = MAX_PROGS;
 					}
 
-					if (progs->log)
-						print_qline(&progs->q[i], debug);
-
-					i++;
 					break;
 				case Q_DELAYED:
-					if (!io_line_in_use() && !flag) {
+					if (!io_line_in_use()) {
 						/* recalculate tstart and tend */
 						progs->q[i].stop += tnow - progs->q[i].start;
 						progs->q[i].start = tnow;
 						progs->q[i].status = Q_RUN;
 						io_out_set(progs->q[i].oline, ON, progs->valve);
-						flag = 1;
+						/* force exit */
+						i = MAX_PROGS;
 					}
 
-					if (progs->log)
-						print_qline(&progs->q[i], debug);
-
-					i++;
 					break;
 				case Q_OFF:
 				default:
-					q_pop(progs, i);
 					break;
 			}
-		} else {
-			if (progs->log)
-				print_qline(&progs->q[i], debug);
-
-			i++;
 		}
+
+		if (progs->log)
+			print_qline(&progs->q[i], debug);
+
+		i++;
 	}
+
+	/* purge all Q_OFF elements */
+	q_purge(progs);
 }
 
 /*! list all valid programs */
