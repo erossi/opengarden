@@ -25,26 +25,42 @@
 #include <string.h>
 #include "program.h"
 
-void print_qline(struct queue_t *q, struct debug_t *debug)
+/*! print the status of a queue element.
+ *
+ * \param progs
+ * \param debug
+ * \param index the indexed element of the queue.
+ */
+void print_qstatus(struct programs_t *progs, struct debug_t *debug, const uint8_t index)
 {
-	sprintf_P(debug->line, PSTR(" %10lu,%10lu,%1x,"), q->start, q->stop, q->oline);
-	debug_print(debug);
-
-	switch (q->status) {
+	switch (progs->q[index].status) {
 		case Q_NEW:
-			debug_print_P(PSTR("new\n"), debug);
+			debug_print_P(PSTR("new"), debug);
 			break;
 		case Q_OFF:
-			debug_print_P(PSTR("off\n"), debug);
+			debug_print_P(PSTR("off"), debug);
 			break;
 		case Q_RUN:
-			debug_print_P(PSTR("on\n"), debug);
+			debug_print_P(PSTR("run"), debug);
 			break;
 		case Q_DELAYED:
-			debug_print_P(PSTR("delayed\n"), debug);
+			debug_print_P(PSTR("delayed"), debug);
 			break;
 		default:
-			debug_print_P(PSTR("ERROR\n"), debug);
+			debug_print_P(PSTR("ERROR"), debug);
+	}
+}
+
+void print_qline(struct programs_t *progs, struct debug_t *debug, const uint8_t index)
+{
+	if (progs->log) {
+		sprintf_P(debug->line, PSTR(" %10lu,%10lu,%1x,"), \
+				progs->q[index].start, \
+				progs->q[index].stop, \
+				progs->q[index].oline);
+		debug_print(debug);
+		print_qstatus(progs, debug, index);
+		debug_print_P(PSTR(" -> "), debug);
 	}
 }
 
@@ -132,31 +148,52 @@ void q_purge(struct programs_t *progs)
 			i++;
 }
 
+/*! Open the oline of the indexed queue element.
+ *
+ * Function to recalculate timing and open the oline relative
+ * to the indexed element in the queue.
+ *
+ * \param progs
+ * \param tnow the time
+ * \param index the indexed element.
+ */
+void run(struct programs_t *progs, const time_t tnow, const uint8_t index)
+{
+	/* recalculate tstart and tend */
+	progs->q[index].stop += tnow - progs->q[index].start;
+	progs->q[index].start = tnow;
+	progs->q[index].status = Q_RUN;
+	io_out_set(progs->q[index].oline, ON, progs->valve);
+}
+
 /*! Check which program in the queue to exec.
  * \param progs
  * \param tm_clock time now.
  * \param debug
  * \bug With bistable valve opening and closing oline cannot be done at the same time, any io-action must be done on separate queue-run.
+ * \note the printed infos rappresent the status of a queue before.
  */
 void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug)
 {
-	uint8_t i;
+	uint8_t i, exit;
 	time_t tnow;
 
 	tnow = mktime(tm_clock);
 	i = 0;
+	exit = FALSE;
 
-	while (i<progs->qc) {
+	while ((i<progs->qc) && (exit == FALSE)) {
+		print_qline(progs, debug, i);
+
 		if (progs->q[i].start <= tnow) {
 			switch (progs->q[i].status) {
 				case Q_NEW:
 					if (io_line_in_use()) {
 						progs->q[i].status = Q_DELAYED;
 					} else {
-						progs->q[i].status = Q_RUN;
-						io_out_set(progs->q[i].oline, ON, progs->valve);
+						run(progs, tnow, i);
 						/* force exit */
-						i = MAX_PROGS;
+						exit = TRUE;
 					}
 
 					break;
@@ -165,19 +202,15 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 						progs->q[i].status = Q_OFF;
 						io_out_set(progs->q[i].oline, OFF, progs->valve);
 						/* force exit */
-						i = MAX_PROGS;
+						exit = TRUE;
 					}
 
 					break;
 				case Q_DELAYED:
 					if (!io_line_in_use()) {
-						/* recalculate tstart and tend */
-						progs->q[i].stop += tnow - progs->q[i].start;
-						progs->q[i].start = tnow;
-						progs->q[i].status = Q_RUN;
-						io_out_set(progs->q[i].oline, ON, progs->valve);
+						run(progs, tnow, i);
 						/* force exit */
-						i = MAX_PROGS;
+						exit = TRUE;
 					}
 
 					break;
@@ -187,8 +220,10 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 			}
 		}
 
-		if (progs->log)
-			print_qline(&progs->q[i], debug);
+		if (progs->log) {
+			print_qstatus(progs, debug, i);
+			debug_print_P(PSTR("\n"), debug);
+		}
 
 		i++;
 	}
@@ -205,6 +240,8 @@ void queue_list(struct programs_t *progs, struct debug_t *debug)
 	sprintf_P(debug->line, PSTR("Queue [%02d]\n"), progs->qc);
 	debug_print(debug);
 
-	for (i = 0; i < progs->qc; i++)
-		print_qline(&progs->q[i], debug);
+	for (i = 0; i < progs->qc; i++) {
+		print_qline(progs, debug, i);
+		debug_print_P(PSTR("\n"), debug);
+	}
 }

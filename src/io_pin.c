@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011 Enrico Rossi
+ * Copyright (C) 2011, 2012 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,13 @@
 #include <util/delay.h>
 #include "io_pin.h"
 
-/*! set a valve to On, Off or a pulse of PULSE_MSEC msec. */
+/*! send an On, Off or a pulse of PULSE_MSEC msec. on the 
+ * OUT_CMD_ONOFF pin.
+ */
 void onoff_pulse(const uint8_t status)
 {
 	switch (status) {
 		case ON:
-			/* OnOff pin to on */
 			OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
 			led_set(RED, ON);
 			break;
@@ -41,15 +42,15 @@ void onoff_pulse(const uint8_t status)
 			_delay_ms(1);
 			break;
 		default:
-			/* OnOff pin to off */
 			OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
 			led_set(RED, OFF);
 	}
 }
 
-/*! Open a valve meaning water flows.
+/*! Send the command to open the pre-selected valve.
  *
  * \param valvetype MONOSTABLE or BISTABLE.
+ * \note Open a valve meaning water flows.
  */
 void valve_open(const uint8_t valvetype)
 {
@@ -65,7 +66,7 @@ void valve_open(const uint8_t valvetype)
 	}
 }
 
-/*! Close a valve meaning water stop.
+/*! Inverse of the valve_open().
  *
  * \param valvetype MONOSTABLE or BISTABLE.
  */
@@ -83,17 +84,23 @@ void valve_close(const uint8_t valvetype)
 	}
 }
 
-/*! setup the io port */
-void io_pin_init(void)
+/*! setup the I/O port.
+ *
+ * \param status I/O port status to be activated.
+ * \bug the status of the IO lines should not be used.
+ */
+void io_pin_init(const uint8_t status)
 {
 	IN_DDR &= ~(_BV(IN_P0) | _BV(IN_P1));
 	IN_PORT &= ~(_BV(IN_P0) | _BV(IN_P1));
-	OUT_PORT = 0;
+	/* OUT_PORT = 0; */
+	OUT_PORT = status;
 	OUT_DDR = 0xff; /* all output */
 	OUT_CMD_DDR |= (_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 }
 
+/*! shutdown all I/O pin */
 void io_pin_shut(void)
 {
 	OUT_PORT = 0;
@@ -102,21 +109,28 @@ void io_pin_shut(void)
 	OUT_CMD_DDR &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 }
 
-/*! Set IO oline.
+/*! Set I/O oline.
  *
- * \param oline the output line to be set or clear.
+ * open or close the I/O line, the OUT_PORT is supposed to
+ * rappresent the correct status of the I/O lines so keep in mind
+ * to save and restore this value during sleep time.
+ *
+ * \param oline the output line to be set.
  * \param onoff set or clear.
  * \valvetype type of the valve in used.
- * \note online is in the range 1 to 8.
+ * \note online is in the range 0 to 7.
+ * \note no more than 1 line can be used at the same time.
+ * \note if OFF, the oline param is ignored, there should be only 1 oline
+ * in use to be closed.
  */
 void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype)
 {
 	if (onoff) {
-		OUT_PORT |= _BV(oline);
+		OUT_PORT = _BV(oline);
 		valve_open(valvetype);
 	} else {
 		valve_close(valvetype);
-		OUT_PORT &= ~_BV(oline);
+		OUT_PORT = 0;
 	}
 }
 
@@ -142,7 +156,10 @@ uint8_t io_in_allarm(struct programs_t *progs)
 	return(err);
 }
 
-/*! \brief Are there any IO out line in use?
+/*! Are there any IO out line in use?
+ *
+ * \bug this function is used also to get the I/O port status
+ * for sleep and restore I/O lines.
  */
 uint8_t io_line_in_use(void)
 {
@@ -150,12 +167,11 @@ uint8_t io_line_in_use(void)
 }
 
 /*! Close all the output line.
- * \bug non compatibile with bistable valve, too quick.
+ *
+ * \note the oline is ignored since there must be only one oline
+ * in use.
  */
 void io_out_off(struct programs_t *progs)
 {
-	uint8_t i;
-
-	for (i=0; i<8; i++)
-		io_out_set(i, OFF, progs->valve);
+	io_out_set(0, OFF, progs->valve);
 }
