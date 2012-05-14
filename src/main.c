@@ -35,7 +35,8 @@
 
 void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm *tm_clock)
 {
-	led_set(GREEN, ON);
+	if (flags_handle(progs, 0, FL_LED))
+		led_set(GREEN, ON);
 
 	if (progs->log) {
 		debug_print_P(PSTR("Executing programs at "), debug);
@@ -44,8 +45,12 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
 
 	prog_run(progs, tm_clock, debug);
 
-	if (prog_allarm(progs) && progs->log) {
-		debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
+	if (prog_allarm(progs)) {
+		if (flags_handle(progs, 0, FL_LED))
+			led_set(RED, BLINK);
+
+		if (progs->log)
+			debug_print_P(PSTR("ALLARM! queue run skipped!\n"), debug);
 	} else {
 		if (progs->log) {
 			debug_print_P(PSTR("Run queue at "), debug);
@@ -142,9 +147,13 @@ int main(void)
 			job_on_the_field(progs, debug, tm_clock);
 
 		/*! \fixme not so good continuing call this */
-		if (prog_allarm(progs) && progs->log)
-			debug_print_P(PSTR("ALLARM! queue removed, I/O lines closed!\n"), debug);
+		if (prog_allarm(progs)) {
+			if (flags_handle(progs, 0, FL_LED))
+				led_set(RED, BLINK);
 
+			if (progs->log)
+				debug_print_P(PSTR("ALLARM! queue removed, I/O lines closed!\n"), debug);
+		}
 	}
 
 	/* This part should never be reached */

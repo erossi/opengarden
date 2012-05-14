@@ -107,6 +107,7 @@ void cmdli_help(struct debug_t *debug)
 	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
+	debug_print_P(PSTR("e[0 | 1] - led OFF/ON\n"), debug);
 	debug_print_P(PSTR("g - Print the temperature.\n"), debug);
 	debug_print_P(PSTR("l - list programs.\n"), debug);
 	debug_print_P(PSTR("L[0 | 1] - logs OFF/ON\n"), debug);
@@ -175,6 +176,9 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 			else
 				debug_print_P(PSTR("ERROR\n"), debug);
 
+			break;
+		case 'e':
+			flags_handle_p(progs, debug, (*(cmd + 1)), FL_LED);
 			break;
 		case 'g':
 			temperature_print(progs, debug);

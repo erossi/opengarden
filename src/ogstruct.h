@@ -23,6 +23,7 @@
 #define OGSTR_H
 
 #include "date.h"
+#include "debug.h"
 
 /*! \brief check code to control if a valid program is in memory.
  *
@@ -35,7 +36,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x05
+#define CHECK_VALID_CODE 0x06
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -56,18 +57,24 @@
 #define MONOSTABLE 1
 #define BISTABLE 2
 
-/*! sunsite 2 bit */
+/*! flag sunsite 2 bit (0, 1) */
 #define FL_SUNSITE 0
-/*! binary value */
+/*! flag valve type bit 2 */
 #define FL_VTYPE 2
+/*! flag log enable bit 3 */
 #define FL_LOG_ENA 3
+/*! flag alarm High or Low */
 #define FL_ALRM 4
+/*! flag leds ON or OFF */
+#define FL_LED 5
 
 /*! trivial value */
 #define FALSE 0
 #define TRUE 1
 #define LOW 0
 #define HIGH 1
+#define OFF 0
+#define ON 1
 
 /*! A single program event structure */
 struct program_t {
@@ -138,5 +145,10 @@ struct programs_t {
 	/*! I/O allarm active high or low */
 	uint8_t flags;
 };
+
+uint8_t flags_handle(struct programs_t *progs, const char c,
+		const uint8_t bit);
+void flags_handle_p(struct programs_t *progs, struct debug_t *debug,
+	       const char c, const uint8_t bit);
 
 #endif

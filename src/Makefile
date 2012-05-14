@@ -51,7 +51,7 @@ tcn75_obj = i2c.o tcn75.o
 temperature_obj = $(tcn75_obj) temperature.o
 debug_obj = uart.o debug.o
 objects = $(debug_obj) $(time_obj) $(temperature_obj)
-objects += led.o io_pin.o program.o cmdli.o queue.o usb.o
+objects += led.o io_pin.o program.o cmdli.o queue.o usb.o ogstruct.o
 
 .PHONY: clean indent
 .SILENT: help
