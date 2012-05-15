@@ -57,7 +57,7 @@
 void io_pin_init(const uint8_t status);
 void io_pin_shut(void);
 void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype);
-uint8_t io_in_allarm(struct programs_t *progs);
+uint8_t io_in_alarm(struct programs_t *progs);
 uint8_t io_line_in_use(void);
 void io_out_off(struct programs_t *progs);
 

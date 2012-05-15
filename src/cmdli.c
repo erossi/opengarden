@@ -103,7 +103,7 @@ void cmdli_free(struct cmdli_t *cmdli)
 void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("Help command:\n"), debug);
-	debug_print_P(PSTR("a[L | H] - Allarm LOW/HIGH.\n"), debug);
+	debug_print_P(PSTR("a[L | H] - Alarm LOW/HIGH.\n"), debug);
 	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);

@@ -39,6 +39,6 @@ void prog_clear(struct programs_t *progs);
 void prog_add(struct programs_t *progs, const char *s);
 uint8_t prog_del(struct programs_t *progs, const uint8_t n);
 void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *debug);
-uint8_t prog_allarm(struct programs_t *progs);
+uint8_t prog_alarm(struct programs_t *progs);
 
 #endif

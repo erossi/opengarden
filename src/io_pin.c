@@ -134,8 +134,8 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetyp
 	}
 }
 
-/*! \brief get allarm status */
-uint8_t io_in_allarm(struct programs_t *progs)
+/*! \brief get alarm status */
+uint8_t io_in_alarm(struct programs_t *progs)
 {
 	uint8_t err = 0;
 

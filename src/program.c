@@ -216,14 +216,14 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 	}
 }
 
-/*! test allarm lines and act accordingly.
+/*! test alarm lines and act accordingly.
  *
  * \bug Bistable valve non-compatible.
  */
-uint8_t prog_allarm(struct programs_t *progs)
+uint8_t prog_alarm(struct programs_t *progs)
 {
-	/* if there is an allarm */
-	if (io_in_allarm(progs)) {
+	/* if there is an alarm */
+	if (io_in_alarm(progs)) {
 		io_out_off(progs); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);

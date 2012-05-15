@@ -142,7 +142,7 @@ struct programs_t {
 	uint8_t valve;
 	/*! log enable */
 	uint8_t log;
-	/*! I/O allarm active high or low */
+	/*! I/O alarm active high or low */
 	uint8_t flags;
 };
 
