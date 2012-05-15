@@ -32,7 +32,6 @@ void onoff_pulse(const uint8_t status)
 	switch (status) {
 		case ON:
 			OUT_CMD_PORT |= _BV(OUT_CMD_ONOFF);
-			led_set(RED, ON);
 			break;
 		case PULSE:
 			_delay_ms(1);
@@ -43,7 +42,6 @@ void onoff_pulse(const uint8_t status)
 			break;
 		default:
 			OUT_CMD_PORT &= ~_BV(OUT_CMD_ONOFF);
-			led_set(RED, OFF);
 	}
 }
 
