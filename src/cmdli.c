@@ -139,15 +139,15 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 'a':
 			switch (*(cmd + 1)) {
 				case 'L':
-					progs->flags &= ~_BV(FL_ALRM);
+					flag_set(progs, FL_LEVEL, FALSE);
 					debug_print_P(PSTR("OK\n"), debug);
 					break;
 				case 'H':
-					progs->flags |= _BV(FL_ALRM);
+					flag_set(progs, FL_LEVEL, TRUE);
 					debug_print_P(PSTR("OK\n"), debug);
 					break;
 				default:
-					if (progs->flags & _BV(FL_ALRM))
+					if (flag_get(progs, FL_LEVEL))
 						debug_print_P(PSTR("HIGH\n"), debug);
 					else
 						debug_print_P(PSTR("LOW\n"), debug);
@@ -178,7 +178,22 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 
 			break;
 		case 'e':
-			flags_handle_p(progs, debug, (*(cmd + 1)), FL_LED);
+			switch (*(cmd + 1)) {
+				case '0':
+					flag_set(progs, FL_LED, FALSE);
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				case '1':
+					flag_set(progs, FL_LED, TRUE);
+					debug_print_P(PSTR("OK\n"), debug);
+					break;
+				default:
+					if (flag_get(progs, FL_LED))
+						debug_print_P(PSTR("ON\n"), debug);
+					else
+						debug_print_P(PSTR("OFF\n"), debug);
+			}
+
 			break;
 		case 'g':
 			temperature_print(progs, debug);
@@ -189,15 +204,15 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 		case 'L':
 			switch (*(cmd + 1)) {
 				case '0':
-					progs->log = FALSE;
+					flag_set(progs, FL_LOG, FALSE);
 					debug_print_P(PSTR("OK\n"), debug);
 					break;
 				case '1':
-					progs->log = TRUE;
+					flag_set(progs, FL_LOG, TRUE);
 					debug_print_P(PSTR("OK\n"), debug);
 					break;
 				default:
-					if (progs->log)
+					if (flag_get(progs, FL_LOG))
 						debug_print_P(PSTR("ON\n"), debug);
 					else
 						debug_print_P(PSTR("OFF\n"), debug);

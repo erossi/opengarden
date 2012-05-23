@@ -35,10 +35,10 @@
 
 void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm *tm_clock)
 {
-	if (flags_handle(progs, 0, FL_LED))
+	if (flag_get(progs, FL_LED))
 		led_set(GREEN, ON);
 
-	if (progs->log) {
+	if (flag_get(progs, FL_LOG)) {
 		debug_print_P(PSTR("Executing programs at "), debug);
 		date(debug);
 	}
@@ -46,13 +46,13 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
 	prog_run(progs, tm_clock, debug);
 
 	if (prog_alarm(progs)) {
-		if (flags_handle(progs, 0, FL_LED))
+		if (flag_get(progs, FL_LED))
 			led_set(RED, BLINK);
 
-		if (progs->log)
+		if (flag_get(progs, FL_LOG))
 			debug_print_P(PSTR("ALARM! queue run skipped!\n"), debug);
 	} else {
-		if (progs->log) {
+		if (flag_get(progs, FL_LOG)) {
 			debug_print_P(PSTR("Run queue at "), debug);
 			date(debug);
 		}
@@ -63,7 +63,7 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
 	/* print the temperature updated
 	 * from the prog_run call
 	 */
-	if (progs->log)
+	if (flag_get(progs, FL_LOG))
 		temperature_print(progs, debug);
 
 	led_set(GREEN, OFF);
@@ -148,10 +148,10 @@ int main(void)
 
 		/*! \fixme not so good continuing call this */
 		if (prog_alarm(progs)) {
-			if (flags_handle(progs, 0, FL_LED))
+			if (flag_get(progs, FL_LED))
 				led_set(RED, BLINK);
 
-			if (progs->log)
+			if (flag_get(progs, FL_LOG))
 				debug_print_P(PSTR("ALARM! queue removed, I/O lines closed!\n"), debug);
 		}
 	}

@@ -39,10 +39,9 @@ void setup_defaults(struct programs_t *progs)
 	progs->dfactor = DFACTOR_INIT;
 	progs->position = FULLSUN;
 	progs->valve = BISTABLE;
-	progs->log = FALSE;
 	/* flags setup */
 	progs->flags = FULLSUN; /* sunsite */
-	progs->flags |= (_BV(FL_ALRM) & HIGH);
+	flag_set(progs, FL_LEVEL, TRUE);
 }
 
 void print_program_details(const uint8_t i, struct programs_t *progs, struct debug_t *debug)
@@ -66,13 +65,13 @@ void print_program_details(const uint8_t i, struct programs_t *progs, struct deb
 void prog_load(struct programs_t *progs)
 {
 	float tnow, tmedia, dfact;
-	uint8_t log;
+	uint8_t flags;
 
 	/* keep this values after the load */
 	tnow = progs->tnow;
 	tmedia = progs->tmedia;
 	dfact = progs->dfactor;
-	log = progs->log;
+	flags = progs->flags;
 
 	eeprom_read_block(progs, &EE_progs, sizeof(struct programs_t));
 
@@ -92,7 +91,7 @@ void prog_load(struct programs_t *progs)
 	progs->tnow = tnow;
 	progs->tmedia = tmedia;
 	progs->dfactor = dfact;
-	progs->log = log;
+	progs->flags = flags;
 }
 
 /*! \brief Store the programs into the eeprom area */
@@ -137,7 +136,7 @@ void prog_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *deb
 				(progs->p[i].hstart == tm_clock->tm_hour) &&
 				(progs->p[i].mstart == tm_clock->tm_min)) {
 
-			if (progs->log)
+			if (flag_get(progs, FL_LOG))
 				print_program_details(i, progs, debug);
 
 			q_push(progs, tm_clock, i);

@@ -16,67 +16,57 @@
  */
 
 /*! \file ogstruct.c
-  \brief Utility to handle struct parameters.
-  */
+ * \brief Utility to handle struct parameters.
+ */
 
 #include <stdlib.h>
 #include "ogstruct.h"
 
-/*! Set or Get flag value.
+/*! Set flag value.
  *
  * This function will set or clear the correspondent bit
  * in the flags byte.
  *
- * \example set the leds is
- * flags(progs, '1', FL_LEDS);
+ * \example set the led flag is
+ * flag_set(progs, FL_LEDS, TRUE);
+ *
+ * \example clear the led flag value is
+ * flag_set(progs, FL_LEDS, FALSE);
  *
  * \param *progs the ogstruct.
- * \param c the value to set or none to get.
  * \param bit the bit of the flag's byte.
+ * \param val TRUE or FALSE.
  */
-uint8_t flags_handle(struct programs_t *progs, const char c,
-		const uint8_t bit)
+void flag_set(struct programs_t *progs, const uint8_t bit,
+		const uint8_t val)
 {
-	switch (c) {
-		/* clear the bit */
-		case '0': progs->flags &= ~_BV(bit);
-			  break;
-			  /* set the bit */
-		case '1': progs->flags |= _BV(bit);
-			  break;
-	}
+	if (val)
+		progs->flags |= _BV(bit);
+	else
+		progs->flags &= ~_BV(bit);
+}
 
+/*! Get flag value.
+ *
+ * This function will get the correspondent bit
+ * in the flags byte.
+ *
+ * \example check the led flag value is
+ *  if (flag_get(progs, FL_LEDS)) ...
+ *
+ * \param *progs the ogstruct.
+ * \param bit the bit of the flag's byte.
+ * \return TRUE or FALSE
+ */
+uint8_t flag_get(struct programs_t *progs, const uint8_t bit)
+{
 	if (progs->flags & _BV(bit))
 		return(TRUE);
 	else
 		return(FALSE);
 }
 
-/*! Set or Get flag value with printing.
- *
- * This function will set or clear the correspondent bit
- * in the flags byte.
- *
- * \param *progs the ogstruct.
- * \param *debub for printing.
- * \param c the value to set or none to get.
- * \param bit the bit of the flag's byte.
- */
-void flags_handle_p(struct programs_t *progs, struct debug_t *debug,
-	       const char c, const uint8_t bit)
-{
-	if (c) {
-		flags_handle(progs, c, bit);
-		debug_print_P(PSTR("OK\n"), debug);
-	} else {
-		if (flags_handle(progs, 0, bit))
-			debug_print_P(PSTR("ON\n"), debug);
-		else
-			debug_print_P(PSTR("OFF\n"), debug);
-	}
-}
-
-/* Incomplete */
+/* to be complete */
 void flag_sunsite(struct programs_t *progs, const char c)
 {
 	switch (c) {
@@ -98,6 +88,7 @@ void flag_sunsite(struct programs_t *progs, const char c)
 	}
 }
 
+/* to be completed */
 void flag_valve(struct programs_t *progs, const char c)
 {
 	switch (c) {

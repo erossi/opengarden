@@ -36,7 +36,7 @@
  * If, during programming, you nuke the flash memory too, this check
  * code is useless.
  */
-#define CHECK_VALID_CODE 0x06
+#define CHECK_VALID_CODE 0x07
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
 #define PROG_MAX_FACTOR 3.0
@@ -59,14 +59,16 @@
 
 /*! flag sunsite 2 bit (0, 1) */
 #define FL_SUNSITE 0
-/*! flag valve type bit 2 */
+/*! flag valve type mono/bi-stable */
 #define FL_VTYPE 2
-/*! flag log enable bit 3 */
-#define FL_LOG_ENA 3
-/*! flag alarm High or Low */
-#define FL_ALRM 4
+/*! flag log enable/disable */
+#define FL_LOG 3
+/*! flag alarm level High or Low */
+#define FL_LEVEL 4
 /*! flag leds ON or OFF */
 #define FL_LED 5
+/*! flag alarm active */
+#define FL_ALRM 6
 
 /*! trivial value */
 #define FALSE 0
@@ -140,15 +142,13 @@ struct programs_t {
 	uint8_t position;
 	/*! valve type */
 	uint8_t valve;
-	/*! log enable */
-	uint8_t log;
-	/*! I/O alarm active high or low */
+	/*! see FL_ definition for this bit mapped byte flag. */
 	uint8_t flags;
 };
 
-uint8_t flags_handle(struct programs_t *progs, const char c,
-		const uint8_t bit);
-void flags_handle_p(struct programs_t *progs, struct debug_t *debug,
-	       const char c, const uint8_t bit);
+
+void flag_set(struct programs_t *progs, const uint8_t bit,
+		const uint8_t val);
+uint8_t flag_get(struct programs_t *progs, const uint8_t bit);
 
 #endif

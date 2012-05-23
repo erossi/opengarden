@@ -53,7 +53,7 @@ void print_qstatus(struct programs_t *progs, struct debug_t *debug, const uint8_
 
 void print_qline(struct programs_t *progs, struct debug_t *debug, const uint8_t index)
 {
-	if (progs->log) {
+	if (flag_get(progs, FL_LOG)) {
 		sprintf_P(debug->line, PSTR(" %10lu,%10lu,%1x,"), \
 				progs->q[index].start, \
 				progs->q[index].stop, \
@@ -220,7 +220,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 			}
 		}
 
-		if (progs->log) {
+		if (flag_get(progs, FL_LOG)) {
 			print_qstatus(progs, debug, i);
 			debug_print_P(PSTR("\n"), debug);
 		}

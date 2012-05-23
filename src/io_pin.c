@@ -132,12 +132,18 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetyp
 	}
 }
 
-/*! \brief get alarm status */
+/*! \brief get alarm status.
+ * It return if one or both the alarm line are set, based on
+ * the alarm level trigger.
+ *
+ * \param progs the struct to look for the alarm level setup.
+ * \return 0 - 3 the alarm line active in binary mapping.
+ */
 uint8_t io_in_alarm(struct programs_t *progs)
 {
 	uint8_t err = 0;
 
-	if (progs->flags & _BV(FL_ALRM)) {
+	if (flag_get(progs, FL_LEVEL)) {
 		if (IN_PIN & _BV(IN_P0))
 			err |= _BV(0);
 
@@ -150,6 +156,11 @@ uint8_t io_in_alarm(struct programs_t *progs)
 		if (!(IN_PIN & _BV(IN_P1)))
 			err |= _BV(1);
 	}
+
+	if (err)
+		flag_set(progs, FL_ALRM, TRUE);
+	else
+		flag_set(progs, FL_ALRM, FALSE);
 
 	return(err);
 }
