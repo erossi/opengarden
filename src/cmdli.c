@@ -104,6 +104,7 @@ void cmdli_help(struct debug_t *debug)
 {
 	debug_print_P(PSTR("Help command:\n"), debug);
 	debug_print_P(PSTR("a[L | H] - Alarm LOW/HIGH.\n"), debug);
+	debug_print_P(PSTR("A - Print the alarm status.\n"), debug);
 	debug_print_P(PSTR("C - clear all programs from memory.\n"), debug);
 	debug_print_P(PSTR("d[seconds] - print or set the absolute time. TimeZones not supported!\n"), debug);
 	debug_print_P(PSTR("DNN - delete program number NN.\n"), debug);
@@ -152,6 +153,13 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 					else
 						debug_print_P(PSTR("LOW\n"), debug);
 			}
+
+			break;
+		case 'A':
+			if (flag_get(progs, FL_ALRM))
+				debug_print_P(PSTR("ON\n"), debug);
+			else
+				debug_print_P(PSTR("OFF\n"), debug);
 
 			break;
 		case 'C':
