@@ -29,7 +29,7 @@
 /* please note that the tm structure has the years since 1900,
    but time returns the seconds since 1970 */
 
-static unsigned char monthDays[] PROGMEM = {31,28,31,30,31,30,31,31,30,31,30,31};
+static const unsigned char monthDays[] PROGMEM = {31,28,31,30,31,30,31,31,30,31,30,31};
 char * __month[]={"Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"};
 char * __day[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 static char ascTimeBuffer[32];
