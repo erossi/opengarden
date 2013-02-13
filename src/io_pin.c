@@ -110,7 +110,7 @@ void io_pin_shut(void)
 /*! Set I/O oline.
  *
  * open or close the I/O line, the OUT_PORT is supposed to
- * rappresent the correct status of the I/O lines so keep in mind
+ * represent the correct status of the I/O lines so keep in mind
  * to save and restore this value during sleep time.
  *
  * \param oline the output line to be set.

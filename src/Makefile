@@ -57,6 +57,9 @@ objects += led.o io_pin.o program.o cmdli.o queue.o usb.o ogstruct.o
 .SILENT: help
 .SUFFIXES: .c, .o
 
+# Export variables used in sub-make
+.EXPORT_ALL_VARIABLES: doc
+
 all: $(objects)
 	$(CC) $(CFLAGS) -o $(PRGNAME).elf main.c $(objects) $(LFLAGS)
 	$(OBJCOPY) $(PRGNAME).elf $(PRGNAME).hex
@@ -76,8 +79,11 @@ clean:
 version:
 	# Last Git tag: $(GIT_TAG)
 
+doc_timing:
+	$(MAKE) -C ../doc timing
+
 doc:
-	cd ../ && ( cat doc/Doxyfile ; echo "PROJECT_NUMBER=$(GIT_TAG)" ) | doxygen -
+	$(MAKE) -C ../doc doxygen
 
 size:
 	$(SIZE)

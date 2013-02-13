@@ -5,4 +5,4 @@ Doxyfile
 *.hex
 *.o
 *.swp
-
+*.timing.png

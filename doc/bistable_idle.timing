@@ -1,0 +1,35 @@
+# Copyright (C) 2013 Enrico Rossi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# BISTABLE timing diagram.
+# usage with drawtiming software, see makefile for more info.
+#
+PB0 = 0, PB1 = 0, PA07 = 0, Action = "".
+PB1 = 1, PA07 = 1, Action = " Open the line".
+PB1 -1ms> PB0 = 1, PB1 = 1.
+.....
+PB1 -PULSE MSEC (25ms)> PB0 = 0.
+PB1 -1ms> PB1 = 0, Action = " Line Opened".
+.
+PB0 = Z, PB1 = Z, PA07 = Z.
+........
+PA07 -Idle time, all lines in 3-state> PB0 = 0, PB1 = 0, PA07 = 1.
+.
+PB1 = 0, Action = " Close the line".
+PB1 -1ms> PB0 = 1, PB1 = 0.
+.....
+PB1 -PULSE MSEC (25ms)> PB0 = 0.
+PB1 -1ms> PB1 = 0, PA07 = 0, Action = "".
+.
