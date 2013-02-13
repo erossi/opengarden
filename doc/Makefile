@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 GIT_TAG = "$(shell git describe --tags)"
-REMOVE = rm -f
+REMOVE = rm -r
 
 # Remote www install
 MYWEBSERVER = www.enricorossi.org:/home/doxygen/opengarden/
@@ -45,6 +45,7 @@ all:
 
 clean:
 	$(REMOVE) $(obj_timing)
+	$(REMOVE) html/*
 
 version:
 	# Last Git tag: $(GIT_TAG)
