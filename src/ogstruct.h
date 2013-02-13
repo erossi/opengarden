@@ -144,6 +144,7 @@ struct programs_t {
 	uint8_t qc;
 	/*! array of the programs 0..(MAX_PROGS - 1)*/
 	struct program_t p[MAX_PROGS];
+	/*! queue programs 0..(MAX_PROGS - 1)*/
 	struct queue_t q[MAX_PROGS];
 	/*! temperature realtime */
 	float tnow;

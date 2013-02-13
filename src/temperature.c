@@ -40,6 +40,8 @@ void temperature_update(struct programs_t *progs)
 	}
 }
 
+/*! print the temperature.
+ */
 void temperature_print(struct programs_t *progs, struct debug_t *debug)
 {
 	if (progs->tnow == -99) {
@@ -58,6 +60,8 @@ void temperature_print(struct programs_t *progs, struct debug_t *debug)
 	}
 }
 
+/*! initialize the temperature sensor.
+ */
 void temperature_init(void)
 {
 	tcn75_init();

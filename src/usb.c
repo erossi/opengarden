@@ -15,10 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*!
-  \file usb.c
-  \brief usb connection cheching functions
-  */
+/*! \file usb.c
+ * \brief usb connection cheching functions
+ */
 
 #include <stdint.h>
 #include <avr/io.h>
@@ -31,6 +30,7 @@ ISR(INT0_vect)
 	usb_is_connected();
 }
 
+/*! check if usb port is connected. */
 uint8_t usb_is_connected(void)
 {
 	if (USB_PORTIN & _BV(USB_PIN))

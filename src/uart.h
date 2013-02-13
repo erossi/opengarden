@@ -28,22 +28,35 @@
 #define UART_BAUD_1 9600
 /*! IO Buffers and masks */
 #define UART_RXBUF_SIZE 64
+/*! IO Buffers and masks */
 #define UART_TXBUF_SIZE 64
+/*! IO Buffers and masks */
 #define UART_RXBUF_MASK ( UART_RXBUF_SIZE - 1 )
+/*! IO Buffers and masks */
 #define UART_TXBUF_MASK ( UART_TXBUF_SIZE - 1 )
 /*! Check if something is wrong in the definitions */
 #if ( UART_RXBUF_SIZE & UART_RXBUF_MASK )
 #error RX buffer size is not a power of 2
 #endif
+/*! Check if something is wrong in the definitions */
 #if ( UART_TXBUF_SIZE & UART_TXBUF_MASK )
 #error TX buffer size is not a power of 2
 #endif
 
 /*! Structure with IO buffers and indexes */
 struct uartStruct {
+	/*! receive buffer. */
         char *rx_buffer;
+	/*! transmit buffer. */
         char *tx_buffer;
-        volatile uint8_t rx_flag, tx_flag, rxIdx, txIdx;
+	/*! flags. */
+        volatile uint8_t rx_flag;
+	/*! flags. */
+        volatile uint8_t tx_flag;
+	/*! flags. */
+        volatile uint8_t rxIdx;
+	/*! flags. */
+        volatile uint8_t txIdx;
 };
 
 void uart_init(const uint8_t port);

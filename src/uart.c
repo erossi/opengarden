@@ -18,6 +18,7 @@
 #include <avr/io.h>
 #include "uart.h"
 
+/*! Init the uart port. */
 void uart_init(const uint8_t port)
 {
 	if (port) {
@@ -49,6 +50,7 @@ void uart_init(const uint8_t port)
 	}
 }
 
+/*! Disable the uart port. */
 void uart_shutdown(const uint8_t port)
 {
 	if (port) {
@@ -64,6 +66,7 @@ void uart_shutdown(const uint8_t port)
 	}
 }
 
+/*! Get a char from the uart port. */
 char uart_getchar(const uint8_t port, const uint8_t locked)
 {
 	if (locked) {
@@ -89,8 +92,7 @@ char uart_getchar(const uint8_t port, const uint8_t locked)
 	}
 }
 
-/*!
- * Send character c down the UART Tx, wait until tx holding register
+/*! Send character c down the UART Tx, wait until tx holding register
  * is empty.
  */
 void uart_putchar(const uint8_t port, const char c)
@@ -104,8 +106,7 @@ void uart_putchar(const uint8_t port, const char c)
   }
 }
 
-/*!
- * Send a C (NUL-terminated) string down the UART Tx.
+/*! Send a C (NUL-terminated) string down the UART Tx.
  */
 void uart_printstr(const uint8_t port, const char *s)
 {

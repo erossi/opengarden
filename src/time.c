@@ -35,14 +35,17 @@ char * __day[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 static char ascTimeBuffer[32];
 static struct tm lastTime;
 
+/*! C lib settimeofday */
 void settimeofday(const time_t seconds) {
 	rtc_seconds = seconds;
 }
 
+/*! C lib gettimeofday */
 time_t gettimeofday(void) {
 	return(rtc_seconds);
 }
 
+/*! C lib time */
 time_t time(time_t *t) {
 	if (t)
 		*t = rtc_seconds;
@@ -50,7 +53,7 @@ time_t time(time_t *t) {
 	return(rtc_seconds);
 }
 
-/* validate the tm structure */
+/*! validate the tm structure */
 static void CheckTime(struct tm *timeptr) {
 	/* we could do some normalization here, e.g.
 	 change 40 october to 9 november */
@@ -64,7 +67,7 @@ static void CheckTime(struct tm *timeptr) {
 	if (timeptr->tm_year<0) timeptr->tm_year=0;
 }
 
-/* format the time into "Sat Feb 17 17:45:23 2001\n" */
+/*! format the time into "Sat Feb 17 17:45:23 2001\n" */
 char *asctime(struct tm *timeptr) {
 	CheckTime(timeptr);
 	sprintf_P(ascTimeBuffer, PSTR("%s %s %2d %02d:%02d:%02d %04d"),
@@ -74,11 +77,11 @@ char *asctime(struct tm *timeptr) {
 	return(ascTimeBuffer);
 }
 
-/* convert calendar time (seconds since 1970) to broken-time
-   This only works for dates between 01-01-1970 00:00:00 and 
-   19-01-2038 03:14:07
+/*! convert calendar time (seconds since 1970) to broken-time.
+ *
+ * This only works for dates between 01-01-1970 00:00:00 and
+ * 19-01-2038 03:14:07
  */
-
 struct tm *gmtime(time_t *timep) {
 	unsigned long epoch=*timep;
 	unsigned int year;
@@ -96,7 +99,7 @@ struct tm *gmtime(time_t *timep) {
 	year=1970;
 	days=0;
 
-	while((days += (LEAP_YEAR(year) ? 366 : 365)) <= epoch) {
+	while ((days += (LEAP_YEAR(year) ? 366 : 365)) <= epoch) {
 		year++;
 	}
 
@@ -134,11 +137,12 @@ struct tm *gmtime(time_t *timep) {
 	return(&lastTime);
 }
 
+/*! C lib ctime */
 char *ctime(time_t *timep) {
 	return(asctime(gmtime(timep)));
 }
 
-/* convert broken time to calendar time (seconds since 1970) */
+/*! convert broken time to calendar time (seconds since 1970) */
 time_t mktime(struct tm *timeptr) {
 	int year=timeptr->tm_year+1900;
 	int month=timeptr->tm_mon;

@@ -16,18 +16,24 @@
  */
 
 /*! \file usb.h
-  \brief usb connection related functions
+ * \brief usb connection related functions
  */
 
 #ifndef USB_H
 #define USB_H
 
+/*! usb port line. */
 #define USB_PORT PORTD
+/*! usb port DDR. */
 #define USB_DDR DDRD
+/*! usb pin port. */
 #define USB_PORTIN PIND
+/*! usb pin. */
 #define USB_PIN PIND2
 
+/*! true */
 #define TRUE 1
+/*! false */
 #define FALSE 0
 
 /*! Global used in interrupt.

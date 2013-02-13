@@ -15,8 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*! \file i2c.h */
-
+/*! \file tcn75.h */
 #ifndef TCN75
 #define TCN75
 

@@ -25,16 +25,16 @@
 
 /*! \file time.h
  * \brief standard libc time handling functions,
- * reduced and adapted to atmega project. */
+ * reduced and adapted to atmega project.
+ */
 
 #ifndef TIME_H
 #define TIME_H
 
 #include "rtc.h"
 
-/*!
-   A leap year is ((((year%4)==0) && ((year%100)!=0)) || ((year%400)==0)) 
-   but since we have no fancy years between 1970 and 2038 we can do:
+/*! A leap year is ((((year%4)==0) && ((year%100)!=0)) || ((year%400)==0))
+ * but since we have no fancy years between 1970 and 2038 we can do:
  */
 #define LEAP_YEAR(year) ((year%4)==0)
 

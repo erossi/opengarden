@@ -16,8 +16,8 @@
  */
 
 /*! \file temperature.h
-  \brief temperature functions 
-  */
+ * \brief temperature functions.
+ */
 
 #ifndef TEMPERATURE_H
 #define TEMPERATURE_H
@@ -28,7 +28,9 @@
 
 /*! \brief temperature media at boot time */
 #define TMEDIA_INIT 15
+/*! initial value. */
 #define TNOW_INIT -99
+/*! delay factor initial value. */
 #define DFACTOR_INIT 0
 
 /*! \brief temperature media weight.
@@ -38,6 +40,7 @@
  * wmedia = 1.0 - wsingle;
  */
 #define TMEDIA_WSING 0.0007
+/*! media wall */
 #define TMEDIA_WALL 0.9993
 
 /*! The formula is:
@@ -45,11 +48,15 @@
  * \note keep this float
  */
 #define TMEDIA_RATIO_FS 5.0
+/*! ratio hs */
 #define TMEDIA_RATIO_HS 6.0
+/*! ratio sw */
 #define TMEDIA_RATIO_SW 5.0
 /*! \brief temperature at which time is considered ok */
 #define TMEDIA_BASE_FS 24.0
+/*! media base hs */
 #define TMEDIA_BASE_HS 20.0
+/*! media base sw */
 #define TMEDIA_BASE_SW 15.0
 
 void temperature_update(struct programs_t *progs);
