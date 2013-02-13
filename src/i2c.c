@@ -23,6 +23,11 @@
 #include <util/twi.h>
 #include "i2c.h"
 
+/*! Send the i2c status to the bus.
+ *
+ * \param code the i2c code to send.
+ * \param data the byte to send.
+ */
 uint8_t i2c_send(const uint8_t code, const uint8_t data)
 {
 	switch (code) {
@@ -129,9 +134,11 @@ uint8_t i2c_master_send_w(const uint8_t addr, const uint8_t msb, const uint8_t l
 }
 
 /*! \brief i2c master read byte.
+ *
  * Read a byte from the slave with a stop at the end.
+ *
  * \param addr address of the slave.
- * \param pre-allocated byte.
+ * \param byte ptr to a pre-allocated byte.
  * \return 1 - value OK, 0 - Error.
  */
 uint8_t i2c_master_read_b(const uint8_t addr, uint8_t *byte)
@@ -159,8 +166,9 @@ uint8_t i2c_master_read_b(const uint8_t addr, uint8_t *byte)
 	return(err);
 }
 /*! Read a word (2 byte) from the slave.
+ *
  * \param addr address of the slave.
- * \param pre-allocated word.
+ * \param code ptr to a pre-allocated word.
  * \return 1 - value OK, 0 - Error.
  */
 uint8_t i2c_master_read_w(const uint8_t addr, uint16_t *code)

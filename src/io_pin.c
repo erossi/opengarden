@@ -115,7 +115,7 @@ void io_pin_shut(void)
  *
  * \param oline the output line to be set.
  * \param onoff set or clear.
- * \valvetype type of the valve in used.
+ * \param valvetype type of the valve in used.
  * \note online is in the range 0 to 7.
  * \note no more than 1 line can be used at the same time.
  * \note if OFF, the oline param is ignored, there should be only 1 oline

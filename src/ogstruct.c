@@ -27,11 +27,15 @@
  * This function will set or clear the correspondent bit
  * in the flags byte.
  *
- * \example set the led flag is
+ * ex. set the led flag is
+ * \code {.c}
  * flag_set(progs, FL_LEDS, TRUE);
+ * \endcode
  *
- * \example clear the led flag value is
+ * ex. clear the led flag value is
+ * \code {.c}
  * flag_set(progs, FL_LEDS, FALSE);
+ * \endcode
  *
  * \param *progs the ogstruct.
  * \param bit the bit of the flag's byte.
@@ -51,7 +55,7 @@ void flag_set(struct programs_t *progs, const uint8_t bit,
  * This function will get the correspondent bit
  * in the flags byte.
  *
- * \example check the led flag value is
+ * ex. check the led flag value is
  *  if (flag_get(progs, FL_LEDS)) ...
  *
  * \param *progs the ogstruct.
@@ -66,7 +70,7 @@ uint8_t flag_get(struct programs_t *progs, const uint8_t bit)
 		return(FALSE);
 }
 
-/* to be complete */
+/*! set or get the sunsite flag. */
 void flag_sunsite(struct programs_t *progs, const char c)
 {
 	switch (c) {
@@ -88,7 +92,7 @@ void flag_sunsite(struct programs_t *progs, const char c)
 	}
 }
 
-/* to be completed */
+/*! set or get the valve type flag. */
 void flag_valve(struct programs_t *progs, const char c)
 {
 	switch (c) {

@@ -20,14 +20,22 @@
 #ifndef I2C_DEF
 #define I2C_DEF
 
+/*! define the i2c START value */
 #define START 1
+/*! define the i2c STOP value */
 #define STOP 2
+/*! define the i2c SLA value */
 #define SLA 3
+/*! define the i2c DATA value */
 #define DATA 4
+/*! define the i2c ACK value */
 #define ACK 5
+/*! define the i2c NACK value */
 #define NACK 6
 
+/*! define WRITE value */
 #define WRITE 0
+/*! define READ value */
 #define READ 1
 
 uint8_t i2c_send(const uint8_t code, const uint8_t data);

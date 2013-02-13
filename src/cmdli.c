@@ -23,6 +23,12 @@
 #include <stdio.h>
 #include "cmdli.h"
 
+/*! Set or print the sunsite parameter.
+ *
+ * \param progs ptr to the programs.
+ * \param debug ptr to the print space.
+ * \param c if provided the new sunsite position.
+ */
 void sunsite_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 {
 	switch (c) {
@@ -53,6 +59,12 @@ void sunsite_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 	}
 }
 
+/*! Set or print the valve type in use.
+ *
+ * \param progs ptr to the programs.
+ * \param debug ptr to the print space.
+ * \param c if provided the new valve type.
+ */
 void valve_cmd(struct programs_t *progs, struct debug_t *debug, const char c)
 {
 	switch (c) {
@@ -125,6 +137,7 @@ void cmdli_help(struct debug_t *debug)
 }
 
 /*! Execute an input command:
+ *
  * \param cmd char with the command,
  * \param progs the programs structure,
  * \param debug used to print things.
@@ -266,7 +279,8 @@ void cmdli_run(char *cmd, struct programs_t *progs, struct debug_t *debug)
 }
 
 /*! Get a char from the users and echo it, compose the command line and,
- * if an \r is entered, execute the command.
+ * if an \\r is entered, execute the command.
+ *
  * \param c input char,
  * \param cmdli struct with the command line string,
  * \param progs the programs structure,

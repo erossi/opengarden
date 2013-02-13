@@ -20,6 +20,11 @@
 #include <util/delay.h>
 #include "led.h"
 
+/*! Set led On Off or Blink.
+ *
+ * \param led which led.
+ * \param status On Off or Blink.
+ */
 void led_set(const uint8_t led, const uint8_t status)
 {
 	switch (status) {
@@ -49,12 +54,14 @@ void led_set(const uint8_t led, const uint8_t status)
 	}
 }
 
+/*! Configure led IO lines. */
 void led_init(void)
 {
 	LED_DDR |= (_BV(LED_RED) | _BV(LED_GREEN));
 	led_set(BOTH, OFF);
 }
 
+/*! Deconfigure led IO lines. */
 void led_shut(void)
 {
 	led_set(BOTH, OFF);

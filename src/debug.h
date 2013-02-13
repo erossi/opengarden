@@ -16,8 +16,8 @@
  */
 
 /*! \file debug.h
-  \brief Functions to activare and display (rs232) debug.
-  */
+ * \brief Functions to activare and display (rs232) debug.
+ */
 
 #ifndef DBG_H
 #define DBG_H
@@ -28,7 +28,12 @@
 /*! Activate debug output in anycase? */
 #define DEBUG_ALWAYS_ACTIVE
 
+/*! Macro example for create a function macro in 2 pass.
+ *
+ * The scope should be \#x -> f(x)
+ */
 #define QUOTEME_(x) #x
+/*! Macro example 2nd pass. */
 #define QUOTEME(x) QUOTEME_(x)
 
 /*! Maximum number of char a line can be */
@@ -39,6 +44,7 @@ Substrings are used to compose the line when, for example,
 conversions have to be made from int to string etc. */
 #define MAX_STRING_LENGHT 20
 
+/*! Unused. */
 #define PRINT_VALUE_X_LINE 16
 
 /*! Seconds to wait for an answer (y/n) */

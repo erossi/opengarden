@@ -16,7 +16,7 @@
  */
 
 /*! \file main.c
-  \brief Main.
+ * \brief Main.
  */
 
 #include <stdlib.h>
@@ -33,6 +33,7 @@
 #include "cmdli.h"
 #include "usb.h"
 
+/*! The main function. */
 void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm *tm_clock)
 {
 	if (flag_get(progs, FL_LED))
@@ -69,7 +70,9 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
 	led_set(GREEN, OFF);
 }
 
-/*! \note Incompatible with MONOSTABLE valve.
+/*! Sleep function.
+ *
+ * \note Incompatible with MONOSTABLE valve.
  */
 void go_to_sleep(struct debug_t *debug)
 {
@@ -96,6 +99,7 @@ void go_to_sleep(struct debug_t *debug)
 	i2c_init();
 }
 
+/*! main */
 int main(void)
 {
 	struct debug_t *debug;
@@ -146,7 +150,7 @@ int main(void)
 		if (date_timetorun(tm_clock, debug))
 			job_on_the_field(progs, debug, tm_clock);
 
-		/*! \fixme not so good continuing call this */
+		/*! \bug not so good continuing call this. */
 		if (prog_alarm(progs)) {
 			if (flag_get(progs, FL_LED))
 				led_set(RED, BLINK);

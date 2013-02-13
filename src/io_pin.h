@@ -24,33 +24,57 @@
 
 #include "ogstruct.h"
 
+/*! the IO line port */
 #define OUT_PORT PORTA
+/*! IO PIN */
 #define OUT_PIN PINA
+/*! IO DDR */
 #define OUT_DDR DDRA
 
+/*! IO line 0 */
 #define OUT_P0 PA0
+/*! IO line 1 */
 #define OUT_P1 PA1
+/*! IO line 2 */
 #define OUT_P2 PA2
+/*! IO line 3 */
 #define OUT_P3 PA3
+/*! IO line 4 */
 #define OUT_P4 PA4
+/*! IO line 5 */
 #define OUT_P5 PA5
+/*! IO line 6 */
 #define OUT_P6 PA6
+/*! IO line 7 */
 #define OUT_P7 PA7
 
+/*! Alarm port */
 #define IN_PORT PORTD
+/*! Alarm PIN */
 #define IN_PIN PIND
+/*! Alarm DDR */
 #define IN_DDR DDRD
+/*! Alarm line 0 */
 #define IN_P0 PIND4
+/*! Alarm line 1 */
 #define IN_P1 PIND5
 
+/*! Command PORT */
 #define OUT_CMD_PORT PORTB
+/*! Command DDR */
 #define OUT_CMD_DDR DDRB
+/*! Command On Off line 0 */
 #define OUT_CMD_ONOFF PB0
+/*! Command +- line */
 #define OUT_CMD_PN PB1
 
+/*! Macro OFF */
 #define OFF 0
+/*! Macro ON */
 #define ON 1
+/*! Macro PULSE */
 #define PULSE 2
+/*! PULSE msec delay */
 #define PULSE_MSEC 25
 
 void io_pin_init(const uint8_t status);

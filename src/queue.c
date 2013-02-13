@@ -16,8 +16,8 @@
  */
 
 /*! \file queue.c
-  \brief queue functions
-  */
+ * \brief queue functions.
+ */
 
 /*! add a stack ? add the 1 time ram only flag? */
 #include <stdlib.h>
@@ -51,6 +51,8 @@ void print_qstatus(struct programs_t *progs, struct debug_t *debug, const uint8_
 	}
 }
 
+/*! print a single queue line.
+ */
 void print_qline(struct programs_t *progs, struct debug_t *debug, const uint8_t index)
 {
 	if (flag_get(progs, FL_LOG)) {

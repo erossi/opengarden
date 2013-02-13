@@ -39,22 +39,30 @@
 #define CHECK_VALID_CODE 0x07
 /*! \brief maximum number of programs */
 #define MAX_PROGS 20
+/*! Maximum increment factor for time increase. */
 #define PROG_MAX_FACTOR 3.0
+/*! Factor increment for tomorrow program reschedule. */
 #define PROG_TOMORROW_FACTOR 2.0
 
-/*! queue status */
+/*! queue status NEW */
 #define Q_NEW 0
+/*! queue status OFF */
 #define Q_OFF 1
+/*! queue status RUN */
 #define Q_RUN 2
+/*! queue status DELAYED */
 #define Q_DELAYED 3
 
-/*! sunlight position of the circuit */
+/*! sunlight position. */
 #define FULLSUN 0
+/*! sunlight position. */
 #define HALFSUN 1
+/*! sunlight position. */
 #define SHADOW 2
 
 /*! valve type */
 #define MONOSTABLE 1
+/*! valve type */
 #define BISTABLE 2
 
 /*! flag sunsite 2 bit (0, 1) */
@@ -70,12 +78,17 @@
 /*! flag alarm active */
 #define FL_ALRM 6
 
-/*! trivial value */
+/*! Macro FALSE */
 #define FALSE 0
+/*! Macro TRUE */
 #define TRUE 1
+/*! Macro LOW */
 #define LOW 0
+/*! Macro HIGH */
 #define HIGH 1
+/*! Macro OFF */
 #define OFF 0
+/*! Macro ON */
 #define ON 1
 
 /*! A single program event structure */

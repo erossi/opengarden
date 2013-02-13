@@ -44,6 +44,8 @@ void setup_defaults(struct programs_t *progs)
 	flag_set(progs, FL_LEVEL, TRUE);
 }
 
+/*! print the single program details.
+ */
 void print_program_details(const uint8_t i, struct programs_t *progs, struct debug_t *debug)
 {
 	sprintf_P(debug->line, PSTR(" %02d,%02d%02d,%03d,%2x,%1x\n"), i, \
@@ -164,14 +166,16 @@ void prog_clear(struct programs_t *progs)
 }
 
 /*! add a program into memory
-  \param s string in the form pShSm,shsm,DD,OO
-  where
-  Sh Start hour in the form 0..24.
-  Sm Start minutes.
-  sh Stop hour.
-  sm Stop minutes.
-  DD Day of the week sun..sat bit for day (HEX number).
-  OO output line 0..7 bit for line 0 to 7 (HEX number).
+ *
+ * \param progs ptr to programs.
+ * \param s string in the form pShSm,shsm,DD,OO
+ * where:
+ * Sh Start hour in the form 0..24.
+ * Sm Start minutes.
+ * sh Stop hour.
+ * sm Stop minutes.
+ * DD Day of the week sun..sat bit for day (HEX number).
+ * OO output line 0..7 bit for line 0 to 7 (HEX number).
  */
 void prog_add(struct programs_t *progs, const char *s)
 {

@@ -16,27 +16,37 @@
  */
 
 /*! \file led.h
-  \brief Utility for handle leds.
-  */
+ * \brief Utility for handle leds.
+ */
 
 #ifndef CHCP_LED_H
 #define CHCP_LED_H
 
+/*! Led PORT */
 #define LED_PORT PORTB
+/*! Led DDR */
 #define LED_DDR DDRB
+/*! Red led pin */
 #define LED_RED PB2
+/*! Green led pin */
 #define LED_GREEN PB3
+/*! Led blink delay */
 #define LED_DELAY _delay_ms(200)
 
-/*! Leds statuses */
+/*! Leds status OFF */
 #define OFF 0
+/*! Leds status ON */
 #define ON 1
+/*! Leds status BLINK */
 #define BLINK 2
 
-/*! Leds types */
+/*! Led ON OFF NONE */
 #define NONE 0
+/*! Led Red */
 #define RED 1
+/*! Led Green */
 #define GREEN 2
+/*! Led OnOff or Blink BOTH */
 #define BOTH 3
 
 void led_set(const uint8_t led, const uint8_t status);

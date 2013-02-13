@@ -41,7 +41,9 @@ void debug_get_str(char *str)
 }
 
 /*! Print a flash-stored string to the terminal.
+ *
  * \param string MUST be a PSTR() string.
+ * \param debug ptr to print space.
  */
 void debug_print_P(PGM_P string, struct debug_t *debug)
 {
@@ -58,6 +60,7 @@ void debug_print(struct debug_t *debug)
 		uart_printstr(0, debug->line);
 }
 
+/*! Print the release version. */
 void debug_version(struct debug_t *debug)
 {
 	debug_print_P(PSTR("OpenGarden "), debug);
@@ -101,12 +104,14 @@ uint8_t debug_wait_for_y(struct debug_t *debug)
 	return(0);
 }
 
+/*! Enable debugging. */
 void debug_start(struct debug_t *debug)
 {
 	uart_init(0);
 	debug->active = 1;
 }
 
+/*! Disable debugging. */
 void debug_stop(struct debug_t *debug)
 {
 	uart_shutdown(0);
