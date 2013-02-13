@@ -16,6 +16,10 @@
 GIT_TAG = "$(shell git describe --tags)"
 REMOVE = rm -f
 
+# Remote www install
+MYWEBSERVER = www.enricorossi.org:/home/doxygen/opengarden/
+RSYNC = rsync -crlvz --delete --whole-file doc/html/ $(MYWEBSERVER)
+
 # Drawtiming parameters.
 DT_PRG = drawtiming
 DT_OPT = --cell-width 48 --cell-height 64 --pagesize 1024x200 --font-size 15
@@ -48,6 +52,9 @@ version:
 timing: $(obj_timing)
 	# Done!
 
-doxygen: timing
+doc: timing
 	cd ../ && ( cat doc/Doxyfile ; echo "PROJECT_NUMBER=$(GIT_TAG)" ) | doxygen -
+
+install: doc
+	cd ../ && ( $(RSYNC) )
 

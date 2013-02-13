@@ -83,7 +83,7 @@ doc_timing:
 	$(MAKE) -C ../doc timing
 
 doc:
-	$(MAKE) -C ../doc doxygen
+	$(MAKE) -C ../doc doc
 
 size:
 	$(SIZE)
