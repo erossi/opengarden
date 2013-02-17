@@ -39,6 +39,7 @@ void setup_defaults(struct programs_t *progs)
 	progs->dfactor = DFACTOR_INIT;
 	progs->position = FULLSUN;
 	progs->valve = BISTABLE;
+	progs->ioline = 0;
 	/* flags setup */
 	progs->flags = FULLSUN; /* sunsite */
 	flag_set(progs, FL_LEVEL, TRUE);

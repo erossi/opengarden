@@ -158,6 +158,12 @@ struct programs_t {
 	uint8_t valve;
 	/*! see FL_ definition for this bit mapped byte flag. */
 	uint8_t flags;
+	/*! \brief I/O line in use.
+	 * In bistable valve type, we store the line in use
+	 * so it can be possible to disable such line once opened
+	 * in order to close only the correct line.
+	 */
+	uint8_t ioline;
 };
 
 
