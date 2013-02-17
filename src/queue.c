@@ -165,7 +165,7 @@ void run(struct programs_t *progs, const time_t tnow, const uint8_t index)
 	progs->q[index].stop += tnow - progs->q[index].start;
 	progs->q[index].start = tnow;
 	progs->q[index].status = Q_RUN;
-	io_out_set(progs->q[index].oline, ON, progs->valve);
+	io_out_set(progs->q[index].oline, ON, progs);
 }
 
 /*! Check which program in the queue to exec.
@@ -202,7 +202,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 				case Q_RUN:
 					if (progs->q[i].stop <= tnow) {
 						progs->q[i].status = Q_OFF;
-						io_out_set(progs->q[i].oline, OFF, progs->valve);
+						io_out_set(progs->q[i].oline, OFF, progs);
 						/* force exit */
 						exit = TRUE;
 					}

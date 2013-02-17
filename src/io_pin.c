@@ -98,7 +98,10 @@ void io_pin_init(const uint8_t status)
 	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 }
 
-/*! shutdown all I/O pin */
+/*! \brief Shutdown all I/O pin.
+ *
+ * Not only make them 0, but also release the IO lines.
+ */
 void io_pin_shut(void)
 {
 	OUT_PORT = 0;
@@ -115,20 +118,22 @@ void io_pin_shut(void)
  *
  * \param oline the output line to be set.
  * \param onoff set or clear.
- * \param valvetype type of the valve in used.
+ * \param progs ptr to the parameters.
  * \note online is in the range 0 to 7.
  * \note no more than 1 line can be used at the same time.
  * \note if OFF, the oline param is ignored, there should be only 1 oline
  * in use to be closed.
  */
-void io_out_set(const uint8_t oline, const uint8_t onoff, const uint8_t valvetype)
+void io_out_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 {
 	if (onoff) {
+		progs->ioline = _BV(oline);
 		OUT_PORT = _BV(oline);
-		valve_open(valvetype);
+		valve_open(progs->valve);
 	} else {
-		valve_close(valvetype);
+		valve_close(progs->valve);
 		OUT_PORT = 0;
+		progs->ioline = 0;
 	}
 }
 
@@ -182,5 +187,5 @@ uint8_t io_line_in_use(void)
  */
 void io_out_off(struct programs_t *progs)
 {
-	io_out_set(0, OFF, progs->valve);
+	io_out_set(0, OFF, progs);
 }
