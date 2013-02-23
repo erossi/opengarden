@@ -77,10 +77,10 @@
 /*! PULSE msec delay */
 #define PULSE_MSEC 25
 
-void io_init(const uint8_t status);
+void io_init(void);
 void io_shut(void);
 void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs);
-uint8_t io_get(void);
+uint8_t io_get(struct programs_t *progs);
 void io_off(struct programs_t *progs);
 uint8_t io_alarm(struct programs_t *progs);
 

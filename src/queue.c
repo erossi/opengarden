@@ -190,7 +190,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 		if (progs->q[i].start <= tnow) {
 			switch (progs->q[i].status) {
 				case Q_NEW:
-					if (io_get()) {
+					if (io_get(progs)) {
 						progs->q[i].status = Q_DELAYED;
 					} else {
 						run(progs, tnow, i);
@@ -209,7 +209,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 
 					break;
 				case Q_DELAYED:
-					if (!io_get()) {
+					if (!io_get(progs)) {
 						run(progs, tnow, i);
 						/* force exit */
 						exit = TRUE;

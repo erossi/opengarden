@@ -72,15 +72,12 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
 
 /*! Sleep function.
  *
+ * Which IO line is in use is recorded in the progs struct.
+ *
  * \note Incompatible with MONOSTABLE valve.
  */
 void go_to_sleep(struct debug_t *debug)
 {
-	uint8_t io_status;
-
-	/* dirty trick to save the I/O line */
-	io_status = io_get();
-
 	/* shut down everything */
 	i2c_shut();
 	debug_stop(debug);
@@ -93,7 +90,7 @@ void go_to_sleep(struct debug_t *debug)
 	sleep_disable();
 	/* restart everything */
 	led_init();
-	io_init(io_status);
+	io_init();
 	debug_start(debug);
 	debug->active = FALSE;
 	i2c_init();
@@ -105,7 +102,7 @@ int main(void)
 	struct debug_t *debug;
 	struct programs_t *progs;
 	struct cmdli_t *cmdli;
-	/* convenient pre-allcated structure */
+	/* convenient pre-allocated structure */
 	struct tm *tm_clock;
 	char c;
 
@@ -119,8 +116,7 @@ int main(void)
 	led_init();
 	led_set(BOTH, ON);
 
-	io_init(0);
-
+	io_init();
 	usb_init();
 	debug = debug_init(debug);
 	progs = prog_init(progs);
@@ -134,6 +130,11 @@ int main(void)
 	led_set(BOTH, OFF);
 
 	while (1) {
+		/* If PC is connected or the valves are monostable
+		 * then check for a command sent from the user
+		 * and execute it.
+		 * Anyway do NOT go to sleep.
+		 */
 		if (usb_connected || (progs->valve == MONOSTABLE)) {
 			debug->active = TRUE;
 			c = uart_getchar(0, 0);
@@ -147,10 +148,15 @@ int main(void)
 			go_to_sleep(debug);
 		}
 
+		/* if there is a job to do (open, close valves).
+		 */
 		if (date_timetorun(tm_clock, debug))
 			job_on_the_field(progs, debug, tm_clock);
 
-		/*! \bug not so good continuing call this. */
+		/*! \bug Calling the check for alarm at any
+		 * cycle is not so good, especially with
+		 * monostable valve the alarm trigger is continuous.
+		 */
 		if (prog_alarm(progs)) {
 			if (flag_get(progs, FL_LED))
 				led_set(RED, BLINK);

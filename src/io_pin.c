@@ -87,12 +87,11 @@ void valve_close(const uint8_t valvetype)
  * \param status I/O port status to be activated.
  * \bug the status of the IO lines should not be used.
  */
-void io_init(const uint8_t status)
+void io_init(void)
 {
 	IN_DDR &= ~(_BV(IN_P0) | _BV(IN_P1));
 	IN_PORT &= ~(_BV(IN_P0) | _BV(IN_P1));
-	/* OUT_PORT = 0; */
-	OUT_PORT = status;
+	OUT_PORT = 0;
 	OUT_DDR = 0xff; /* all output */
 	OUT_CMD_DDR |= (_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
 	OUT_CMD_PORT &= ~(_BV(OUT_CMD_ONOFF) | _BV(OUT_CMD_PN));
@@ -139,12 +138,13 @@ void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 
 /*! Are there any IO out line in use?
  *
- * \bug this function is used also to get the I/O port status
- * for sleep and restore I/O lines.
  */
-uint8_t io_get(void)
+uint8_t io_get(struct programs_t *progs)
 {
-	return(OUT_PORT);
+	if (progs->valve == MONOSTABLE)
+		return(OUT_PORT);
+	else
+		return(progs->ioline);
 }
 
 /*! Close all the output line.
