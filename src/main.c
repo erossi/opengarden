@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2013 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ void go_to_sleep(struct debug_t *debug)
 	uint8_t io_status;
 
 	/* dirty trick to save the I/O line */
-	io_status = io_line_in_use();
+	io_status = io_get();
 
 	/* shut down everything */
 	i2c_shut();

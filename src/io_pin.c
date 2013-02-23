@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2013 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ void io_pin_shut(void)
  * \note if OFF, the oline param is ignored, there should be only 1 oline
  * in use to be closed.
  */
-void io_out_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
+void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 {
 	if (onoff) {
 		progs->ioline = _BV(oline);
@@ -137,6 +137,26 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, struct programs_t *pro
 	}
 }
 
+/*! Are there any IO out line in use?
+ *
+ * \bug this function is used also to get the I/O port status
+ * for sleep and restore I/O lines.
+ */
+uint8_t io_get(void)
+{
+	return(OUT_PORT);
+}
+
+/*! Close all the output line.
+ *
+ * \note the oline is ignored since there must be only one oline
+ * in use.
+ */
+void io_off(struct programs_t *progs)
+{
+	io_set(0, OFF, progs);
+}
+
 /*! \brief get alarm status.
  * It return if one or both the alarm line are set, based on
  * the alarm level trigger.
@@ -144,7 +164,7 @@ void io_out_set(const uint8_t oline, const uint8_t onoff, struct programs_t *pro
  * \param progs the struct to look for the alarm level setup.
  * \return 0 - 3 the alarm line active in binary mapping.
  */
-uint8_t io_in_alarm(struct programs_t *progs)
+uint8_t io_alarm(struct programs_t *progs)
 {
 	uint8_t err = 0;
 
@@ -168,24 +188,4 @@ uint8_t io_in_alarm(struct programs_t *progs)
 		flag_set(progs, FL_ALRM, FALSE);
 
 	return(err);
-}
-
-/*! Are there any IO out line in use?
- *
- * \bug this function is used also to get the I/O port status
- * for sleep and restore I/O lines.
- */
-uint8_t io_line_in_use(void)
-{
-	return(OUT_PORT);
-}
-
-/*! Close all the output line.
- *
- * \note the oline is ignored since there must be only one oline
- * in use.
- */
-void io_out_off(struct programs_t *progs)
-{
-	io_out_set(0, OFF, progs);
 }

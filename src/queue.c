@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2013 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ void run(struct programs_t *progs, const time_t tnow, const uint8_t index)
 	progs->q[index].stop += tnow - progs->q[index].start;
 	progs->q[index].start = tnow;
 	progs->q[index].status = Q_RUN;
-	io_out_set(progs->q[index].oline, ON, progs);
+	io_set(progs->q[index].oline, ON, progs);
 }
 
 /*! Check which program in the queue to exec.
@@ -190,7 +190,7 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 		if (progs->q[i].start <= tnow) {
 			switch (progs->q[i].status) {
 				case Q_NEW:
-					if (io_line_in_use()) {
+					if (io_get()) {
 						progs->q[i].status = Q_DELAYED;
 					} else {
 						run(progs, tnow, i);
@@ -202,14 +202,14 @@ void queue_run(struct programs_t *progs, struct tm *tm_clock, struct debug_t *de
 				case Q_RUN:
 					if (progs->q[i].stop <= tnow) {
 						progs->q[i].status = Q_OFF;
-						io_out_set(progs->q[i].oline, OFF, progs);
+						io_set(progs->q[i].oline, OFF, progs);
 						/* force exit */
 						exit = TRUE;
 					}
 
 					break;
 				case Q_DELAYED:
-					if (!io_line_in_use()) {
+					if (!io_get()) {
 						run(progs, tnow, i);
 						/* force exit */
 						exit = TRUE;

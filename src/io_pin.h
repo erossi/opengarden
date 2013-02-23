@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2013 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,9 @@
 
 void io_pin_init(const uint8_t status);
 void io_pin_shut(void);
-void io_out_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs);
-uint8_t io_in_alarm(struct programs_t *progs);
-uint8_t io_line_in_use(void);
-void io_out_off(struct programs_t *progs);
+void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs);
+uint8_t io_get(void);
+void io_off(struct programs_t *progs);
+uint8_t io_alarm(struct programs_t *progs);
 
 #endif

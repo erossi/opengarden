@@ -227,8 +227,8 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 uint8_t prog_alarm(struct programs_t *progs)
 {
 	/* if there is an alarm */
-	if (io_in_alarm(progs)) {
-		io_out_off(progs); /* close all the lines */
+	if (io_alarm(progs)) {
+		io_off(progs); /* close all the lines */
 		progs->qc = 0; /* remove all progs in the queue */
 		return(1);
 	} else {
