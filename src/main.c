@@ -84,7 +84,7 @@ void go_to_sleep(struct debug_t *debug)
 	/* shut down everything */
 	i2c_shut();
 	debug_stop(debug);
-	io_pin_shut();
+	io_shut();
 	led_shut();
 	/* start sleep procedure */
 	sleep_enable();
@@ -93,7 +93,7 @@ void go_to_sleep(struct debug_t *debug)
 	sleep_disable();
 	/* restart everything */
 	led_init();
-	io_pin_init(io_status);
+	io_init(io_status);
 	debug_start(debug);
 	debug->active = FALSE;
 	i2c_init();
@@ -119,7 +119,7 @@ int main(void)
 	led_init();
 	led_set(BOTH, ON);
 
-	io_pin_init(0);
+	io_init(0);
 
 	usb_init();
 	debug = debug_init(debug);

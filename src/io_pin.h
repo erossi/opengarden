@@ -77,8 +77,8 @@
 /*! PULSE msec delay */
 #define PULSE_MSEC 25
 
-void io_pin_init(const uint8_t status);
-void io_pin_shut(void);
+void io_init(const uint8_t status);
+void io_shut(void);
 void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs);
 uint8_t io_get(void);
 void io_off(struct programs_t *progs);

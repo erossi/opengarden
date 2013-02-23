@@ -87,7 +87,7 @@ void valve_close(const uint8_t valvetype)
  * \param status I/O port status to be activated.
  * \bug the status of the IO lines should not be used.
  */
-void io_pin_init(const uint8_t status)
+void io_init(const uint8_t status)
 {
 	IN_DDR &= ~(_BV(IN_P0) | _BV(IN_P1));
 	IN_PORT &= ~(_BV(IN_P0) | _BV(IN_P1));
@@ -102,7 +102,7 @@ void io_pin_init(const uint8_t status)
  *
  * Not only make them 0, but also release the IO lines.
  */
-void io_pin_shut(void)
+void io_shut(void)
 {
 	OUT_PORT = 0;
 	OUT_DDR = 0;
