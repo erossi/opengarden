@@ -112,8 +112,18 @@ void io_shut(void)
 /*! Set I/O oline.
  *
  * open or close the I/O line, the OUT_PORT is supposed to
- * represent the correct status of the I/O lines so keep in mind
- * to save and restore this value during sleep time.
+ * represent the correct status of the I/O lines only if the
+ * valve type is MONOSTABLE.
+ * In the open case, we set the port to the corresponding oline,
+ * then we also set the oline into the progs structure in order to
+ * remember which ioline we are using, because this info will be lost
+ * during the stand-by period. Then, after opened the valve, if the valve
+ * is BISTABLE we can clear the oline from the port, no need to keep
+ * the line up; instead if the valve is MONOSTABLE then the PORT
+ * represent the ioline in use and it must not be cleared.
+ * In the close case and bistable valve, the port must be set to
+ * the correct ioline before the close operation or it will not
+ * affect any line.
  *
  * \param oline the output line to be set.
  * \param onoff set or clear.
@@ -126,10 +136,18 @@ void io_shut(void)
 void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 {
 	if (onoff) {
+		/* store the ioline in use into the progs struct. */
 		progs->ioline = _BV(oline);
+		/* set the ioline to the port. */
 		OUT_PORT = _BV(oline);
 		valve_open(progs->valve);
+
+		if (progs->valve == BISTABLE)
+			OUT_PORT = 0;
 	} else {
+		if (progs->valve == BISTABLE)
+			OUT_PORT = progs->ioline;
+
 		valve_close(progs->valve);
 		OUT_PORT = 0;
 		progs->ioline = 0;
