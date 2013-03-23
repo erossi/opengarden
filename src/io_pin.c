@@ -140,15 +140,26 @@ void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 		progs->ioline = _BV(oline);
 		/* set the ioline to the port. */
 		OUT_PORT = _BV(oline);
-		valve_open(progs->valve);
 
-		if (progs->valve == BISTABLE)
+		if (progs->valve == BISTABLE) {
+			onoff_pulse(ON);
+			_delay_ms(1);
 			OUT_PORT = 0;
+			_delay_ms(60);
+			onoff_pulse(OFF);
+		} else
+			valve_open(progs->valve);
 	} else {
-		if (progs->valve == BISTABLE)
+		if (progs->valve == BISTABLE) {
 			OUT_PORT = progs->ioline;
+			OUT_CMD_PORT |= _BV(OUT_CMD_PN);
+			_delay_ms(1);
+			OUT_PORT = 0;
+			_delay_ms(60);
+			OUT_CMD_PORT &= ~_BV(OUT_CMD_PN);
+		} else
+			valve_close(progs->valve);
 
-		valve_close(progs->valve);
 		OUT_PORT = 0;
 		progs->ioline = 0;
 	}
