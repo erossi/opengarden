@@ -75,7 +75,7 @@
 /*! Macro PULSE */
 #define PULSE 2
 /*! PULSE msec delay */
-#define PULSE_MSEC 25
+#define PULSE_MSEC 50
 
 void io_init(void);
 void io_shut(void);
