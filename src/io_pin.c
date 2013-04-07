@@ -147,7 +147,7 @@ void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 			onoff_pulse(ON);
 			_delay_ms(1);
 			OUT_PORT = 0;
-			_delay_ms(60);
+			_delay_ms(PULSE_MSEC);
 			onoff_pulse(OFF);
 		} else {
 			valve_open(progs->valve);
@@ -158,7 +158,7 @@ void io_set(const uint8_t oline, const uint8_t onoff, struct programs_t *progs)
 			OUT_CMD_PORT |= _BV(OUT_CMD_PN);
 			_delay_ms(1);
 			OUT_PORT = 0;
-			_delay_ms(60);
+			_delay_ms(PULSE_MSEC);
 			OUT_CMD_PORT &= ~_BV(OUT_CMD_PN);
 		} else {
 			valve_close(progs->valve);
