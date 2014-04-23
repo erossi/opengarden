@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2014 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,6 @@
 
 #include <avr/pgmspace.h>
 #include "uart.h"
-
-/*! Activate debug output in anycase? */
-#define DEBUG_ALWAYS_ACTIVE
 
 /*! Macro example for create a function macro in 2 pass.
  *

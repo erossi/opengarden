@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011-2013 Enrico Rossi
+ * Copyright (C) 2011-2014 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,6 @@ void go_to_sleep(struct debug_t *debug)
 {
 	/* shut down everything */
 	i2c_shut();
-	debug_stop(debug);
 	io_shut();
 	led_shut();
 	/* start sleep procedure */
@@ -91,8 +90,6 @@ void go_to_sleep(struct debug_t *debug)
 	/* restart everything */
 	led_init();
 	io_init();
-	debug_start(debug);
-	debug->active = FALSE;
 	i2c_init();
 }
 
@@ -122,21 +119,25 @@ int main(void)
 	progs = prog_init(progs);
 	cmdli = cmdli_init(cmdli);
 	tm_clock = date_init(tm_clock, debug);
-
         set_sleep_mode(SLEEP_MODE_PWR_SAVE);
-
 	sei();
 	date_hwclock_start();
 	led_set(BOTH, OFF);
 
 	while (1) {
-		/* If PC is connected or the valves are monostable
+		/* PC is connected but debug is off. */
+		if (usb_connected && (!debug->active))
+			debug_start(debug);
+
+		if (debug->active && (!usb_connected))
+			debug_stop(debug);
+
+		/* If PC is connected
 		 * then check for a command sent from the user
 		 * and execute it.
 		 * Anyway do NOT go to sleep.
 		 */
-		if (usb_connected || (progs->valve == MONOSTABLE)) {
-			debug->active = TRUE;
+		if (debug->active) {
 			c = uart_getchar(0, 0);
 
 			if (c) {
@@ -145,7 +146,8 @@ int main(void)
 				cmdli_exec(c, cmdli, progs, debug);
 			}
 		} else {
-			go_to_sleep(debug);
+			if (progs->valve == BISTABLE)
+				go_to_sleep(debug);
 		}
 
 		/* if there is a job to do (open, close valves).

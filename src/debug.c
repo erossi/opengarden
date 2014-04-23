@@ -1,5 +1,5 @@
 /* This file is part of OpenGarden
- * Copyright (C) 2011, 2012 Enrico Rossi
+ * Copyright (C) 2011-2014 Enrico Rossi
  *
  * OpenGarden is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,7 @@ void debug_start(struct debug_t *debug)
 {
 	uart_init(0);
 	debug->active = 1;
+	hello(debug);
 }
 
 /*! Disable debugging. */
@@ -127,18 +128,6 @@ struct debug_t *debug_init(struct debug_t *debug)
 	debug->line = malloc(MAX_LINE_LENGHT);
 	debug->string = malloc(MAX_STRING_LENGHT);
 	debug_start(debug);
-	hello(debug);
-
-#ifndef DEBUG_ALWAYS_ACTIVE
-	debug_print_P(PSTR("\nActivate debug? (y/N): "), debug);
-
-	if (!debug_wait_for_y(debug)) {
-		debug_stop(debug);
-		free(debug->line);
-		free(debug->string);
-	}
-#endif
-
 	return(debug);
 }
 
