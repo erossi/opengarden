@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012 Enrico Rossi
+# Copyright (C) 2011-2014 Enrico Rossi
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,8 +50,9 @@ time_obj = rtc.o time.o date.o
 tcn75_obj = i2c.o tcn75.o
 temperature_obj = $(tcn75_obj) temperature.o
 debug_obj = uart.o debug.o
-objects = $(debug_obj) $(time_obj) $(temperature_obj)
-objects += led.o io_pin.o program.o cmdli.o queue.o usb.o ogstruct.o
+test_obj = ogstruct.o led.o io_pin.o
+objects = $(debug_obj) $(time_obj) $(temperature_obj) $(test_obj)
+objects += program.o cmdli.o queue.o usb.o
 
 .PHONY: clean indent
 .SILENT: help
@@ -66,6 +67,11 @@ all: $(objects)
 
 debug.o:
 	$(CC) $(CFLAGS) -D GITREL=\"$(GIT_TAG)\" -c debug.c
+
+test: $(test_obj)
+	$(CC) $(CFLAGS) -o $(PRGNAME)_test_iolines.elf test_iolines.c \
+	       	$(test_obj) $(LFLAGS)
+	$(OBJCOPY) $(PRGNAME)_test_iolines.elf $(PRGNAME)_test_iolines.hex
 
 programstk:
 	$(DUDE) -c $(DUDESDEV) -P $(DUDESPORT)
