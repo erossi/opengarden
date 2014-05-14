@@ -15,7 +15,8 @@
 
 PRG_NAME = opengarden
 #MCU = atmega164p
-MCU = atmega1284p
+MCU = atmega324pa
+#MCU = atmega1284p
 OPTLEV = s
 FCPU = 1000000UL
 PWD = $(shell pwd)
