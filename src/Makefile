@@ -14,8 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 PRG_NAME = opengarden
-#MCU = atmega164p
-MCU = atmega1284p
+
+# Open Hardware platform
+#MCU = atmega1284p
+
+# GTP Hardware platform
+MCU = atmega324pa
+
 OPTLEV = s
 FCPU = 1000000UL
 PWD = $(shell pwd)
