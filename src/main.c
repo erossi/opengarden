@@ -76,21 +76,30 @@ void job_on_the_field(struct programs_t *progs, struct debug_t *debug, struct tm
  *
  * \note Incompatible with MONOSTABLE valve.
  */
-void go_to_sleep(struct debug_t *debug)
+void go_to_sleep(uint8_t valve, struct debug_t *debug)
 {
-	/* shut down everything */
-	i2c_shut();
-	io_shut();
-	led_shut();
-	/* start sleep procedure */
-	sleep_enable();
-	sleep_bod_disable();
-	sleep_cpu();
-	sleep_disable();
-	/* restart everything */
-	led_init();
-	io_init();
-	i2c_init();
+	if (valve == BISTABLE) {
+		set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+		/* shut down everything */
+		i2c_shut();
+		io_shut();
+		led_shut();
+		/* start sleep procedure */
+		sleep_enable();
+		sleep_bod_disable();
+		sleep_cpu();
+		sleep_disable();
+		/* restart everything */
+		led_init();
+		io_init();
+		i2c_init();
+	} else {
+		set_sleep_mode(SLEEP_MODE_IDLE);
+		/* start sleep procedure */
+		sleep_enable();
+		sleep_cpu();
+		sleep_disable();
+	}
 }
 
 /*! main */
@@ -146,26 +155,16 @@ int main(void)
 				cmdli_exec(c, cmdli, progs, debug);
 			}
 		} else {
-			if (progs->valve == BISTABLE)
-				go_to_sleep(debug);
+			go_to_sleep(progs->valve, debug);
+
+			if (prog_alarm(progs) && flag_get(progs, FL_LED))
+				led_set(RED, BLINK);
 		}
 
 		/* if there is a job to do (open, close valves).
 		 */
 		if (date_timetorun(tm_clock, debug))
 			job_on_the_field(progs, debug, tm_clock);
-
-		/*! \bug Calling the check for alarm at any
-		 * cycle is not so good, especially with
-		 * monostable valve the alarm trigger is continuous.
-		 */
-		if (prog_alarm(progs)) {
-			if (flag_get(progs, FL_LED))
-				led_set(RED, BLINK);
-
-			if (flag_get(progs, FL_LOG))
-				debug_print_P(PSTR("ALARM! queue removed, I/O lines closed!\n"), debug);
-		}
 	}
 
 	/* This part should never be reached */

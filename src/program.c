@@ -226,12 +226,23 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
  */
 uint8_t prog_alarm(struct programs_t *progs)
 {
-	/* if there is an alarm */
+	static uint8_t counter = 0;
+
 	if (io_alarm(progs)) {
-		io_off(progs); /* close all the lines */
-		progs->qc = 0; /* remove all progs in the queue */
-		return(1);
+		if (counter > ALRM_THRESHOLD) {
+			flag_set(progs, FL_ALRM, TRUE);
+			io_off(progs); /* close the line in use */
+			progs->qc = 0; /* remove all progs in the queue */
+		} else {
+			counter++;
+		}
 	} else {
-		return(0);
+		if (counter) {
+			counter--;
+		} else {
+			flag_set(progs, FL_ALRM, FALSE);
+		}
 	}
+
+	return(flag_get(progs, FL_ALRM));
 }

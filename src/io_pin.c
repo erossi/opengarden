@@ -235,10 +235,5 @@ uint8_t io_alarm(struct programs_t *progs)
 			err |= _BV(1);
 	}
 
-	if (err)
-		flag_set(progs, FL_ALRM, TRUE);
-	else
-		flag_set(progs, FL_ALRM, FALSE);
-
 	return(err);
 }
