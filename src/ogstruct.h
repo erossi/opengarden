@@ -75,6 +75,7 @@
 #define FL_LEVEL 4
 /*! flag leds ON or OFF */
 #define FL_LED 5
+
 /*! flag alarm active
  * \bug since alarms are not immediate and therefor can be read
  * from the hardware I/O lines, but they have a number of events
@@ -82,9 +83,12 @@
  * filter) then there is the need of 2 counter for the two lines and
  * 2 flags for the two separate lines. For the moment we keep only
  * the main alarm.
+ * This will be fixed when alarms and lines will be treated indipendently.
  */
 #define FL_ALRM 6
-#define ALRM_THRESHOLD 5
+
+/*! Number of consecutive alarm to be active to switch alarm on/off */
+#define ALRM_THRESHOLD 3
 
 /*! Macro FALSE */
 #define FALSE 0
