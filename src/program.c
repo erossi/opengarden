@@ -222,6 +222,19 @@ uint8_t prog_del(struct programs_t *progs, const uint8_t n)
 
 /*! test alarm lines and act accordingly.
  *
+ * An alarm must be present for ALRM_THRESHOLD number of cycle before
+ * triggering the event (like close all the lines and set the
+ * ALARM flag). It must also be absent for the same amount of cycle in
+ * order to trigger the clear event (like clear the ALARM flag).
+ *
+ * If there is an alarm and we haven't reached the ALRM_THRESHOLD
+ * and it is the first time we hit the alarm, then close the lines and
+ * clear all the programs.
+ * If the ALRM_THRESHOLD is not yet reached, then increment it.
+ * If the is not an alarm, but we still have an alarm counter > 0 then
+ * decrement it.
+ * Finally if the alarm counter = 0, clear the ALARM flag.
+ *
  * \bug Bistable valve non-compatible.
  */
 uint8_t prog_alarm(struct programs_t *progs)
@@ -230,18 +243,19 @@ uint8_t prog_alarm(struct programs_t *progs)
 
 	if (io_alarm(progs)) {
 		if (counter > ALRM_THRESHOLD) {
-			flag_set(progs, FL_ALRM, TRUE);
-			io_off(progs); /* close the line in use */
-			progs->qc = 0; /* remove all progs in the queue */
+			if (!flag_get(progs, FL_ALRM)) {
+				flag_set(progs, FL_ALRM, TRUE);
+				io_off(progs); /* close the line in use */
+				progs->qc = 0; /* remove all progs in the queue */
+			}
 		} else {
 			counter++;
 		}
 	} else {
-		if (counter) {
+		if (counter)
 			counter--;
-		} else {
+		else
 			flag_set(progs, FL_ALRM, FALSE);
-		}
 	}
 
 	return(flag_get(progs, FL_ALRM));
