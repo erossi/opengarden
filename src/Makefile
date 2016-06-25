@@ -22,6 +22,7 @@ PWD = $(shell pwd)
 INC = -I/usr/lib/avr/include/
 
 CFLAGS = $(INC) -Wall -Wstrict-prototypes -pedantic -mmcu=$(MCU) -O$(OPTLEV) -D F_CPU=$(FCPU)
+CFLAGS += -D GTP_HARDWARE
 LFLAGS = -lm
 
 PRGNAME = $(PRG_NAME)
